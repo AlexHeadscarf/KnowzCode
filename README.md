@@ -52,40 +52,27 @@ cd your-project/
 
 ### For Cursor IDE
 
-#### Step 1: Clone the Repository
+Cursor IDE does **not** currently support the KnowzCode plugin architecture. Cursor uses a different command system (`.cursor/commands/` with Markdown files) that is incompatible with Claude Code's plugin model.
 
-```bash
-git clone https://github.com/AlexHeadscarf/KnowzCode.git ~/.cursor/knowzcode
-```
+**Current Status:**
+- ❌ KnowzCode plugin not compatible with Cursor IDE
+- ❌ No agent orchestration support in Cursor
+- ❌ Different command structure (simple Markdown vs. agent-based)
 
-#### Step 2: Link Commands
+**Alternative for Cursor Users:**
+If you want to use KnowzCode concepts in Cursor, you would need to:
+1. Manually create simplified command files in `.cursor/commands/`
+2. Adapt the workflow without multi-agent orchestration
+3. Manage project state manually
 
-```bash
-ln -s ~/.cursor/knowzcode/commands ~/.cursor/commands/knowzcode
-ln -s ~/.cursor/knowzcode/agents ~/.cursor/agents/knowzcode
-```
-
-#### Step 3: Initialize Your Project
-
-```bash
-cd your-project/
-/init  # Or /knowzcode:init if namespaced
-```
-
-**Note**: Cursor IDE may not require command namespacing. Test both formats to see which works in your environment.
+**Recommendation:** Use Claude Code for the full KnowzCode experience with multi-agent orchestration, quality gates, and structured TDD workflow.
 
 ## Quick Start
 
 ### Start a New Feature
 
-**Claude Code:**
 ```bash
 /knowzcode:work "Build user authentication with email and password"
-```
-
-**Cursor IDE:**
-```bash
-/work "Build user authentication with email and password"
 ```
 
 KnowzCode will:
@@ -97,36 +84,19 @@ KnowzCode will:
 
 ### Execute Specific Phases
 
-**Claude Code:**
 ```bash
 /knowzcode:step 1A    # Run impact analysis only
 /knowzcode:step 2A    # Jump to implementation
 /knowzcode:step 2B    # Run verification
 ```
 
-**Cursor IDE:**
-```bash
-/step 1A    # Run impact analysis only
-/step 2A    # Jump to implementation
-/step 2B    # Run verification
-```
-
 ### Run Quality Audits
 
-**Claude Code:**
 ```bash
 /knowzcode:audit spec          # Review specifications
 /knowzcode:audit architecture  # Check architecture health
 /knowzcode:audit security      # Security assessment
 /knowzcode:audit integration   # Integration test coverage
-```
-
-**Cursor IDE:**
-```bash
-/audit spec          # Review specifications
-/audit architecture  # Check architecture health
-/audit security      # Security assessment
-/audit integration   # Integration test coverage
 ```
 
 ## How It Works
@@ -135,9 +105,8 @@ KnowzCode will:
 
 **Global Plugin** (installed once):
 ```
-~/.claude/plugins/knowzcode/    # Claude Code
-~/.cursor/knowzcode/             # Cursor IDE
-├── commands/     # All commands
+~/.claude/plugins/knowzcode/
+├── commands/     # All /knowzcode:* commands
 ├── agents/       # Specialized AI agents
 └── skills/       # Development skills (future)
 ```
@@ -181,8 +150,6 @@ Each phase has **quality gates** that must pass before proceeding.
 
 ## Available Commands
 
-### Claude Code (with namespace)
-
 | Command | Description | Example |
 |:--------|:------------|:--------|
 | `/knowzcode:init` | Initialize KnowzCode in project | `/knowzcode:init` |
@@ -193,46 +160,20 @@ Each phase has **quality gates** that must pass before proceeding.
 | `/knowzcode:fix <target>` | Quick targeted fix | `/knowzcode:fix auth.js` |
 | `/knowzcode:resolve-conflicts` | Resolve merge conflicts | `/knowzcode:resolve-conflicts` |
 
-### Cursor IDE (without namespace)
-
-| Command | Description | Example |
-|:--------|:------------|:--------|
-| `/init` | Initialize KnowzCode in project | `/init` |
-| `/work <goal>` | Start new feature WorkGroup | `/work "Add dark mode"` |
-| `/step <phase>` | Execute specific phase | `/step 2A` |
-| `/audit [type]` | Run quality audits | `/audit security` |
-| `/plan [type]` | Generate development plans | `/plan feature` |
-| `/fix <target>` | Quick targeted fix | `/fix auth.js` |
-| `/resolve-conflicts` | Resolve merge conflicts | `/resolve-conflicts` |
-
 ## Example Workflow
 
 ### 1. Initialize New Project
 
-**Claude Code:**
 ```bash
 mkdir my-app && cd my-app
 git init
 /knowzcode:init
 ```
 
-**Cursor IDE:**
-```bash
-mkdir my-app && cd my-app
-git init
-/init
-```
-
 ### 2. Start First Feature
 
-**Claude Code:**
 ```bash
 /knowzcode:work "Build REST API with Express.js for user management"
-```
-
-**Cursor IDE:**
-```bash
-/work "Build REST API with Express.js for user management"
 ```
 
 **KnowzCode will:**
@@ -253,14 +194,8 @@ See all WorkGroups, their status, and completion.
 
 ### 4. Continue Development
 
-**Claude Code:**
 ```bash
 /knowzcode:work "Add JWT authentication to API"
-```
-
-**Cursor IDE:**
-```bash
-/work "Add JWT authentication to API"
 ```
 
 Each feature gets its own WorkGroup with full tracking.
@@ -326,10 +261,10 @@ Automated checks at each phase:
 
 ### Quick Migration
 
-1. **Install plugin**: `/plugin install knowzcode` (Claude Code) or clone repo (Cursor IDE)
+1. **Install plugin**: `/plugin install knowzcode`
 2. **Your data is safe**: `knowzcode/` directory preserved automatically
 3. **Remove `.claude/`**: Commands now come from plugin
-4. **Update command usage**: Old `/kc` → New `/knowzcode:work` (Claude) or `/work` (Cursor)
+4. **Update command usage**: Old `/kc` → New `/knowzcode:work`
 
 See **[MIGRATION_GUIDE.md](MIGRATION_GUIDE.md)** for detailed migration steps.
 
@@ -391,7 +326,6 @@ KnowzCode is built on these principles:
 
 Work on multiple features simultaneously without conflicts:
 
-**Claude Code:**
 ```bash
 # Developer 1
 git checkout -b feature/profiles
@@ -405,22 +339,6 @@ git checkout -b feature/notifications
 git merge feature/profiles          # ✓ Clean
 git merge feature/notifications     # Conflict (expected)
 /knowzcode:resolve-conflicts       # Auto-resolves safely
-```
-
-**Cursor IDE:**
-```bash
-# Developer 1
-git checkout -b feature/profiles
-/work "Add user profiles"
-
-# Developer 2
-git checkout -b feature/notifications
-/work "Add email notifications"
-
-# Merge both - conflicts auto-resolve
-git merge feature/profiles     # ✓ Clean
-git merge feature/notifications # Conflict (expected)
-/resolve-conflicts            # Auto-resolves safely
 ```
 
 ## Documentation

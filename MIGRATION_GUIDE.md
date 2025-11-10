@@ -152,26 +152,36 @@ The plugin doesn't conflict with the old installation model.
 
 ### Renamed Commands (v2.0)
 
-All commands have been renamed for clarity and now require the `knowzcode:` namespace prefix in Claude Code:
+All commands have been renamed for clarity and now require the `knowzcode:` namespace prefix:
 
-| Old Command (v1.x) | New Command (v2.0) | Cursor IDE |
-|:-------------------|:-------------------|:-----------|
-| `/kc "goal"` | `/knowzcode:work "goal"` | `/work "goal"` |
-| `/kc-init` | `/knowzcode:init` | `/init` |
-| `/kc-step <phase>` | `/knowzcode:step <phase>` | `/step <phase>` |
-| `/kc-audit [type]` | `/knowzcode:audit [type]` | `/audit [type]` |
-| `/kc-plan [type]` | `/knowzcode:plan [type]` | `/plan [type]` |
-| `/kc-microfix <target>` | `/knowzcode:fix <target>` | `/fix <target>` |
-| `/kc-resolve-merge` | `/knowzcode:resolve-conflicts` | `/resolve-conflicts` |
+| Old Command (v1.x) | New Command (v2.0) |
+|:-------------------|:-------------------|
+| `/kc "goal"` | `/knowzcode:work "goal"` |
+| `/kc-init` | `/knowzcode:init` |
+| `/kc-step <phase>` | `/knowzcode:step <phase>` |
+| `/kc-audit [type]` | `/knowzcode:audit [type]` |
+| `/kc-plan [type]` | `/knowzcode:plan [type]` |
+| `/kc-microfix <target>` | `/knowzcode:fix <target>` |
+| `/kc-resolve-merge` | `/knowzcode:resolve-conflicts` |
 
-**Note**: The namespace (`knowzcode:`) is required in Claude Code to prevent command conflicts. Cursor IDE may work without namespacing.
+**Note**: The namespace (`knowzcode:`) is required in Claude Code to prevent command conflicts with other plugins.
 
 ### Changed Behavior
 
 1. **Commands are global**: All `/knowzcode:*` commands available everywhere after plugin install
-2. **Command namespace required**: Commands need `knowzcode:` prefix in Claude Code
+2. **Command namespace required**: Commands need `knowzcode:` prefix to prevent conflicts
 3. **No per-project agents**: Agents come from plugin, not project `.claude/` directory
 4. **Visible data directory**: `knowzcode/` is visible and git-committable
+
+### IDE Compatibility
+
+**Supported:**
+- ✅ **Claude Code**: Full support with plugin architecture, multi-agent orchestration, and all features
+
+**Not Supported:**
+- ❌ **Cursor IDE**: Incompatible command system. Cursor uses simple Markdown commands in `.cursor/commands/` which cannot support KnowzCode's multi-agent orchestration and complex workflow phases.
+
+**Recommendation**: Use Claude Code for KnowzCode. Cursor IDE does not support the agent-based architecture required for TDD workflows, quality gates, and structured development loops.
 
 ## FAQ
 

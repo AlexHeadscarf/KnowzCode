@@ -318,7 +318,7 @@ No WorkGroup needed for micro-fixes
 ## Example Complete Loop Execution
 
 ```
-User: /kc Add user authentication
+User: /knowzcode:work "Add user authentication"
 
 Orchestrator:
 1. Generate WorkGroupID: kc-feat-20250104-193000

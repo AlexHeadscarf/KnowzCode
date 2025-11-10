@@ -1,0 +1,12 @@
+{
+  "name": "architecture-diff",
+  "version": "0.1.0",
+  "description": "Highlights differences between specs and the Mermaid flowchart in knowzcode_architecture.md.",
+  "parameters": [],
+  "actions": [
+    {
+      "type": "python",
+      "code": "from pathlib import Path\nimport re\narch = Path('knowzcode/knowzcode_architecture.md').read_text()\nspec_paths = list(Path('knowzcode/specs').glob('*.md'))\nnode_ids = {p.stem for p in spec_paths}\nmermaid_nodes = set(re.findall(r'([A-Z]{2,}_[A-Za-z0-9]+)', arch))\nmissing_in_arch = sorted(node_ids - mermaid_nodes)\nmissing_in_specs = sorted(mermaid_nodes - node_ids)\noutputs['missing_in_architecture'] = missing_in_arch\noutputs['missing_specs'] = missing_in_specs\n"
+    }
+  ]
+}

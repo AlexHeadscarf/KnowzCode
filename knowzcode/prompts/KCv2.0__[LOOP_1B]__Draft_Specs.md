@@ -1,0 +1,75 @@
+# KnowzCode v2.0: [LOOP 1B] Authorize Change Set & Draft Specs
+
+**Confirmed Change Set:**
+[Orchestrator: Copy and paste the *exact* Change Set that the agent proposed and you are approving. This serves as the official, unambiguous authorization.]
+
+> **Automation Path:** Invoke `/kc-step phase=1B workgroup_id=<ID>` to delegate to the `spec-chief` subagent. This automatically applies the `spec-template`, `spec-quality-check`, and `tracker-update` skills before presenting draft specs.
+
+**Remember:**
+- Update each affected spec in `knowzcode/specs/` until it passes the KCv2.0 template checks.
+- Capture spec todo items in `knowzcode/workgroups/<WorkGroupID>.md` (prefix every bullet with `KnowzCode:`).
+
+*   **New Nodes to Create:**
+    *   `[NodeID_A]`
+    *   `[NodeID_B]`
+*   **Existing Nodes to be Modified:**
+    *   `[NodeID_C]` (Status: `[VERIFIED]`)
+    *   `[NodeID_D]` (Status: `[TODO]`)
+
+---
+
+## Your Mission
+The Change Set has been confirmed. Your first action is to **update the `knowzcode_tracker.md`** to reflect the start of this work. Then, proceed to draft or refine all required specifications directly in their respective files.
+
+**CRITICAL RULE: Your work in this phase is strictly limited to updating KnowzCode's own project and specification files (`.md` files). You MUST NOT write or modify any application source code (e.g., `.js`, `.py`, `.html` files).**
+
+**Reference:** Your actions are governed by `knowzcode_loop.md`, executing the sequence from **Step 1.4 to Step 3**.
+
+---
+
+### Step 1: Establish Work Group & Update Tracker (Ref: `knowzcode_loop.md` - Step 1.4)
+
+*   Generate a single, unique `WorkGroupID` for this session (e.g., `wip-<timestamp>`).
+*   In `knowzcode_tracker.md`, immediately update every node listed in the confirmed Change Set above:
+    1.  Set its `Status` to `[WIP]`.
+    2.  Assign the new `WorkGroupID` to it.
+*   This action formally begins the work session and reserves the nodes for this task.
+
+### Step 2: Draft and Refine Specifications (Ref: `knowzcode_loop.md` - Steps 2 & 3)
+
+*   Now that the tracker is updated, execute a **full Context Assembly (Step 2)** from the loop to gather all necessary information for the entire Change Set.
+*   Proceed to **Specification Management (Step 3)**:
+    *   For each **new** node in the Change Set, **create and write** its complete specification to a new file at `specs/[NodeID].md`.
+    *   For each **existing** node in the Change Set, **read, modify, and save** its specification file at `specs/[NodeID].md`.
+
+### Step 3: Report Readiness for Review (Ref: `knowzcode_loop.md` - Step 3.3)
+
+*   Once all spec files for the *entire* Change Set have been created or updated, **do not output their contents.**
+*   Instead, report that the administrative and drafting phases are complete, providing a clear list of the files that are now ready for the Orchestrator's review.
+
+**Example Response Format:**
+> "Authorization received. The `knowzcode_tracker.md` has been updated and all nodes in `WorkGroupID: [ID]` are now marked as `[WIP]`.
+>
+> The specification drafting and refinement phase is also complete. The following files are now ready for your review in the `specs/` directory:
+>
+> *   **New Specs Created:**
+>     *   `specs/[NodeID_A].md`
+>     *   `specs/[NodeID_B].md`
+> *   **Existing Specs Modified:**
+>     *   `specs/[NodeID_C].md`
+>     *   `specs/[NodeID_D].md`
+>
+> Please review these files at your convenience. Based on a Change Set size of [Number] nodes, I recommend we proceed to [Spec Verification Checkpoint | LOOP 2A]. Your approval via the next prompt will authorize the next step."
+
+### Step 4: Verification Recommendation
+*   **Assess the Change Set size.**
+    *   If the Change Set involves **10 or more NodeIDs**, recommend that the Orchestrator runs the **`KCv2.0__Spec_Verification_Checkpoint.md`** prompt next.
+    *   If the Change Set is **5-9 NodeIDs**, note that the checkpoint is optional but suggested.
+    *   For **<5 NodeIDs**, proceed directly to Loop 2.
+
+### Step 5: Pause for Approval
+
+*   **Your work for this prompt is now complete.**
+*   You will now **PAUSE** and await the Orchestrator's next command. This will either be the **Spec Verification Checkpoint** for large change sets, or **`KCv2.0__[LOOP_2A]__Implement_Change_Set.md`** to begin implementation. Do not take any further action.
+
+---

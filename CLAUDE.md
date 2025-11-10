@@ -1,8 +1,8 @@
-# KnowzCode v2.0 - Plugin-Based Framework
+# KnowzCode v2.0 - Claude Code Plugin
 
-## ⚠️ This is a Plugin Repository
+## ⚠️ This is a Claude Code Plugin Repository
 
-This repository is the **KnowzCode plugin** for Claude Code. It provides AI-powered development workflows with TDD, quality gates, and multi-agent orchestration.
+This repository is the **KnowzCode plugin** for Claude Code. It provides structured AI-powered development workflows with enforced TDD, quality gates, and multi-agent orchestration.
 
 ## What is KnowzCode?
 

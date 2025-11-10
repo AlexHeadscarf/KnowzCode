@@ -1,4 +1,4 @@
-# KnowzCode - AI-Powered Development Workflow Framework
+# KnowzCode - Claude Code Development Workflow Plugin
 
 <div align="center">
 
@@ -6,6 +6,7 @@
 
 [![Install Plugin](https://img.shields.io/badge/Plugin-Install-blue)](https://github.com/AlexHeadscarf/KnowzCode)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Claude Code](https://img.shields.io/badge/Claude_Code-Plugin-purple)](https://claude.ai/code)
 
 [Installation](#installation) • [Quick Start](#quick-start) • [Documentation](#documentation) • [Migration Guide](MIGRATION_GUIDE.md)
 
@@ -15,33 +16,31 @@
 
 ## What is KnowzCode?
 
-KnowzCode is a **Claude Code plugin** that transforms software development into a structured, quality-driven workflow. It provides:
+KnowzCode is a **Claude Code plugin** that transforms AI-assisted development into a structured, quality-driven workflow. It provides:
 
-- 🧪 **Test-Driven Development**: Enforced Red-Green-Refactor cycles
-- 🤖 **Multi-Agent System**: Specialized AI agents for analysis, implementation, and verification
-- 📋 **Living Documentation**: Auto-generated architecture diagrams and specifications
-- ✅ **Quality Gates**: Automated verification at each development phase
-- 📊 **WorkGroup Tracking**: Transparent progress tracking for every feature
+- 🧪 **Test-Driven Development**: Enforced Red-Green-Refactor cycles with quality verification
+- 🤖 **Multi-Agent Orchestration**: Specialized agents for analysis, specs, implementation, and auditing
+- 📋 **Living Documentation**: Auto-maintained architecture diagrams and component specifications
+- ✅ **Quality Gates**: Automated verification prevents proceeding until standards are met
+- 📊 **WorkGroup Tracking**: Complete transparency with session history and progress tracking
 
-Your AI already knows how to code. **KnowzCode teaches it how to engineer.**
+**Claude Code already knows how to write code. KnowzCode teaches it how to engineer software.**
 
 ## Installation
 
-### For Claude Code
-
-#### Step 1: Add Marketplace
+### Step 1: Add Marketplace
 
 ```bash
 /plugin marketplace add https://github.com/AlexHeadscarf/KnowzCode
 ```
 
-#### Step 2: Install Plugin
+### Step 2: Install Plugin
 
 ```bash
 /plugin install knowzcode
 ```
 
-#### Step 3: Initialize Your Project
+### Step 3: Initialize Your Project
 
 ```bash
 cd your-project/
@@ -49,23 +48,6 @@ cd your-project/
 ```
 
 **Done!** You're ready to start building with KnowzCode.
-
-### For Cursor IDE
-
-Cursor IDE does **not** currently support the KnowzCode plugin architecture. Cursor uses a different command system (`.cursor/commands/` with Markdown files) that is incompatible with Claude Code's plugin model.
-
-**Current Status:**
-- ❌ KnowzCode plugin not compatible with Cursor IDE
-- ❌ No agent orchestration support in Cursor
-- ❌ Different command structure (simple Markdown vs. agent-based)
-
-**Alternative for Cursor Users:**
-If you want to use KnowzCode concepts in Cursor, you would need to:
-1. Manually create simplified command files in `.cursor/commands/`
-2. Adapt the workflow without multi-agent orchestration
-3. Manage project state manually
-
-**Recommendation:** Use Claude Code for the full KnowzCode experience with multi-agent orchestration, quality gates, and structured TDD workflow.
 
 ## Quick Start
 
@@ -101,33 +83,36 @@ KnowzCode will:
 
 ## How It Works
 
-### Plugin Architecture (Hybrid Model)
+### Plugin Architecture
 
-**Global Plugin** (installed once):
+KnowzCode uses Claude Code's plugin system to provide a clean separation between framework and project data:
+
+**Global Plugin** (installed once, auto-updates):
 ```
 ~/.claude/plugins/knowzcode/
-├── commands/     # All /knowzcode:* commands
-├── agents/       # Specialized AI agents
-└── skills/       # Development skills (future)
+├── commands/     # All /knowzcode:* slash commands
+├── agents/       # Specialized sub-agents
+└── skills/       # Development skills
 ```
 
-**Project Directory** (visible, per-project):
+**Project Directory** (visible, version-controlled):
 ```
 your-project/
-└── knowzcode/                    # Git-committable!
-    ├── knowzcode_project.md      # Project context
-    ├── knowzcode_tracker.md      # WorkGroup tracker
-    ├── knowzcode_log.md          # Session history
-    ├── specs/                    # Component specs
-    └── workgroups/               # Feature tracking
+└── knowzcode/         # Committed to git!
+    ├── knowzcode_project.md      # Project metadata
+    ├── knowzcode_tracker.md      # WorkGroup status
+    ├── knowzcode_log.md          # Development history
+    ├── knowzcode_architecture.md # Auto-updated architecture
+    ├── specs/                    # Component specifications
+    └── workgroups/               # Active WorkGroups
 ```
 
 **Key Benefits:**
-- ✅ No hidden `.claude/` directories
-- ✅ Install once, use everywhere
-- ✅ Automatic plugin updates
-- ✅ Visible project data
-- ✅ Git-friendly workflow
+- ✅ Install once globally, use in any project
+- ✅ Automatic updates via Claude Code marketplace
+- ✅ No hidden directories - everything visible and git-committable
+- ✅ Clean separation: framework code vs. project data
+- ✅ Works seamlessly across all your projects
 
 ### Development Loop
 
@@ -243,17 +228,31 @@ Automated checks at each phase:
 - Architecture compliance
 - Performance benchmarks
 
-## Comparison Table
+## Why KnowzCode?
 
-| Aspect | Traditional AI Coding | KnowzCode |
-|--------|----------------------|-----------|
-| **Memory** | Forgets between sessions | Complete history + WorkGroup tracking |
-| **Context** | Reads entire codebase or misses connections | Living architecture + specifications |
-| **Changes** | Modifies random files → breaks things | Complete Change Sets → all pieces together |
-| **Verification** | "Done" = "I wrote code" | Quality gates + automated verification |
-| **Documentation** | Drifts from reality immediately | Specs updated after every change |
-| **Collaboration** | Merge conflicts everywhere | WorkGroup system + conflict resolution |
-| **Quality** | Hope tests catch issues | Pre-code spec audit + post-code verification |
+### The Problem with Traditional AI Coding
+
+**Claude Code is powerful** - it can read your entire codebase, write complex code, and understand requirements. But without structure:
+
+- 🔴 **No memory**: Forgets context between sessions
+- 🔴 **Random changes**: Modifies files without considering impact
+- 🔴 **No verification**: "Done" means "I wrote code" not "it works"
+- 🔴 **Stale docs**: Documentation drifts from reality immediately
+- 🔴 **Hope-driven quality**: Cross fingers that tests catch issues
+
+### How KnowzCode Fixes This
+
+| Challenge | KnowzCode Solution |
+|-----------|-------------------|
+| **Lost context** | WorkGroup tracking + complete session history |
+| **Missing connections** | Living architecture + auto-updated specifications |
+| **Scattered changes** | Complete Change Sets - all related pieces together |
+| **Unverified code** | Quality gates at every phase + automated verification |
+| **Outdated docs** | Specs updated after every change |
+| **Merge chaos** | WorkGroup isolation + smart conflict resolution |
+| **Unknown quality** | Pre-code spec audit + post-code ARC verification |
+
+**Result:** Software development becomes systematic, transparent, and high-quality.
 
 ## Migration from v1.x
 

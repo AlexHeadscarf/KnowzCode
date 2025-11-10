@@ -173,15 +173,18 @@ All commands have been renamed for clarity and now require the `knowzcode:` name
 3. **No per-project agents**: Agents come from plugin, not project `.claude/` directory
 4. **Visible data directory**: `knowzcode/` is visible and git-committable
 
-### IDE Compatibility
+### Platform Support
 
-**Supported:**
-- ✅ **Claude Code**: Full support with plugin architecture, multi-agent orchestration, and all features
+KnowzCode is built exclusively for **Claude Code** using its native plugin architecture, agent SDK, and command system.
 
-**Not Supported:**
-- ❌ **Cursor IDE**: Incompatible command system. Cursor uses simple Markdown commands in `.cursor/commands/` which cannot support KnowzCode's multi-agent orchestration and complex workflow phases.
+**Why Claude Code only?**
+- Requires Claude Code's plugin architecture for global installation
+- Requires agent orchestration for multi-phase workflows
+- Requires sub-agent delegation (impact-analyst, spec-chief, implementation-lead, etc.)
+- Requires command namespacing for WorkGroup state management
+- Requires persistent plugin storage for framework updates
 
-**Recommendation**: Use Claude Code for KnowzCode. Cursor IDE does not support the agent-based architecture required for TDD workflows, quality gates, and structured development loops.
+Other AI coding assistants use different architectures and cannot support KnowzCode's structured workflow system.
 
 ## FAQ
 

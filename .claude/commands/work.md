@@ -1,11 +1,14 @@
 ---
-description: "◆ KnowzCode: Start a new KnowzCode v2.0 workflow session with WorkGroup initialization"
-argument-hint: "[primary_goal]"
+description: "Start a new KnowzCode development workflow with TDD, quality gates, and multi-agent orchestration"
+argument-hint: "[feature_description]"
 ---
 
-# ◆ KnowzCode Workflow Initialization
+# Work on New Feature
 
 Start a new KnowzCode development workflow session.
+
+**Usage**: `/knowzcode:work "feature description"`
+**Example**: `/knowzcode:work "Build user authentication with JWT"`
 
 **Primary Goal**: $ARGUMENTS
 

@@ -1,11 +1,14 @@
 ---
-description: "◆ KnowzCode: Auto-resolve merge conflicts in tracker and log files"
+description: "Auto-resolve merge conflicts in tracker and log files"
 argument-hint: ""
 ---
 
-# ◆ KnowzCode Merge Conflict Resolver
+# KnowzCode Merge Conflict Resolver
 
 Automatically resolve common merge conflicts in KnowzCode state files when merging parallel WorkGroups.
+
+**Usage**: `/knowzcode:resolve-conflicts`
+**Example**: Run after `git merge` shows conflicts in tracker or log files
 
 ## What This Resolves
 
@@ -38,7 +41,7 @@ Do NOT use this command if:
 
 ```bash
 # After git merge shows conflicts
-/kc-resolve-merge
+/knowzcode:resolve-conflicts
 
 # The command will:
 # ✓ Detect conflicts in tracker and log
@@ -53,11 +56,11 @@ Do NOT use this command if:
 
 ```bash
 # Session 1 (feature/user-profiles branch)
-/kc "Add user profile editing"
+/knowzcode:work "Add user profile editing"
 git commit -am "feat: Complete UserProfile WorkGroup"
 
 # Session 2 (feature/notifications branch)
-/kc "Add email notifications"
+/knowzcode:work "Add email notifications"
 git commit -am "feat: Complete EmailService WorkGroup"
 
 # Merge both
@@ -66,7 +69,7 @@ git merge feature/user-profiles  # No conflict
 git merge feature/notifications  # CONFLICT in tracker and log
 
 # Auto-resolve
-/kc-resolve-merge
+/knowzcode:resolve-conflicts
 
 # Conflicts resolved! ✓
 git commit -m "Merge both WorkGroups"

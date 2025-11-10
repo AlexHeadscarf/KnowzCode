@@ -1,11 +1,14 @@
 ---
-description: "◆ KnowzCode: Run KnowzCode audit workflows (spec, architecture, security, integration)"
+description: "Run KnowzCode audit workflows (spec, architecture, security, integration)"
 argument-hint: "[audit_type]"
 ---
 
-# ◆ KnowzCode Audit Execution
+# Run KnowzCode Audit
 
 Run specialized audit workflows.
+
+**Usage**: `/knowzcode:audit [audit_type]`
+**Example**: `/knowzcode:audit spec` or `/knowzcode:audit security`
 
 **Audit Type**: $ARGUMENTS
 

@@ -1,11 +1,14 @@
 ---
-description: "◆ KnowzCode: Execute a specific KnowzCode v2.0 loop phase with WorkGroup context"
+description: "Execute a specific KnowzCode v2.0 loop phase with WorkGroup context"
 argument-hint: "[phase] [workgroup_id]"
 ---
 
-# ◆ KnowzCode Phase Execution
+# Execute KnowzCode Phase
 
 Execute a specific phase of the KnowzCode v2.0 loop.
+
+**Usage**: `/knowzcode:step [phase] [workgroup_id]`
+**Example**: `/knowzcode:step 1A` or `/knowzcode:step implement WG-001`
 
 **Arguments**: $ARGUMENTS
 

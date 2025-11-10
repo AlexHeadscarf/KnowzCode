@@ -27,33 +27,65 @@ Your AI already knows how to code. **KnowzCode teaches it how to engineer.**
 
 ## Installation
 
-### Step 1: Add Marketplace
+### For Claude Code
+
+#### Step 1: Add Marketplace
 
 ```bash
 /plugin marketplace add https://github.com/AlexHeadscarf/KnowzCode
 ```
 
-### Step 2: Install Plugin
+#### Step 2: Install Plugin
 
 ```bash
 /plugin install knowzcode
 ```
 
-### Step 3: Initialize Your Project
+#### Step 3: Initialize Your Project
 
 ```bash
 cd your-project/
-/kc-init
+/knowzcode:init
 ```
 
 **Done!** You're ready to start building with KnowzCode.
+
+### For Cursor IDE
+
+#### Step 1: Clone the Repository
+
+```bash
+git clone https://github.com/AlexHeadscarf/KnowzCode.git ~/.cursor/knowzcode
+```
+
+#### Step 2: Link Commands
+
+```bash
+ln -s ~/.cursor/knowzcode/commands ~/.cursor/commands/knowzcode
+ln -s ~/.cursor/knowzcode/agents ~/.cursor/agents/knowzcode
+```
+
+#### Step 3: Initialize Your Project
+
+```bash
+cd your-project/
+/init  # Or /knowzcode:init if namespaced
+```
+
+**Note**: Cursor IDE may not require command namespacing. Test both formats to see which works in your environment.
 
 ## Quick Start
 
 ### Start a New Feature
 
+**Claude Code:**
 ```bash
-/kc "Build user authentication with email and password"
+/knowzcode:work "Build user authentication with email and password"
+```
+
+**Cursor IDE:**
+```bash
+/work "Build user authentication with email and password"
 ```
 
 KnowzCode will:
@@ -65,19 +97,36 @@ KnowzCode will:
 
 ### Execute Specific Phases
 
+**Claude Code:**
 ```bash
-/kc-step 1A    # Run impact analysis only
-/kc-step 2A    # Jump to implementation
-/kc-step 2B    # Run verification
+/knowzcode:step 1A    # Run impact analysis only
+/knowzcode:step 2A    # Jump to implementation
+/knowzcode:step 2B    # Run verification
+```
+
+**Cursor IDE:**
+```bash
+/step 1A    # Run impact analysis only
+/step 2A    # Jump to implementation
+/step 2B    # Run verification
 ```
 
 ### Run Quality Audits
 
+**Claude Code:**
 ```bash
-/kc-audit spec          # Review specifications
-/kc-audit architecture  # Check architecture health
-/kc-audit security      # Security assessment
-/kc-audit integration   # Integration test coverage
+/knowzcode:audit spec          # Review specifications
+/knowzcode:audit architecture  # Check architecture health
+/knowzcode:audit security      # Security assessment
+/knowzcode:audit integration   # Integration test coverage
+```
+
+**Cursor IDE:**
+```bash
+/audit spec          # Review specifications
+/audit architecture  # Check architecture health
+/audit security      # Security assessment
+/audit integration   # Integration test coverage
 ```
 
 ## How It Works
@@ -86,10 +135,11 @@ KnowzCode will:
 
 **Global Plugin** (installed once):
 ```
-~/.claude/plugins/knowzcode/
-├── commands/     # All /kc-* commands
+~/.claude/plugins/knowzcode/    # Claude Code
+~/.cursor/knowzcode/             # Cursor IDE
+├── commands/     # All commands
 ├── agents/       # Specialized AI agents
-└── skills/       # Development skills
+└── skills/       # Development skills (future)
 ```
 
 **Project Directory** (visible, per-project):
@@ -131,30 +181,58 @@ Each phase has **quality gates** that must pass before proceeding.
 
 ## Available Commands
 
+### Claude Code (with namespace)
+
 | Command | Description | Example |
 |:--------|:------------|:--------|
-| `/kc-init` | Initialize KnowzCode in project | `/kc-init` |
-| `/kc <goal>` | Start new feature WorkGroup | `/kc "Add dark mode"` |
-| `/kc-step <phase>` | Execute specific phase | `/kc-step 2A` |
-| `/kc-audit [type]` | Run quality audits | `/kc-audit security` |
-| `/kc-plan [type]` | Generate development plans | `/kc-plan feature` |
-| `/kc-microfix <target>` | Quick targeted fix | `/kc-microfix auth.js` |
-| `/kc-resolve-merge` | Resolve merge conflicts | `/kc-resolve-merge` |
+| `/knowzcode:init` | Initialize KnowzCode in project | `/knowzcode:init` |
+| `/knowzcode:work <goal>` | Start new feature WorkGroup | `/knowzcode:work "Add dark mode"` |
+| `/knowzcode:step <phase>` | Execute specific phase | `/knowzcode:step 2A` |
+| `/knowzcode:audit [type]` | Run quality audits | `/knowzcode:audit security` |
+| `/knowzcode:plan [type]` | Generate development plans | `/knowzcode:plan feature` |
+| `/knowzcode:fix <target>` | Quick targeted fix | `/knowzcode:fix auth.js` |
+| `/knowzcode:resolve-conflicts` | Resolve merge conflicts | `/knowzcode:resolve-conflicts` |
+
+### Cursor IDE (without namespace)
+
+| Command | Description | Example |
+|:--------|:------------|:--------|
+| `/init` | Initialize KnowzCode in project | `/init` |
+| `/work <goal>` | Start new feature WorkGroup | `/work "Add dark mode"` |
+| `/step <phase>` | Execute specific phase | `/step 2A` |
+| `/audit [type]` | Run quality audits | `/audit security` |
+| `/plan [type]` | Generate development plans | `/plan feature` |
+| `/fix <target>` | Quick targeted fix | `/fix auth.js` |
+| `/resolve-conflicts` | Resolve merge conflicts | `/resolve-conflicts` |
 
 ## Example Workflow
 
 ### 1. Initialize New Project
 
+**Claude Code:**
 ```bash
 mkdir my-app && cd my-app
 git init
-/kc-init
+/knowzcode:init
+```
+
+**Cursor IDE:**
+```bash
+mkdir my-app && cd my-app
+git init
+/init
 ```
 
 ### 2. Start First Feature
 
+**Claude Code:**
 ```bash
-/kc "Build REST API with Express.js for user management"
+/knowzcode:work "Build REST API with Express.js for user management"
+```
+
+**Cursor IDE:**
+```bash
+/work "Build REST API with Express.js for user management"
 ```
 
 **KnowzCode will:**
@@ -175,8 +253,14 @@ See all WorkGroups, their status, and completion.
 
 ### 4. Continue Development
 
+**Claude Code:**
 ```bash
-/kc "Add JWT authentication to API"
+/knowzcode:work "Add JWT authentication to API"
+```
+
+**Cursor IDE:**
+```bash
+/work "Add JWT authentication to API"
 ```
 
 Each feature gets its own WorkGroup with full tracking.
@@ -242,9 +326,10 @@ Automated checks at each phase:
 
 ### Quick Migration
 
-1. **Install plugin**: `/plugin install knowzcode`
+1. **Install plugin**: `/plugin install knowzcode` (Claude Code) or clone repo (Cursor IDE)
 2. **Your data is safe**: `knowzcode/` directory preserved automatically
 3. **Remove `.claude/`**: Commands now come from plugin
+4. **Update command usage**: Old `/kc` → New `/knowzcode:work` (Claude) or `/work` (Cursor)
 
 See **[MIGRATION_GUIDE.md](MIGRATION_GUIDE.md)** for detailed migration steps.
 
@@ -306,19 +391,36 @@ KnowzCode is built on these principles:
 
 Work on multiple features simultaneously without conflicts:
 
+**Claude Code:**
 ```bash
 # Developer 1
 git checkout -b feature/profiles
-/kc "Add user profiles"
+/knowzcode:work "Add user profiles"
 
 # Developer 2
 git checkout -b feature/notifications
-/kc "Add email notifications"
+/knowzcode:work "Add email notifications"
+
+# Merge both - conflicts auto-resolve
+git merge feature/profiles          # ✓ Clean
+git merge feature/notifications     # Conflict (expected)
+/knowzcode:resolve-conflicts       # Auto-resolves safely
+```
+
+**Cursor IDE:**
+```bash
+# Developer 1
+git checkout -b feature/profiles
+/work "Add user profiles"
+
+# Developer 2
+git checkout -b feature/notifications
+/work "Add email notifications"
 
 # Merge both - conflicts auto-resolve
 git merge feature/profiles     # ✓ Clean
 git merge feature/notifications # Conflict (expected)
-/kc-resolve-merge              # Auto-resolves safely
+/resolve-conflicts            # Auto-resolves safely
 ```
 
 See **[MULTI_SESSION.md](MULTI_SESSION.md)** for patterns and best practices.

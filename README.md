@@ -423,8 +423,6 @@ git merge feature/notifications # Conflict (expected)
 /resolve-conflicts            # Auto-resolves safely
 ```
 
-See **[MULTI_SESSION.md](MULTI_SESSION.md)** for patterns and best practices.
-
 ## Documentation
 
 - **[Getting Started](./docs/knowzcode_getting_started.md)** - Complete walkthrough

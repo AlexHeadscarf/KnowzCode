@@ -1,0 +1,26 @@
+{
+  "name": "knowzcode-marketplace",
+  "owner": {
+    "name": "Alex Headscarf",
+    "email": "alex@headscarf.com"
+  },
+  "metadata": {
+    "description": "Official KnowzCode plugin marketplace - AI-powered development workflows",
+    "version": "2.0.0"
+  },
+  "plugins": [
+    {
+      "name": "knowzcode",
+      "source": ".",
+      "description": "AI-powered software development workflow framework with TDD, quality gates, and multi-agent orchestration",
+      "version": "2.0.0",
+      "author": "Alex Headscarf",
+      "homepage": "https://github.com/AlexHeadscarf/KnowzCode",
+      "repository": "https://github.com/AlexHeadscarf/KnowzCode",
+      "license": "MIT",
+      "keywords": ["tdd", "workflow", "agents", "quality", "automation"],
+      "category": "Development Workflow",
+      "tags": ["tdd", "testing", "quality-assurance", "multi-agent", "orchestration"]
+    }
+  ]
+}

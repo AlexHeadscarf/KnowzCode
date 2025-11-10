@@ -1,0 +1,8 @@
+{
+  "name": "knowzcode",
+  "description": "AI-powered software development workflow framework with TDD, quality gates, and multi-agent orchestration",
+  "version": "2.0.0",
+  "author": {
+    "name": "Alex Headscarf"
+  }
+}

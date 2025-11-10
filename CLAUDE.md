@@ -1,189 +1,306 @@
-# KnowzCode Template Repository
+# KnowzCode v2.0 - Plugin-Based Framework
 
-## ⚠️ Important: This is a Template Repository
+## ⚠️ This is a Plugin Repository
 
-This repository is the **master template** for the KnowzCode framework. It is NOT a project to be developed in directly.
+This repository is the **KnowzCode plugin** for Claude Code. It provides AI-powered development workflows with TDD, quality gates, and multi-agent orchestration.
 
-## Repository Purpose
+## What is KnowzCode?
 
-### What This Repo Is
-- ✅ **Source template** for KnowzCode framework
-- ✅ **Installation source** for new projects
-- ✅ **Update source** for existing KnowzCode installations
-- ✅ **Reference implementation** of agents, commands, and prompts
+KnowzCode is a comprehensive software development workflow framework that provides:
 
-### What This Repo Is NOT
-- ❌ **NOT a project workspace** - Don't develop features here
-- ❌ **NOT an installation target** - Install TO other projects, not this one
-- ❌ **NOT a standalone application** - This is framework code only
+- **Structured TDD Workflow**: Red-Green-Refactor with quality gates
+- **Multi-Agent Orchestration**: Specialized agents for different development phases
+- **Living Documentation**: Auto-generated architecture, specs, and tracking
+- **Quality Automation**: Automated verification, testing, and code review
+- **Session Management**: WorkGroup-based feature development tracking
 
-## How to Use This Repository
+## Installation
 
-### For Installing KnowzCode
+### For End Users
 
-1. **Clone this template** (one time):
+Install KnowzCode as a plugin in Claude Code:
+
+```bash
+# Add the KnowzCode marketplace
+/plugin marketplace add https://github.com/AlexHeadscarf/KnowzCode
+
+# Install the plugin
+/plugin install knowzcode
+
+# Initialize in your project
+cd my-project/
+/kc-init
+
+# Start building
+/kc "Build user authentication"
+```
+
+**That's it!** The plugin provides all commands and agents globally.
+
+## How It Works
+
+### Plugin Architecture (Hybrid Model)
+
+**Plugin (installed globally once):**
+```
+~/.claude/plugins/knowzcode/
+├── commands/          # All /kc-* slash commands
+├── agents/            # All specialized sub-agents
+└── skills/            # Optional skills
+```
+
+**Project (visible directory per-project):**
+```
+my-project/
+└── knowzcode/         # Visible, git-committable
+    ├── knowzcode_project.md      # Project metadata
+    ├── knowzcode_tracker.md      # WorkGroup tracker
+    ├── knowzcode_log.md          # Session history
+    ├── knowzcode_architecture.md # Architecture docs
+    ├── specs/                    # Specifications
+    └── workgroups/               # WorkGroup data
+```
+
+**Key Benefits:**
+- ✅ No hidden `.claude/` directories in projects
+- ✅ Install plugin once, use everywhere
+- ✅ Automatic updates via marketplace
+- ✅ Visible project data (git-friendly)
+- ✅ Clean separation: framework vs. data
+
+## Available Commands
+
+After installing the plugin, you have access to:
+
+| Command | Description |
+|:--------|:------------|
+| `/kc-init` | Initialize KnowzCode in current project |
+| `/kc <goal>` | Start new feature WorkGroup |
+| `/kc-step <phase>` | Execute specific workflow phase |
+| `/kc-audit [type]` | Run quality audits |
+| `/kc-plan [type]` | Generate development plans |
+| `/kc-microfix <target>` | Quick targeted fixes |
+| `/kc-resolve-merge` | Resolve merge conflicts |
+
+## Project Structure
+
+### What Gets Committed
+
+The `knowzcode/` directory should be **committed to git**:
+
+```gitignore
+# Commit these
+knowzcode/*.md
+knowzcode/specs/
+knowzcode/prompts/
+
+# Optional: Exclude session-specific data
+knowzcode/workgroups/
+```
+
+### What You Edit
+
+- **knowzcode/knowzcode_project.md** - Project goals, tech stack, architecture
+- **knowzcode/specs/*.md** - Component specifications
+- **knowzcode/prompts/*.md** - Project-specific prompt templates
+
+### What KnowzCode Manages
+
+- **knowzcode/knowzcode_tracker.md** - WorkGroup status tracking
+- **knowzcode/knowzcode_log.md** - Session history and logs
+- **knowzcode/workgroups/*.md** - Individual WorkGroup data
+
+## Development Workflow
+
+### 1. Initialize Project
+
+```bash
+cd my-new-project/
+/kc-init
+```
+
+This creates the `knowzcode/` directory structure.
+
+### 2. Start Feature Development
+
+```bash
+/kc "Build user registration with email verification"
+```
+
+This:
+1. Creates a new WorkGroup (e.g., `WG-001`)
+2. Runs impact analysis (Phase 1A)
+3. Generates specifications (Phase 1B)
+4. Implements with TDD (Phase 2A)
+5. Verifies quality (Phase 2B)
+6. Finalizes documentation (Phase 3)
+
+### 3. Work Through Phases
+
+KnowzCode guides you through each phase with quality gates:
+
+- **Phase 1A (Impact Analysis)**: Understand changes needed
+- **Phase 1B (Specification)**: Define component specs
+- **Phase 2A (Implementation)**: Build with TDD
+- **Phase 2B (Verification)**: Quality checks
+- **Phase 3 (Finalization)**: Update docs and close WorkGroup
+
+## For Plugin Developers
+
+### Repository Structure
+
+```
+knowzcode/                    # Plugin source
+├── .claude-plugin/
+│   ├── plugin.json          # Plugin manifest
+│   └── marketplace.json     # Marketplace definition
+├── commands/                # Slash command definitions
+│   ├── kc.md
+│   ├── kc-init.md
+│   ├── kc-step.md
+│   └── ...
+├── agents/                  # Sub-agent definitions
+│   ├── kc-orchestrator.md
+│   ├── impact-analyst.md
+│   ├── implementation-lead.md
+│   └── ...
+├── skills/                  # Optional skills
+├── knowzcode/               # Template files (copied on /kc-init)
+│   ├── knowzcode_loop.md
+│   ├── prompts/
+│   └── specs/
+├── docs/                    # Documentation
+├── MIGRATION_GUIDE.md       # v1.x → v2.0 migration
+└── README.md                # User-facing readme
+```
+
+### Development Workflow
+
+1. **Clone this repository**:
    ```bash
    git clone https://github.com/AlexHeadscarf/KnowzCode.git
    cd KnowzCode
    ```
 
-2. **Install into your project** (from this directory):
+2. **Make changes** to:
+   - `commands/*.md` - Slash commands
+   - `agents/*.md` - Sub-agents
+   - `skills/*.md` - Skills
+
+3. **Test locally**:
    ```bash
-   # Run Claude Code from this folder
-   /kc-install /path/to/your/project
+   # Create test project
+   mkdir test-project && cd test-project
+
+   # Initialize (uses local plugin)
+   /kc-init
+
+   # Test commands
+   /kc "Test feature"
    ```
 
-3. **Switch to your project** and start using KnowzCode:
+4. **Update version** in:
+   - `.claude-plugin/plugin.json`
+   - `.claude-plugin/marketplace.json`
+
+5. **Commit and push**:
    ```bash
-   cd /path/to/your/project
-   /kc "Your first feature"
+   git add .
+   git commit -m "feat: add new capability"
+   git push
    ```
 
-### For Updating Projects
+6. **Users update automatically** via plugin system
 
-When this template gets improvements:
+### Testing Changes
 
-```bash
-# From this template directory
-/kc-update /path/to/your/project
-```
+Before committing:
 
-This merges template improvements into your project while preserving:
-- Your project data (tracker, logs, workgroups)
-- Your customizations (custom agents, commands)
-- Your specs and implementation work
-
-## Working in This Repository
-
-### If You're Improving the Template
-
-When editing files in this repository, remember you're changing the **template** that will be installed into projects:
-
-1. **Agent files** (`claude/agents/*.md`):
-   - These define sub-agent behaviors
-   - Changes affect ALL projects that install/update
-   - Test changes thoroughly before committing
-
-2. **Command files** (`claude/commands/*.md`):
-   - These define slash commands (`/kc`, `/kc-step`, etc.)
-   - Changes affect command behavior across all installations
-   - Ensure backward compatibility
-
-3. **Core files** (`knowzcode/*.md`):
-   - These are the framework foundations
-   - `knowzcode_loop.md` - The core workflow phases
-   - `knowzcode_project.md` - Template for project metadata
-   - `knowzcode_tracker.md` - Template for WorkGroup tracking
-   - Changes should enhance, not break, existing installations
-
-4. **Prompts** (`knowzcode/prompts/*.md`):
-   - Reusable prompt templates
-   - Should be generic and project-agnostic
-   - Document clearly for end users
-
-### Testing Template Changes
-
-Before committing changes:
-
-1. **Install to a test project**:
+1. **Verify plugin manifest**:
    ```bash
-   /kc-install /path/to/test-project
+   cat .claude-plugin/plugin.json
+   # Check version, name, description
    ```
 
-2. **Verify the installation works**:
+2. **Test commands work**:
    ```bash
-   cd /path/to/test-project
-   /kc-step 1A  # Test a basic workflow
+   /kc-init  # Should create knowzcode/
+   /kc "Test" # Should work with test project
    ```
 
-3. **Test updates on existing installation**:
-   ```bash
-   # Back to template repo
-   cd <template-directory>
-   /kc-update /path/to/test-project
-   ```
+3. **Verify no breaking changes**:
+   - Existing commands still work
+   - Project data structure unchanged
+   - Backward compatibility maintained
 
-4. **Verify data preservation**:
-   - Check that tracker, logs, workgroups weren't lost
-   - Verify customizations weren't overwritten
-   - Confirm new features work
+## Migration from v1.x
 
-### File Structure
+If you used the old KnowzCode installation model (with `/kc-install` and `.claude/` directories), see [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) for:
 
-```
-<template-repository>/
-├── claude/              # Template source (gets copied to .claude/)
-│   ├── agents/          # Sub-agent definitions
-│   └── commands/        # Slash command definitions
-├── .claude/             # Working copy for testing commands locally
-│   ├── agents/          # (Mirror of claude/agents)
-│   └── commands/        # (Mirror of claude/commands)
-├── knowzcode/           # Core framework files
-│   ├── knowzcode_loop.md        # Loop phase definitions
-│   ├── knowzcode_project.md     # Project metadata template
-│   ├── knowzcode_tracker.md     # Tracker template
-│   ├── prompts/                 # Reusable prompts
-│   └── specs/                   # Example/template specs
-└── docs/                # Framework documentation
-```
+- Understanding architectural changes
+- Migrating existing projects
+- Preserving your data
+- Handling customizations
 
-**Note:** Both `claude/` and `.claude/` are committed to this repo:
-- `claude/` is the source template that gets installed
-- `.claude/` is a working copy so commands function when testing in this repo
+**Quick migration:**
 
-## Installation Commands
+1. Install plugin: `/plugin install knowzcode`
+2. Your `knowzcode/` data is preserved automatically
+3. Remove old `.claude/` directory (commands now in plugin)
 
-### `/kc-install <target-path>`
+## Contributing
 
-Installs KnowzCode framework into a target project:
-- Copies `claude/` → `.claude/` in target
-- Copies `knowzcode/` → `knowzcode/` in target
-- Creates initial data files
-- Validates installation
+### How to Contribute
 
-### `/kc-update <target-path>`
+1. **Fork** this repository
+2. **Create** a feature branch: `git checkout -b feature/amazing-feature`
+3. **Make** your changes to `commands/`, `agents/`, or `skills/`
+4. **Test** thoroughly in a test project
+5. **Commit** with conventional commits: `git commit -m 'feat: add amazing feature'`
+6. **Push** to your fork: `git push origin feature/amazing-feature`
+7. **Open** a Pull Request
 
-Updates an existing KnowzCode installation:
-- Detects changes between template and target
-- Preserves project data (tracker, logs, workgroups, specs)
-- Protects customizations (creates `.new` files for manual review)
-- Updates framework files
-- Validates update
+### What to Contribute
 
-Both commands require the **target path** as an argument since this repo is the source, not the target.
+- **New commands**: Additional workflow helpers
+- **New agents**: Specialized sub-agents for specific tasks
+- **Improvements**: Better prompts, clearer documentation
+- **Bug fixes**: Resolve issues or edge cases
+- **Documentation**: Tutorials, examples, guides
 
-## Development Workflow
+### Guidelines
 
-1. **Make changes** to template files in `claude/` or `knowzcode/`
-2. **Update `.claude/`** to test locally: `cp -r claude/* .claude/`
-3. **Test commands** work: Run `/kc-install` or `/kc-update` on test project
-4. **Commit changes** to this template repo
-5. **Users pull updates** and run `/kc-update` on their projects
+- **Test thoroughly** before submitting
+- **Follow existing patterns** for commands and agents
+- **Update documentation** for user-facing changes
+- **Maintain backward compatibility** when possible
+- **Use semantic versioning** for breaking changes
 
-## Multi-Session Support
+## Philosophy
 
-KnowzCode **supports multiple concurrent sessions** through git branches. See [`MULTI_SESSION.md`](MULTI_SESSION.md) for:
-- Working with multiple developers on the same project
-- Git worktree patterns for parallel development
-- How to resolve merge conflicts with `/kc-resolve-merge`
-- Best practices for coordination
+KnowzCode follows these principles:
 
-## Critical Rules
+1. **Test-Driven Development**: Every feature starts with failing tests
+2. **Quality Gates**: Automated verification at each phase
+3. **Living Documentation**: Architecture and specs stay current
+4. **Incremental Progress**: Small, safe steps with verification
+5. **Transparent State**: Visible tracking of all work
+6. **Separation of Concerns**: Framework (plugin) vs. Data (project)
 
-1. **Never develop project features in this repo** - This is template code
-2. **Always test installation/update commands** before committing changes
-3. **Maintain backward compatibility** - Existing installations must not break
-4. **Document breaking changes** clearly in commit messages and docs
-5. **Keep templates generic** - No project-specific code in the template
-6. **Preserve data structures** - Don't change tracker/log formats without migration
+## Support
 
-## Questions?
+- **Issues**: https://github.com/AlexHeadscarf/KnowzCode/issues
+- **Discussions**: https://github.com/AlexHeadscarf/KnowzCode/discussions
+- **Documentation**: See `docs/` directory
 
-- **"Can I use KnowzCode in this repo?"** - Yes, for testing template changes only
-- **"Should I commit .claude/?"** - Yes, so users can test commands immediately after clone
-- **"Can I customize agents here?"** - Only to improve the template for all users
-- **"Where do I develop my actual project?"** - In a different repo, after running `/kc-install`
+## License
+
+MIT License - See LICENSE file for details
 
 ---
 
-**Remember:** This is the **template**. Your actual work happens in projects where you've installed KnowzCode.
+**Remember:**
+- This repo is the **plugin source**
+- Your work happens in **your projects** (after `/kc-init`)
+- Commands/agents are **global** (via plugin)
+- Project data is **local** (in `knowzcode/` directory)

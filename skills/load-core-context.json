@@ -1,0 +1,18 @@
+{
+  "name": "load-core-context",
+  "version": "0.1.0",
+  "description": "Loads the KnowzCode project overview, architecture, tracker, log header, and automation manifest for downstream steps.",
+  "parameters": [],
+  "actions": [
+    {
+      "type": "read_file",
+      "paths": [
+        "knowzcode/knowzcode_project.md",
+        "knowzcode/knowzcode_architecture.md",
+        "knowzcode/knowzcode_tracker.md",
+        "knowzcode/knowzcode_log.md",
+        "knowzcode/automation_manifest.md"
+      ]
+    }
+  ]
+}

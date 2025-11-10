@@ -1,257 +1,308 @@
-# KnowzCode
+# KnowzCode - AI-Powered Development Workflow Framework
 
-Your AI already knows how to code. **KnowzCode teaches it how to engineer.**
+<div align="center">
 
----
+**Structured TDD • Quality Gates • Multi-Agent Orchestration • Living Documentation**
 
-## Quick Start
+[![Install Plugin](https://img.shields.io/badge/Plugin-Install-blue)](https://github.com/AlexHeadscarf/KnowzCode)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**Get started in 3 steps:**
+[Installation](#installation) • [Quick Start](#quick-start) • [Documentation](#documentation) • [Migration Guide](MIGRATION_GUIDE.md)
 
-1. **Get the Template**
-   ```bash
-   # Option A: Clone from GitHub
-   git clone https://github.com/AlexHeadscarf/KnowzCode.git
-   cd KnowzCode
-
-   # Option B: Download and extract knowzcode.zip
-   unzip knowzcode.zip
-   cd KnowzCode
-   ```
-
-2. **Install into Your Project**
-   ```bash
-   # Start Claude Code in this template folder
-   # Then run the install command with your project path:
-   /kc-install /path/to/your/project
-   ```
-
-3. **Start Building**
-   ```bash
-   # Switch to your project
-   cd /path/to/your/project
-
-   # Start your first feature
-   /kc "Add user authentication"
-   ```
-
-That's it! KnowzCode guides you through spec → code → audit → commit.
+</div>
 
 ---
 
 ## What is KnowzCode?
 
-KnowzCode gives AI what every senior developer has: **permanent memory** and **system understanding**.
+KnowzCode is a **Claude Code plugin** that transforms software development into a structured, quality-driven workflow. It provides:
 
-### The Problem with Traditional AI Coding
+- 🧪 **Test-Driven Development**: Enforced Red-Green-Refactor cycles
+- 🤖 **Multi-Agent System**: Specialized AI agents for analysis, implementation, and verification
+- 📋 **Living Documentation**: Auto-generated architecture diagrams and specifications
+- ✅ **Quality Gates**: Automated verification at each development phase
+- 📊 **WorkGroup Tracking**: Transparent progress tracking for every feature
 
-- **No memory** - AI forgets what it built between sessions
-- **No context** - Changing one thing breaks others without warning
-- **No structure** - Each feature built in isolation
-- **No verification** - "Done" means "I wrote code", not "it works correctly"
-- **No documentation** - Code and docs drift apart immediately
-
-### How KnowzCode Solves This
-
-| You Get | What It Means |
-|---------|---------------|
-| **🏷️ NodeIDs** | Every building block (UI_LoginForm, API_AuthCheck) has a permanent, unique identity that persists forever |
-| **🗺️ Visual Architecture** | Mermaid diagram showing HOW everything connects - AI sees your system like an architect |
-| **📋 Living Specs** | Detailed blueprints for each NodeID that evolve from planned → built → verified |
-| **📊 Mission Control** | Real-time tracker showing what's done, in-progress, and blocked |
-| **📖 Perfect Memory** | Complete history of what was built, why decisions were made, what problems were found |
-| **🔍 Change Sets** | AI identifies ALL affected pieces before changing anything - no surprise breakage |
-| **✅ Quality Gates** | Specs verified before coding, implementation audited after - no incomplete "done" |
-
----
+Your AI already knows how to code. **KnowzCode teaches it how to engineer.**
 
 ## Installation
 
-### Understanding the Template Model
+### Step 1: Add Marketplace
 
-**This repository is a TEMPLATE**, not a project workspace:
-- ✅ Clone/download it ONCE
-- ✅ Use it to install KnowzCode into MULTIPLE projects
-- ✅ Keep it updated to get latest improvements
-- ❌ Don't develop your actual projects here
-
-### Step-by-Step Installation
-
-#### 1. Get the Template
-
-**Option A: Clone from GitHub**
 ```bash
-git clone https://github.com/AlexHeadscarf/KnowzCode.git
-cd KnowzCode
+/plugin marketplace add https://github.com/AlexHeadscarf/KnowzCode
 ```
 
-**Option B: Download ZIP**
+### Step 2: Install Plugin
+
 ```bash
-# Download knowzcode.zip
-unzip knowzcode.zip
-cd KnowzCode
+/plugin install knowzcode
 ```
 
-#### 2. Install into Your Project
+### Step 3: Initialize Your Project
 
-**For a NEW project:**
 ```bash
-# From the KnowzCode template directory
-# Start Claude Code, then run:
-/kc-install /path/to/your/new/project
+cd your-project/
+/kc-init
 ```
 
-**For an EXISTING project with KnowzCode:**
+**Done!** You're ready to start building with KnowzCode.
+
+## Quick Start
+
+### Start a New Feature
+
 ```bash
-# Update to latest version
-/kc-update /path/to/your/existing/project
+/kc "Build user authentication with email and password"
 ```
 
-#### 3. What Gets Installed
+KnowzCode will:
+1. ✅ **Analyze impact** - Identify components to create/modify
+2. 📝 **Generate specs** - Create detailed specifications
+3. 🧪 **Implement with TDD** - Guide you through test-first development
+4. ✓ **Verify quality** - Run automated checks and reviews
+5. 📚 **Update documentation** - Keep architecture current
 
+### Execute Specific Phases
+
+```bash
+/kc-step 1A    # Run impact analysis only
+/kc-step 2A    # Jump to implementation
+/kc-step 2B    # Run verification
+```
+
+### Run Quality Audits
+
+```bash
+/kc-audit spec          # Review specifications
+/kc-audit architecture  # Check architecture health
+/kc-audit security      # Security assessment
+/kc-audit integration   # Integration test coverage
+```
+
+## How It Works
+
+### Plugin Architecture (Hybrid Model)
+
+**Global Plugin** (installed once):
+```
+~/.claude/plugins/knowzcode/
+├── commands/     # All /kc-* commands
+├── agents/       # Specialized AI agents
+└── skills/       # Development skills
+```
+
+**Project Directory** (visible, per-project):
 ```
 your-project/
-├── .claude/                      # Claude Code automation
-│   ├── commands/                 # 8 slash commands (/kc, /kc-step, etc.)
-│   └── agents/                   # 15+ specialized AI agents
-│
-└── knowzcode/                    # KnowzCode framework
-    ├── knowzcode_project.md      # Project overview & standards
-    ├── knowzcode_architecture.md # Visual system map (Mermaid)
-    ├── knowzcode_tracker.md      # Mission control dashboard
-    ├── knowzcode_log.md          # Complete history & decisions
-    ├── knowzcode_loop.md         # Workflow guide for AI
-    ├── environment_context.md    # Your environment commands
-    ├── specs/                    # NodeID blueprints
-    ├── prompts/                  # 20+ workflow prompts
-    ├── planning/                 # Planning documents
-    └── workgroups/               # Active work tracking
+└── knowzcode/                    # Git-committable!
+    ├── knowzcode_project.md      # Project context
+    ├── knowzcode_tracker.md      # WorkGroup tracker
+    ├── knowzcode_log.md          # Session history
+    ├── specs/                    # Component specs
+    └── workgroups/               # Feature tracking
 ```
 
-**What you get:**
-- ✅ 8 slash commands for workflows
-- ✅ 20+ automation prompts
-- ✅ 15+ specialized AI agents
-- ✅ Complete quality enforcement system
-- ✅ Multi-session collaboration support
+**Key Benefits:**
+- ✅ No hidden `.claude/` directories
+- ✅ Install once, use everywhere
+- ✅ Automatic plugin updates
+- ✅ Visible project data
+- ✅ Git-friendly workflow
 
-#### 4. Verify Installation
+### Development Loop
+
+KnowzCode follows a structured **3-phase loop**:
+
+#### Phase 1: Planning
+- **1A - Impact Analysis**: Identify affected components
+- **1B - Specification**: Define detailed requirements
+
+#### Phase 2: Implementation
+- **2A - Development**: TDD implementation with agent guidance
+- **2B - Verification**: Automated quality checks
+
+#### Phase 3: Finalization
+- Update architecture documentation
+- Close WorkGroup
+- Archive specifications
+
+Each phase has **quality gates** that must pass before proceeding.
+
+## Available Commands
+
+| Command | Description | Example |
+|:--------|:------------|:--------|
+| `/kc-init` | Initialize KnowzCode in project | `/kc-init` |
+| `/kc <goal>` | Start new feature WorkGroup | `/kc "Add dark mode"` |
+| `/kc-step <phase>` | Execute specific phase | `/kc-step 2A` |
+| `/kc-audit [type]` | Run quality audits | `/kc-audit security` |
+| `/kc-plan [type]` | Generate development plans | `/kc-plan feature` |
+| `/kc-microfix <target>` | Quick targeted fix | `/kc-microfix auth.js` |
+| `/kc-resolve-merge` | Resolve merge conflicts | `/kc-resolve-merge` |
+
+## Example Workflow
+
+### 1. Initialize New Project
 
 ```bash
-cd /path/to/your/project
-
-# Check that files were created
-ls -la knowzcode/
-ls -la .claude/commands/
-
-# Test a command (should show usage help)
-/kc
+mkdir my-app && cd my-app
+git init
+/kc-init
 ```
 
----
+### 2. Start First Feature
 
-## Core Advantages
-
-### 1. Permanent Identity for Every Building Block
-
-**Traditional AI:**
-```
-You: "Update the login"
-AI: "Which login? The form? The API? The validation?"
+```bash
+/kc "Build REST API with Express.js for user management"
 ```
 
-**With KnowzCode:**
-```
-You: "Update API_AuthCheck"
-AI: "Found it. This affects UI_LoginForm above and SVC_TokenValidator below."
-```
+**KnowzCode will:**
+- Create WorkGroup `WG-001`
+- Analyze what needs to be built
+- Generate specifications
+- Guide TDD implementation
+- Verify code quality
+- Update documentation
 
-Every piece of your system gets a **NodeID** - a permanent, unique name that persists across all sessions forever.
+### 3. Review Progress
 
-### 2. Visual System Understanding
-
-NodeIDs aren't just labels - they live in a **Mermaid diagram** showing:
-- WHERE each piece fits
-- HOW it connects to others
-- WHAT depends on it
-
-```mermaid
-graph TD
-    UI_LoginForm[/Login Form/] --> API_AuthCheck{{Auth Check API}}
-    API_AuthCheck --> SVC_TokenValidator[[Token Validator]]
-    SVC_TokenValidator --> DB_Users[(Users DB)]
+```bash
+cat knowzcode/knowzcode_tracker.md
 ```
 
-The AI sees your system spatially, like an architect reading blueprints.
+See all WorkGroups, their status, and completion.
 
-### 3. Complete Change Sets
+### 4. Continue Development
 
-**Traditional AI:** Changes one thing, breaks three others
-
-**KnowzCode:**
-```
-You: "Add password reset"
-AI: "This Change Set requires:
-     - NEW: UI_ResetForm, API_ResetPassword, SVC_EmailService
-     - MODIFY: UI_LoginPage (add forgot link)
-     - MODIFY: DB_Users (add reset_token column)
-     All 5 NodeIDs will be built together."
+```bash
+/kc "Add JWT authentication to API"
 ```
 
-No partial implementations. No surprise breakage.
+Each feature gets its own WorkGroup with full tracking.
 
-### 4. Living Documentation
+## Features
 
-Each NodeID has a detailed spec file (`knowzcode/specs/NodeID.md`) containing:
-- Purpose and responsibilities
-- Dependencies and interfaces
-- Core logic and behavior
-- Verification criteria
-- Technical debt notes
+### 🧪 Test-Driven Development
 
-**Specs evolve:** Planned → Implemented → Verified → "As-Built"
+KnowzCode **enforces TDD**:
 
-Unlike traditional docs, specs are updated AFTER building to match reality.
+1. Write failing test
+2. Implement minimal code
+3. Refactor if needed
+4. Repeat
 
-### 5. Mission Control Dashboard
+No production code without tests!
 
-See everything at a glance in `knowzcode_tracker.md`:
+### 🤖 Specialized Agents
 
-| Status | WorkGroupID | NodeID | Label | Dependencies |
-|:---|:---|:---|:---|:---|
-| 🟢 VERIFIED | - | UI_LoginForm | Login Form | - |
-| ◆ WIP | kc-feat-143022 | API_AuthCheck | Auth API | UI_LoginForm |
-| ⚪️ TODO | - | API_PasswordReset | Reset API | API_AuthCheck |
+Different agents handle different tasks:
 
-Track progress, spot blockers, understand dependencies.
+- **Impact Analyst**: Identifies affected components
+- **Spec Chief**: Writes detailed specifications
+- **Implementation Lead**: Guides TDD implementation
+- **ARC Auditor**: Verifies code quality
+- **Architecture Reviewer**: Maintains architecture health
+- **Security Officer**: Performs security audits
 
-### 6. Perfect Historical Memory
+### 📋 Living Documentation
 
-`knowzcode_log.md` records:
-- What was built and when
-- Why decisions were made
-- What problems were discovered
-- What technical debt was created
+Documentation **stays current**:
 
-**Example:**
+- Architecture diagrams auto-update
+- Component specs track implementation
+- API documentation reflects actual code
+- Test coverage reports generated automatically
+
+### ✅ Quality Gates
+
+Automated checks at each phase:
+
+- Code style (linting/formatting)
+- Test coverage thresholds
+- Security vulnerability scans
+- Architecture compliance
+- Performance benchmarks
+
+## Comparison Table
+
+| Aspect | Traditional AI Coding | KnowzCode |
+|--------|----------------------|-----------|
+| **Memory** | Forgets between sessions | Complete history + WorkGroup tracking |
+| **Context** | Reads entire codebase or misses connections | Living architecture + specifications |
+| **Changes** | Modifies random files → breaks things | Complete Change Sets → all pieces together |
+| **Verification** | "Done" = "I wrote code" | Quality gates + automated verification |
+| **Documentation** | Drifts from reality immediately | Specs updated after every change |
+| **Collaboration** | Merge conflicts everywhere | WorkGroup system + conflict resolution |
+| **Quality** | Hope tests catch issues | Pre-code spec audit + post-code verification |
+
+## Migration from v1.x
+
+**Used the old KnowzCode** with `/kc-install` and `.claude/` directories?
+
+### Quick Migration
+
+1. **Install plugin**: `/plugin install knowzcode`
+2. **Your data is safe**: `knowzcode/` directory preserved automatically
+3. **Remove `.claude/`**: Commands now come from plugin
+
+See **[MIGRATION_GUIDE.md](MIGRATION_GUIDE.md)** for detailed migration steps.
+
+## Project Structure
+
+### What You Edit
+
+These files are **yours to customize**:
+
+- `knowzcode/knowzcode_project.md` - Project goals, tech stack
+- `knowzcode/specs/*.md` - Component specifications
+- `knowzcode/prompts/*.md` - Custom prompt templates
+
+### What KnowzCode Manages
+
+These files are **auto-generated**:
+
+- `knowzcode/knowzcode_tracker.md` - WorkGroup tracking
+- `knowzcode/knowzcode_log.md` - Session history
+- `knowzcode/knowzcode_architecture.md` - Architecture docs
+- `knowzcode/workgroups/*.md` - Individual WorkGroups
+
+### Recommended `.gitignore`
+
+```gitignore
+# Commit framework data
+!knowzcode/*.md
+!knowzcode/specs/
+!knowzcode/prompts/
+
+# Optional: Exclude session-specific data
+knowzcode/workgroups/
 ```
-You: "Why does this auth code look weird?"
-AI: "Per log entry Jan 15, we worked around a third-party
-     API limitation. See WorkGroup kc-fix-20250115-143000."
-```
 
-### 7. Built-in Quality Gates
+## Contributing
 
-**Before coding** (Spec Verification):
-- For large changes (≥10 NodeIDs), specs are audited for completeness
-- Prevents building on a flawed foundation
+We welcome contributions!
 
-**After coding** (Implementation Audit):
-- READ-ONLY comparison of code vs specs
-- Reports true completion percentage: "85% of requirements met"
-- Prevents incomplete "done" claims
+1. Fork the repository
+2. Create feature branch: `git checkout -b feature/amazing`
+3. Make changes to `commands/` or `agents/`
+4. Test thoroughly
+5. Submit pull request
 
-### 8. Multi-Session Collaboration
+See **[CLAUDE.md](CLAUDE.md)** for developer documentation.
+
+## Philosophy
+
+KnowzCode is built on these principles:
+
+1. **Quality Over Speed**: Better code takes time
+2. **Tests First**: Every feature needs tests
+3. **Incremental Progress**: Small, safe steps
+4. **Transparency**: Visible tracking of all work
+5. **Automation**: Automate quality checks
+6. **Documentation**: Keep docs current
+
+## Multi-Session Collaboration
 
 Work on multiple features simultaneously without conflicts:
 
@@ -270,270 +321,40 @@ git merge feature/notifications # Conflict (expected)
 /kc-resolve-merge              # Auto-resolves safely
 ```
 
-See [`MULTI_SESSION.md`](MULTI_SESSION.md) for patterns and best practices.
-
----
-
-## How It Works: The KnowzCode Loop
-
-Every feature follows this verification-driven process:
-
-### **Loop 1A: Impact Analysis**
-```bash
-/kc "Add password reset feature"
-```
-
-AI identifies the complete Change Set:
-- What NodeIDs need to be created
-- What existing NodeIDs need modification
-- What dependencies exist
-- Visual impact on architecture
-
-### **Loop 1B: Draft Specs**
-
-AI creates detailed blueprints for each affected NodeID:
-- Purpose and interfaces
-- Core logic and data structures
-- Error handling and edge cases
-- Verification criteria
-
-**For large changes (≥10 NodeIDs):** Spec Verification Checkpoint runs automatically
-
-### **Loop 2A: Implement Change Set**
-
-AI builds ALL NodeIDs in the Change Set together:
-- Writes code following your standards
-- Runs tests and linters
-- Performs initial verification
-
-### **Loop 2B: Verify Implementation**
-
-READ-ONLY audit compares code against specs:
-- Calculates true completion percentage
-- Identifies gaps and missing requirements
-- Reports what's actually done vs claimed
-
-### **Loop 3: Finalize & Commit**
-
-- Updates all specs to "as-built" state
-- Logs decisions and discoveries
-- Schedules technical debt (REFACTOR_ tasks)
-- Creates clean git commit
-- Updates tracker to VERIFIED
-
----
-
-## Real World Example
-
-### Traditional AI Coding
-
-```
-Monday: "Add user profile"
-→ AI writes some profile code
-
-Wednesday: "Add user settings"
-→ AI writes settings code (doesn't connect to profile)
-
-Friday: "Make profile show settings"
-→ AI: "I don't see how these relate..."
-```
-
-### With KnowzCode
-
-```
-Monday: /kc "Add user profile"
-→ AI: "Creating NodeIDs: UI_UserProfile, API_GetProfile
-       Updating: UI_Navigation (profile link)
-       All connected in architecture diagram"
-
-Wednesday: /kc "Add user settings"
-→ AI: "I see UI_UserProfile exists from Jan 7.
-       Creating: UI_UserSettings (child component)
-       Creating: API_UpdateSettings
-       Linking to existing profile NodeID"
-
-Friday: "Make profile show settings"
-→ AI: "Both exist in architecture. Already connected.
-       One-line change to UI_UserProfile render.
-       Change Set: 1 NodeID modified"
-```
-
----
-
-## Key Workflows
-
-### Starting a New Feature
-
-```bash
-/kc "Your feature description"
-```
-
-Executes the complete loop: analyze → spec → build → verify → commit
-
-### Continuing Active Work
-
-```bash
-/kc-step 2A  # Jump to implementation
-/kc-step 3   # Jump to finalization
-```
-
-### Running Audits
-
-```bash
-/kc-audit spec          # Verify all specs are complete
-/kc-audit architecture  # Check architecture health
-/kc-audit security      # Run security review
-/kc-audit integration   # Holistic system audit
-```
-
-### Quick Fixes
-
-```bash
-/kc-microfix src/auth.ts "Fix null check in validation"
-```
-
-For small changes (<50 lines, no ripple effects)
-
-### Planning
-
-```bash
-/kc-plan feature   # Break down a major feature
-/kc-plan refactor  # Plan refactoring work
-```
-
-### Resolving Merge Conflicts
-
-```bash
-git merge feature/notifications  # Conflict occurs
-/kc-resolve-merge               # Auto-resolves tracker/log
-git commit -m "Merge features"
-```
-
----
+See **[MULTI_SESSION.md](MULTI_SESSION.md)** for patterns and best practices.
 
 ## Documentation
 
-- **[Getting Started](./docs/knowzcode_getting_started.md)** - Complete walkthrough and first steps
+- **[Getting Started](./docs/knowzcode_getting_started.md)** - Complete walkthrough
 - **[Understanding KnowzCode](./docs/understanding-knowzcode.md)** - Deep dive into concepts
 - **[Prompts Guide](./docs/knowzcode_prompts_guide.md)** - All commands and workflows
 - **[Visual Guide](./docs/knowzcode_guide.md)** - File structure roadmap
-- **[Multi-Session Guide](./MULTI_SESSION.md)** - Team collaboration patterns
-- **[Installation Guide](./INSTALL.md)** - Detailed setup and troubleshooting
+- **[Developer Guide](./CLAUDE.md)** - Plugin development documentation
 
----
+## Support
 
-## Comparison Table
-
-| Aspect | Traditional AI Coding | KnowzCode |
-|--------|----------------------|-----------|
-| **Memory** | Forgets between sessions | Permanent NodeID identity + complete log |
-| **Context** | Reads entire codebase or misses connections | Visual architecture shows exact relationships |
-| **Changes** | Modifies random files → breaks things | Complete Change Sets → all affected pieces together |
-| **Updates** | "Update the auth" → "Which auth?" | "Update API_AuthCheck" → knows exactly what |
-| **Verification** | "Done" = "I wrote code" | ARC Verification = tests pass, meets quality gates |
-| **Documentation** | Drifts from reality immediately | Specs updated to "as-built" after every change |
-| **Collaboration** | Merge conflicts everywhere | Git branches + `/kc-resolve-merge` = clean merges |
-| **Quality** | Hope tests catch issues | Pre-code spec audit + post-code implementation audit |
-| **Tech Debt** | Accumulates invisibly | Every debt logged → REFACTOR_ tasks auto-scheduled |
-| **System View** | Flat file list | Visual architecture diagram |
-
----
-
-## Prerequisites
-
-- **Claude Code** (or any AI assistant that can read/write files)
-- **Git** (for version control)
-- **Basic familiarity** with AI-assisted coding
-- **A project** (new or existing)
-
----
-
-## Updating KnowzCode
-
-Keep your projects up-to-date with the latest improvements:
-
-```bash
-# From the KnowzCode template directory
-/kc-update /path/to/your/project
-```
-
-**The update safely:**
-- ✅ Preserves your project data (tracker, logs, specs)
-- ✅ Updates framework files (prompts, loop, commands)
-- ✅ Protects your customizations (creates `.new` files for review)
-- ✅ Validates update succeeded
-
----
-
-## Critical Concepts
-
-### Environment Context
-
-The AI needs `knowzcode/environment_context.md` configured for YOUR setup:
-- Package manager (npm vs yarn vs pnpm)
-- Python version (python vs python3)
-- Test commands
-- Database connection
-- Build process
-
-This teaches the AI to work in YOUR environment.
-
-### WorkGroups
-
-Each feature gets a unique **WorkGroupID** (e.g., `kc-feat-20250109-143022`):
-- Groups related NodeID changes together
-- Tracks progress as a unit
-- Creates clean git history
-- Enables multi-session collaboration
-
-### ARC Verification
-
-**A**ttentive **R**eview & **C**ompliance ensures quality:
-- All tests pass
-- Security standards met
-- Performance acceptable
-- Error handling robust
-- Documentation accurate
-
-Every NodeID must pass ARC before marking VERIFIED.
-
----
+- **Issues**: [GitHub Issues](https://github.com/AlexHeadscarf/KnowzCode/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/AlexHeadscarf/KnowzCode/discussions)
+- **Documentation**: See [`docs/`](docs/) directory
 
 ## Acknowledgments
 
 KnowzCode is built upon the excellent foundation of the [Noderr project](https://github.com/kaithoughtarchitect/noderr) by [@kaithoughtarchitect](https://github.com/kaithoughtarchitect). We're grateful for their pioneering work in systematic AI-driven development.
 
----
-
 ## License
 
-MIT License - Use freely in your projects
+MIT License - See [LICENSE](LICENSE) file
 
 ---
 
-## The Bottom Line
+<div align="center">
 
-**Traditional AI coding** = Eager intern who writes random code
-
-**KnowzCode** = Disciplined engineer who:
-- ✅ Understands your entire system
-- ✅ Sees how changes ripple through architecture
-- ✅ Follows your quality standards
-- ✅ Documents what was actually built
-- ✅ Remembers everything forever
-- ✅ Works cleanly with your team
-
----
-
-## Questions?
-
-- **"Do I install KnowzCode into this template repo?"** - No! Clone/download the template, then install INTO your actual projects.
-- **"Can multiple people use KnowzCode on the same project?"** - Yes! See [MULTI_SESSION.md](MULTI_SESSION.md) for collaboration patterns.
-- **"What if I already have a large codebase?"** - Use the retrofit workflow to map existing code to NodeIDs.
-- **"Does this work with any AI?"** - Yes, but optimized for Claude Code. Works with ChatGPT, Cursor, or any file-based AI assistant.
-
----
+**Built with ❤️ for software quality**
 
 *Welcome to systematic AI development. Welcome to KnowzCode.*
 
 **Because great software isn't just coded. It's engineered.**
+
+[Get Started](#installation) • [View Docs](CLAUDE.md) • [Contribute](CLAUDE.md#contributing)
+
+</div>

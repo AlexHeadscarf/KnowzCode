@@ -47,6 +47,24 @@ cd your-project/
 /knowzcode:init
 ```
 
+### Step 4: Connect to KnowzCode Cloud (Optional)
+
+Unlock enhanced AI-powered features:
+
+```bash
+/knowzcode:connect-mcp <your-api-key>
+```
+
+**Current Environment**: Development (`api.dev.knowz.io`) - Production coming after testing
+
+Get your API key at [knowz.io/api-keys](https://knowz.io/api-keys)
+
+**Enhanced features:**
+- 🔍 Vector search across indexed code
+- 📚 Query specifications and documentation
+- 🧠 Context-aware agent decisions
+- 🕸️ Dependency and impact analysis
+
 **Done!** You're ready to start building with KnowzCode.
 
 ## Quick Start
@@ -80,6 +98,20 @@ KnowzCode will:
 /knowzcode:audit security      # Security assessment
 /knowzcode:audit integration   # Integration test coverage
 ```
+
+### Resume Work After Interruptions
+
+```bash
+/knowzcode:continue           # Restore context and resume current WorkGroup
+# or just say: "continue"     # Automatically triggers continuation
+```
+
+KnowzCode will:
+1. 🔍 **Detect active WorkGroup** - Find where you left off
+2. 📥 **Load full context** - Specs, todos, phase, test status
+3. 🎯 **Identify current phase** - Determine exact position in workflow
+4. ✅ **Re-establish discipline** - Enforce TDD, quality gates, framework patterns
+5. ▶️ **Resume execution** - Continue from exact interruption point
 
 ## How It Works
 
@@ -139,11 +171,14 @@ Each phase has **quality gates** that must pass before proceeding.
 |:--------|:------------|:--------|
 | `/knowzcode:init` | Initialize KnowzCode in project | `/knowzcode:init` |
 | `/knowzcode:work <goal>` | Start new feature WorkGroup | `/knowzcode:work "Add dark mode"` |
+| `/knowzcode:continue [wg-id]` | Resume current WorkGroup with context recovery | `/knowzcode:continue` |
 | `/knowzcode:step <phase>` | Execute specific phase | `/knowzcode:step 2A` |
 | `/knowzcode:audit [type]` | Run quality audits | `/knowzcode:audit security` |
 | `/knowzcode:plan [type]` | Generate development plans | `/knowzcode:plan feature` |
 | `/knowzcode:fix <target>` | Quick targeted fix | `/knowzcode:fix auth.js` |
 | `/knowzcode:resolve-conflicts` | Resolve merge conflicts | `/knowzcode:resolve-conflicts` |
+| `/knowzcode:connect-mcp` | Configure MCP server | `/knowzcode:connect-mcp <api-key>` |
+| `/knowzcode:status` | Check MCP connection status | `/knowzcode:status` |
 
 ## Example Workflow
 
@@ -218,6 +253,18 @@ Documentation **stays current**:
 - API documentation reflects actual code
 - Test coverage reports generated automatically
 
+### 🔄 Interruption Recovery
+
+KnowzCode handles interruptions gracefully:
+
+- **Auto-detection**: Just say "continue" to resume
+- **Full context restoration**: Loads specs, todos, phase, and test status
+- **Phase identification**: Determines exact position in workflow
+- **Framework re-establishment**: Restores TDD discipline and quality gates
+- **Transparent recovery**: Shows you exactly where you are before resuming
+
+**Never lose progress** - KnowzCode remembers everything and picks up exactly where you left off.
+
 ### ✅ Quality Gates
 
 Automated checks at each phase:
@@ -227,6 +274,65 @@ Automated checks at each phase:
 - Security vulnerability scans
 - Architecture compliance
 - Performance benchmarks
+
+### 🌐 MCP Integration (Optional Cloud Features)
+
+Connect to **KnowzCode Cloud** for AI-powered enhancements via Model Context Protocol (MCP):
+
+#### What You Get
+
+- **Vector Code Search** - Find implementations across your indexed codebase using semantic search
+- **Spec Queries** - Query specifications and documentation with natural language
+- **Smart Context** - Agents automatically receive relevant context for their tasks
+- **Dependency Analysis** - Understand code relationships and impact before making changes
+
+#### How It Works
+
+```bash
+# One-time setup per project
+/knowzcode:connect-mcp <your-api-key>
+
+# Optional: Custom endpoint (self-hosted)
+/knowzcode:connect-mcp <your-api-key> --endpoint https://your-domain.com/mcp
+
+# Restart Claude Code to activate
+
+# Verify connection
+/knowzcode:status
+```
+
+Once connected, **all KnowzCode agents automatically use MCP tools**:
+
+| Agent | Uses MCP For |
+|:------|:-------------|
+| **Impact Analyst** | `search_codebase` to find related code<br>`analyze_dependencies` to map change ripple effects<br>`get_context` to understand the domain |
+| **Spec Chief** | `query_specs` to retrieve existing specifications<br>`search_codebase` to find implementation patterns |
+| **Implementation Lead** | `query_specs` to load specifications<br>`search_codebase` to find reference implementations |
+
+#### Configuration Scopes
+
+Choose how to configure the MCP server:
+
+- **local** (default): Only this project, private to you
+- **project**: Shared with team via `.mcp.json` (committed to git)
+- **user**: Available across all your projects
+
+```bash
+# Local scope (default)
+/knowzcode:connect-mcp <api-key>
+
+# Project-wide (team access)
+/knowzcode:connect-mcp <api-key> --scope project
+
+# Global (all your projects)
+/knowzcode:connect-mcp <api-key> --scope user
+```
+
+#### Graceful Degradation
+
+**KnowzCode works perfectly without MCP** - agents simply use traditional grep/glob/read tools. MCP enhances their capabilities but isn't required.
+
+Get your API key: [knowz.io/api-keys](https://knowz.io/api-keys)
 
 ## Why KnowzCode?
 

@@ -7,8 +7,8 @@ argument-hint: "<target> <summary>"
 
 Execute a targeted micro-fix within the KnowzCode v2.0 framework.
 
-**Usage**: `/knowzcode:fix <target> <summary>`
-**Example**: `/knowzcode:fix src/auth/login.ts "Fix null reference in password validation"`
+**Usage**: `/kc:fix <target> <summary>`
+**Example**: `/kc:fix src/auth/login.ts "Fix null reference in password validation"`
 
 ---
 
@@ -24,7 +24,7 @@ Execute a targeted micro-fix within the KnowzCode v2.0 framework.
 | No new dependencies introduced | ✓ |
 | Existing tests cover the change area | ✓ |
 
-**If ANY criteria fails**: Stop and suggest `/knowzcode:work` for full orchestration.
+**If ANY criteria fails**: Stop and suggest `/kc:work` for full orchestration.
 
 ---
 
@@ -32,7 +32,7 @@ Execute a targeted micro-fix within the KnowzCode v2.0 framework.
 
 ### 1. Validate Scope
 - Confirm the fix meets micro-fix criteria above
-- If scope exceeds limits, redirect to `/knowzcode:work`
+- If scope exceeds limits, redirect to `/kc:work`
 
 ### 2. Load Context
 - Read the target file to understand current implementation
@@ -89,8 +89,8 @@ REPEAT until all checks pass:
 ## Example Usage
 
 ```
-/knowzcode:fix src/auth/login.ts "Fix null reference in password validation"
-/knowzcode:fix NODE_AUTH_123 "Update error message formatting"
+/kc:fix src/auth/login.ts "Fix null reference in password validation"
+/kc:fix NODE_AUTH_123 "Update error message formatting"
 ```
 
 ## Execution

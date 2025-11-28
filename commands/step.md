@@ -7,8 +7,8 @@ argument-hint: "[phase] [workgroup_id]"
 
 Execute a specific phase of the KnowzCode v2.0 loop.
 
-**Usage**: `/knowzcode:step [phase] [workgroup_id]`
-**Example**: `/knowzcode:step 1A` or `/knowzcode:step implement WG-001`
+**Usage**: `/kc:step [phase] [workgroup_id]`
+**Example**: `/kc:step 1A` or `/kc:step implement WG-001`
 
 **Arguments**: $ARGUMENTS
 

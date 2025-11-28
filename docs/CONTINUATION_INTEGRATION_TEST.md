@@ -20,7 +20,7 @@ User starts work, gets interrupted after specs are approved, returns later.
 
 **Step 1: Start Work**
 ```bash
-User: /knowzcode:work "Add product review feature"
+User: /kc:work "Add product review feature"
 
 Orchestrator creates WorkGroupID: kc-feat-20250117-150000
 Phase 1A: Impact Analysis → Approved
@@ -48,15 +48,15 @@ User: "continue"
 Continue Skill Activation:
 ✓ Detected continuation phrase: "continue"
 ✓ Verified knowzcode/ directory exists
-✓ Redirecting to /knowzcode:continue command
+✓ Redirecting to /kc:continue command
 
 Message to user:
-"I'll use /knowzcode:continue to restore context and resume the workflow."
+"I'll use /kc:continue to restore context and resume the workflow."
 ```
 
 **Step 4: Command Executes**
 ```markdown
-/knowzcode:continue command invoked
+/kc:continue command invoked
 → Delegates to kc-orchestrator with mode: CONTINUATION
 ```
 
@@ -227,7 +227,7 @@ Orchestrator PAUSES execution:
 
 **Step 3: User Notices, Invokes Continue**
 ```bash
-User: "/knowzcode:continue"
+User: "/kc:continue"
 ```
 
 **Step 4: Orchestrator Recovery**
@@ -273,7 +273,7 @@ User: "continue"
 
 **Step 2: Skill Intercepts & Redirects**
 ```
-Continue Skill: Redirecting to /knowzcode:continue
+Continue Skill: Redirecting to /kc:continue
 ```
 
 **Step 3: Orchestrator State Discovery**
@@ -349,7 +349,7 @@ But: No audit event logged
 
 **Step 2: User Continues**
 ```bash
-User: "/knowzcode:continue"
+User: "/kc:continue"
 ```
 
 **Step 3: Phase Detection Catches Anomaly**
@@ -416,7 +416,7 @@ Instructions:
 
 ### Skill Integration
 - [x] Skill detects continuation phrases
-- [x] Skill redirects to /knowzcode:continue command
+- [x] Skill redirects to /kc:continue command
 - [x] Skill logs activation event
 - [x] Skill doesn't trigger inappropriately
 - [x] Skill works with natural language

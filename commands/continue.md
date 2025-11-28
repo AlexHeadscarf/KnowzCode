@@ -7,8 +7,8 @@ argument-hint: "[workgroup_id]"
 
 Resume a KnowzCode workflow session with complete state recovery and pattern enforcement.
 
-**Usage**: `/knowzcode:continue [workgroup_id]`
-**Example**: `/knowzcode:continue` or `/knowzcode:continue kc-feat-20250117-143000`
+**Usage**: `/kc:continue [workgroup_id]`
+**Example**: `/kc:continue` or `/kc:continue kc-feat-20250117-143000`
 
 **Arguments**: $ARGUMENTS
 
@@ -22,7 +22,7 @@ This command provides intelligent continuation when work is interrupted. It:
 
 ## When to Use
 
-Use `/knowzcode:continue` when:
+Use `/kc:continue` when:
 - Resuming after a break or interruption
 - Context was lost and framework patterns weren't being followed
 - You need to re-anchor in the KnowzCode workflow
@@ -43,7 +43,7 @@ Instructions for orchestrator:
    - If WorkGroupID provided, load that specific workgroup
    - Otherwise, search knowzcode/knowzcode_tracker.md for active `[WIP]` entries
    - If multiple active WorkGroups, present list for user selection
-   - If no active WorkGroups, inform user and suggest `/knowzcode:work`
+   - If no active WorkGroups, inform user and suggest `/kc:work`
 
 2. **Full Context Loading**:
    - Read `knowzcode/workgroups/{WorkGroupID}.md` (todos, phase, history)

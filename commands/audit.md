@@ -7,8 +7,8 @@ argument-hint: "[audit_type]"
 
 Run specialized audit workflows.
 
-**Usage**: `/knowzcode:audit [audit_type]`
-**Example**: `/knowzcode:audit spec` or `/knowzcode:audit security`
+**Usage**: `/kc:audit [audit_type]`
+**Example**: `/kc:audit spec` or `/kc:audit security`
 
 **Audit Type**: $ARGUMENTS
 

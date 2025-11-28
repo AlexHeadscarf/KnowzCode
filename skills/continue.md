@@ -1,12 +1,12 @@
 ---
 name: continue
-description: Automatically intercept continuation phrases and redirect to /knowzcode:continue for proper workflow resumption
+description: Automatically intercept continuation phrases and redirect to /kc:continue for proper workflow resumption
 trigger: User says "continue", "keep going", "resume", or similar continuation intent
 ---
 
 # Continue Skill
 
-**Purpose**: Detect when user wants to continue work and redirect to the structured `/knowzcode:continue` command to ensure proper context restoration and framework discipline.
+**Purpose**: Detect when user wants to continue work and redirect to the structured `/kc:continue` command to ensure proper context restoration and framework discipline.
 
 ## Trigger Patterns
 
@@ -46,18 +46,18 @@ When triggered:
    ```
    I notice you want to continue the current work. To ensure we maintain
    KnowzCode's disciplined workflow and restore full context, I'll use
-   the /knowzcode:continue command.
+   the /kc:continue command.
    ```
 
 2. **Check for active WorkGroup**:
    - Search knowzcode/knowzcode_tracker.md for `[WIP]` entries
    - If exactly one active WorkGroup found: auto-detect and use it
    - If multiple active: will present options via the command
-   - If none active: will inform and suggest `/knowzcode:work`
+   - If none active: will inform and suggest `/kc:work`
 
 3. **Execute continuation command**:
    ```
-   /knowzcode:continue [auto-detected-workgroup-id]
+   /kc:continue [auto-detected-workgroup-id]
    ```
 
 4. **Let orchestrator handle**:
@@ -68,8 +68,8 @@ When triggered:
 ### Example 1: Simple Continue
 ```
 User: continue
-Skill: I'll use /knowzcode:continue to restore context and resume the workflow.
-[Executes /knowzcode:continue, orchestrator loads state and presents status]
+Skill: I'll use /kc:continue to restore context and resume the workflow.
+[Executes /kc:continue, orchestrator loads state and presents status]
 ```
 
 ### Example 2: Continue with Context Loss
@@ -77,15 +77,15 @@ Skill: I'll use /knowzcode:continue to restore context and resume the workflow.
 User: let's keep going
 Skill: I notice we should continue with the KnowzCode workflow. Let me restore
        the full context to ensure we follow TDD and quality gates properly.
-[Executes /knowzcode:continue, orchestrator re-establishes discipline]
+[Executes /kc:continue, orchestrator re-establishes discipline]
 ```
 
 ### Example 3: Continue After Interruption
 ```
 User: resume where we left off
-Skill: I'll use /knowzcode:continue to find where we left off and restore
+Skill: I'll use /kc:continue to find where we left off and restore
        all WorkGroup context.
-[Executes /knowzcode:continue, orchestrator detects phase and resumes]
+[Executes /kc:continue, orchestrator detects phase and resumes]
 ```
 
 ## When NOT to Trigger
@@ -93,7 +93,7 @@ Skill: I'll use /knowzcode:continue to find where we left off and restore
 Do NOT trigger this skill if:
 - User is giving specific new instructions (e.g., "continue with a new feature to add X")
 - User is asking a question (e.g., "should we continue with this approach?")
-- Already executing a /knowzcode:* command
+- Already executing a /kc:* command
 - User says "continue" but context clearly indicates they mean something else
 - knowzcode/ directory doesn't exist (not a KnowzCode project)
 
@@ -105,7 +105,7 @@ This skill is a **lightweight interceptor** that:
 - ✓ Lets kc-orchestrator do the heavy lifting
 - ✓ Ensures framework discipline is maintained
 
-The actual state recovery, context loading, and workflow resumption is handled by `/knowzcode:continue` via the kc-orchestrator.
+The actual state recovery, context loading, and workflow resumption is handled by `/kc:continue` via the kc-orchestrator.
 
 ## Benefits
 
@@ -128,7 +128,7 @@ The actual state recovery, context loading, and workflow resumption is handled b
 **Timestamp:** [Generated Timestamp]
 **Skill:** continue
 **Trigger:** User said "{user_message}"
-**Action:** Redirected to /knowzcode:continue
+**Action:** Redirected to /kc:continue
 **Logged By:** AI-Agent
 ---
 ```

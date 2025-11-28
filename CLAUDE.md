@@ -29,10 +29,10 @@ Install KnowzCode as a plugin in Claude Code:
 
 # Initialize in your project
 cd my-project/
-/knowzcode:init
+/kc:init
 
 # Start building
-/knowzcode:work "Build user authentication"
+/kc:work "Build user authentication"
 ```
 
 **That's it!** The plugin provides all commands and agents globally.
@@ -44,7 +44,7 @@ cd my-project/
 **Plugin (installed globally once):**
 ```
 ~/.claude/plugins/knowzcode/
-├── commands/          # All /knowzcode:* slash commands
+├── commands/          # All /kc:* slash commands
 ├── agents/            # All specialized sub-agents
 └── skills/            # Optional skills
 ```
@@ -74,13 +74,13 @@ After installing the plugin, you have access to:
 
 | Command | Description |
 |:--------|:------------|
-| `/knowzcode:init` | Initialize KnowzCode in current project |
-| `/knowzcode:work <goal>` | Start new feature WorkGroup |
-| `/knowzcode:step <phase>` | Execute specific workflow phase |
-| `/knowzcode:audit [type]` | Run quality audits |
-| `/knowzcode:plan [type]` | Generate development plans |
-| `/knowzcode:fix <target>` | Quick targeted fixes |
-| `/knowzcode:resolve-conflicts` | Resolve merge conflicts |
+| `/kc:init` | Initialize KnowzCode in current project |
+| `/kc:work <goal>` | Start new feature WorkGroup |
+| `/kc:step <phase>` | Execute specific workflow phase |
+| `/kc:audit [type]` | Run quality audits |
+| `/kc:plan [type]` | Generate development plans |
+| `/kc:fix <target>` | Quick targeted fixes |
+| `/kc:resolve-conflicts` | Resolve merge conflicts |
 
 ## Project Structure
 
@@ -116,7 +116,7 @@ knowzcode/workgroups/
 
 ```bash
 cd my-new-project/
-/knowzcode:init
+/kc:init
 ```
 
 This creates the `knowzcode/` directory structure.
@@ -124,7 +124,7 @@ This creates the `knowzcode/` directory structure.
 ### 2. Start Feature Development
 
 ```bash
-/knowzcode:work "Build user registration with email verification"
+/kc:work "Build user registration with email verification"
 ```
 
 This:
@@ -165,7 +165,7 @@ knowzcode/                    # Plugin source
 │   ├── implementation-lead.md
 │   └── ...
 ├── skills/                  # Optional skills
-├── knowzcode/               # Template files (copied on /knowzcode:init)
+├── knowzcode/               # Template files (copied on /kc:init)
 │   ├── knowzcode_loop.md
 │   ├── prompts/
 │   └── specs/
@@ -193,10 +193,10 @@ knowzcode/                    # Plugin source
    mkdir test-project && cd test-project
 
    # Initialize (uses local plugin)
-   /knowzcode:init
+   /kc:init
 
    # Test commands
-   /knowzcode:work "Test feature"
+   /kc:work "Test feature"
    ```
 
 4. **Update version** in:
@@ -224,8 +224,8 @@ Before committing:
 
 2. **Test commands work**:
    ```bash
-   /knowzcode:init  # Should create knowzcode/
-   /knowzcode:work "Test" # Should work with test project
+   /kc:init  # Should create knowzcode/
+   /kc:work "Test" # Should work with test project
    ```
 
 3. **Verify no breaking changes**:
@@ -248,7 +248,7 @@ If you used the old KnowzCode installation model (with `/kc-install` and `.claud
 1. Install plugin: `/plugin install knowzcode`
 2. Your `knowzcode/` data is preserved automatically
 3. Remove old `.claude/` directory (commands now in plugin)
-4. Update command usage: `/kc` → `/knowzcode:work`, etc.
+4. Update command usage: `/kc` → `/kc:work`, etc.
 
 ## Contributing
 
@@ -303,7 +303,7 @@ MIT License - See LICENSE file for details
 
 **Remember:**
 - This repo is the **plugin source**
-- Your work happens in **your projects** (after `/knowzcode:init`)
+- Your work happens in **your projects** (after `/kc:init`)
 - Commands/agents are **global** (via plugin)
 - Project data is **local** (in `knowzcode/` directory)
-- Commands require namespace in Claude Code (`/knowzcode:*`)
+- Commands require namespace in Claude Code (`/kc:*`)

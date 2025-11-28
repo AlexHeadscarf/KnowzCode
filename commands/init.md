@@ -124,7 +124,7 @@ Use these embedded templates:
 
 ## Active WorkGroups
 
-*None yet. Run `/knowzcode:work "your feature description"` to create your first WorkGroup.*
+*None yet. Run `/kc:work "your feature description"` to create your first WorkGroup.*
 
 ---
 
@@ -149,7 +149,7 @@ Use these embedded templates:
 
 ## Recent Sessions
 
-*No sessions yet. This will be populated when you run your first `/knowzcode:work` command.*
+*No sessions yet. This will be populated when you run your first `/kc:work` command.*
 
 ---
 
@@ -247,7 +247,7 @@ Created:
 
 Next steps:
   1. Review knowzcode/knowzcode_project.md and add project details
-  2. Start your first feature: /knowzcode:work "your feature description"
+  2. Start your first feature: /kc:work "your feature description"
   3. View available commands: /help
 
 The knowzcode/ directory contains all project-specific KnowzCode data
@@ -259,7 +259,7 @@ and is safe to commit to version control (except workgroups/).
 
 Connect to KnowzCode Cloud for AI-powered capabilities:
 
-  /knowzcode:connect-mcp <api-key>
+  /kc:connect-mcp <api-key>
 
 This enables:
   • Vector search across indexed code

@@ -7,8 +7,8 @@ argument-hint: "[feature_description]"
 
 Start a new KnowzCode development workflow session.
 
-**Usage**: `/knowzcode:work "feature description"`
-**Example**: `/knowzcode:work "Build user authentication with JWT"`
+**Usage**: `/kc:work "feature description"`
+**Example**: `/kc:work "Build user authentication with JWT"`
 
 **Primary Goal**: $ARGUMENTS
 
@@ -40,10 +40,10 @@ Before invoking the orchestrator, assess the change:
 
 | Criteria | Route |
 |----------|-------|
-| Single file, <50 lines, no dependencies, isolated fix | Consider `/knowzcode:fix` instead |
+| Single file, <50 lines, no dependencies, isolated fix | Consider `/kc:fix` instead |
 | Multiple files OR architectural impact OR new feature | **Continue with full orchestration below** |
 
-If genuinely trivial, inform the user: "This appears to be a micro-fix. Would you prefer `/knowzcode:fix` for a faster path, or full orchestration for traceability?"
+If genuinely trivial, inform the user: "This appears to be a micro-fix. Would you prefer `/kc:fix` for a faster path, or full orchestration for traceability?"
 
 ---
 

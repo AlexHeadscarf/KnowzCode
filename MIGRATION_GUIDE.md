@@ -11,7 +11,7 @@ KnowzCode v2.0 introduces a **plugin-based architecture** that eliminates hidden
 | Hidden `.claude/` directory in projects | No `.claude/` in projects |
 | `/kc-install` command copies files | Plugin installed globally once |
 | `/kc-update` command merges changes | Plugin updates automatically |
-| Commands like `/kc`, `/kc-step` | Namespaced: `/knowzcode:work`, `/knowzcode:step` |
+| Commands like `/kc`, `/kc-step` | Namespaced: `/kc:work`, `/kc:step` |
 | Clone template repo required | Install from marketplace |
 | Commands/agents per-project | Commands/agents global (via plugin) |
 | Project data in `.claude/` | Project data in visible `knowzcode/` |
@@ -21,7 +21,7 @@ KnowzCode v2.0 introduces a **plugin-based architecture** that eliminates hidden
 **Plugin (Global, installed once):**
 ```
 ~/.claude/plugins/knowzcode/
-├── commands/          # All /knowzcode:* commands
+├── commands/          # All /kc:* commands
 ├── agents/            # All sub-agents
 └── skills/            # Optional skills
 ```
@@ -55,12 +55,12 @@ Start fresh with the plugin model:
 2. **Initialize in your project**:
    ```bash
    cd my-new-project/
-   /knowzcode:init
+   /kc:init
    ```
 
 3. **Start working**:
    ```bash
-   /knowzcode:work "Build authentication system"
+   /kc:work "Build authentication system"
    ```
 
 ### Path 2: Existing Projects (Manual Migration)
@@ -128,7 +128,7 @@ If you customized agents or commands in `.claude/`:
 
 ```bash
 # Should work immediately with new command names
-/knowzcode:work "Test migration"
+/kc:work "Test migration"
 ```
 
 ### Path 3: Hybrid (Keep Both)
@@ -136,7 +136,7 @@ If you customized agents or commands in `.claude/`:
 You can keep the old model in some projects and use the new model in others:
 
 - **Old projects**: Continue using `/kc-install` and `.claude/` directories
-- **New projects**: Use plugin model with `/knowzcode:init`
+- **New projects**: Use plugin model with `/kc:init`
 
 The plugin doesn't conflict with the old installation model.
 
@@ -146,30 +146,30 @@ The plugin doesn't conflict with the old installation model.
 
 | Command | Replacement | Why |
 |:--------|:------------|:----|
-| `/kc-install <target>` | `/knowzcode:init` | Plugin installs globally now |
+| `/kc-install <target>` | `/kc:init` | Plugin installs globally now |
 | `/kc-update <target>` | Plugin auto-update | Plugins update via marketplace |
 | `/kc-rollback` | Git revert on `knowzcode/` | Simpler with visible directory |
 
 ### Renamed Commands (v2.0)
 
-All commands have been renamed for clarity and now require the `knowzcode:` namespace prefix:
+All commands have been renamed for clarity and now use the short `kc:` namespace prefix:
 
 | Old Command (v1.x) | New Command (v2.0) |
 |:-------------------|:-------------------|
-| `/kc "goal"` | `/knowzcode:work "goal"` |
-| `/kc-init` | `/knowzcode:init` |
-| `/kc-step <phase>` | `/knowzcode:step <phase>` |
-| `/kc-audit [type]` | `/knowzcode:audit [type]` |
-| `/kc-plan [type]` | `/knowzcode:plan [type]` |
-| `/kc-microfix <target>` | `/knowzcode:fix <target>` |
-| `/kc-resolve-merge` | `/knowzcode:resolve-conflicts` |
+| `/kc "goal"` | `/kc:work "goal"` |
+| `/kc-init` | `/kc:init` |
+| `/kc-step <phase>` | `/kc:step <phase>` |
+| `/kc-audit [type]` | `/kc:audit [type]` |
+| `/kc-plan [type]` | `/kc:plan [type]` |
+| `/kc-microfix <target>` | `/kc:fix <target>` |
+| `/kc-resolve-merge` | `/kc:resolve-conflicts` |
 
-**Note**: The namespace (`knowzcode:`) is required in Claude Code to prevent command conflicts with other plugins.
+**Note**: The namespace (`kc:`) is required in Claude Code to prevent command conflicts with other plugins.
 
 ### Changed Behavior
 
-1. **Commands are global**: All `/knowzcode:*` commands available everywhere after plugin install
-2. **Command namespace required**: Commands need `knowzcode:` prefix to prevent conflicts
+1. **Commands are global**: All `/kc:*` commands available everywhere after plugin install
+2. **Command namespace required**: Commands need `kc:` prefix to prevent conflicts
 3. **No per-project agents**: Agents come from plugin, not project `.claude/` directory
 4. **Visible data directory**: `knowzcode/` is visible and git-committable
 
@@ -215,7 +215,7 @@ Just make sure the `knowzcode/` directory exists and contains your data.
 **No!** That's the beauty of plugins:
 
 1. Install plugin **once** globally
-2. Run `/knowzcode:init` in each new project
+2. Run `/kc:init` in each new project
 3. All commands work immediately
 
 ### "Can I contribute to the plugin?"
@@ -262,7 +262,7 @@ Both models coexist peacefully.
 /plugin enable knowzcode
 ```
 
-### "/knowzcode:init creates nothing"
+### "/kc:init creates nothing"
 
 Check your current directory:
 
@@ -271,7 +271,7 @@ pwd  # Should be in your project root
 ls -la  # Verify you're in the right place
 
 # Then retry
-/knowzcode:init
+/kc:init
 ```
 
 ### "Can't find knowzcode/ directory"
@@ -283,7 +283,7 @@ The plugin expects `knowzcode/` in your **current working directory**:
 cd /path/to/my-project
 
 # Initialize if needed
-/knowzcode:init
+/kc:init
 
 # Or check it exists
 ls -la knowzcode/
@@ -309,8 +309,8 @@ ls -la knowzcode/
 ## Next Steps
 
 1. **Install the plugin**: `/plugin marketplace add` → `/plugin install knowzcode`
-2. **Initialize a project**: `cd my-project && /knowzcode:init`
-3. **Start building**: `/knowzcode:work "your feature"`
+2. **Initialize a project**: `cd my-project && /kc:init`
+3. **Start building**: `/kc:work "your feature"`
 4. **Learn new command names**: See "Renamed Commands" section above
 5. **Join the community**: https://github.com/AlexHeadscarf/KnowzCode
 

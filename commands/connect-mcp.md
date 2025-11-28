@@ -9,7 +9,7 @@ You are the **KnowzCode MCP Connection Agent**. Your task is to configure the Kn
 ## Command Syntax
 
 ```bash
-/knowzcode:connect-mcp <api-key> [--endpoint <url>] [--scope <local|project|user>]
+/kc:connect-mcp <api-key> [--endpoint <url>] [--scope <local|project|user>]
 ```
 
 **Parameters:**
@@ -24,19 +24,19 @@ You are the **KnowzCode MCP Connection Agent**. Your task is to configure the Kn
 **Examples:**
 ```bash
 # Basic usage (uses dev environment by default)
-/knowzcode:connect-mcp kz_test_abc123...
+/kc:connect-mcp kz_test_abc123...
 
 # Interactive mode
-/knowzcode:connect-mcp
+/kc:connect-mcp
 
 # Production environment (when available)
-/knowzcode:connect-mcp kz_live_abc123... --endpoint https://api.knowz.io/mcp
+/kc:connect-mcp kz_live_abc123... --endpoint https://api.knowz.io/mcp
 
 # Self-hosted endpoint
-/knowzcode:connect-mcp kz_live_abc123... --endpoint https://your-domain.com/mcp
+/kc:connect-mcp kz_live_abc123... --endpoint https://your-domain.com/mcp
 
 # Project-wide dev testing
-/knowzcode:connect-mcp kz_test_team456... --scope project
+/kc:connect-mcp kz_test_team456... --scope project
 ```
 
 ## What This Enables
@@ -123,7 +123,7 @@ Configure the KnowzCode MCP server using Claude Code's built-in MCP management.
 
    After restart, these tools will be available to all KnowzCode agents.
 
-   Check connection status: /knowzcode:status
+   Check connection status: /kc:status
    ```
 
 ## Configuration Details
@@ -176,16 +176,16 @@ The KnowzCode MCP server (default: `https://api.dev.knowz.io/mcp`):
 **Switching Environments:**
 ```bash
 # Development (default for testing)
-/knowzcode:connect-mcp kz_test_abc123...
+/kc:connect-mcp kz_test_abc123...
 
 # Production (when ready)
-/knowzcode:connect-mcp kz_live_abc123... --endpoint https://api.knowz.io/mcp
+/kc:connect-mcp kz_live_abc123... --endpoint https://api.knowz.io/mcp
 
 # Local development
-/knowzcode:connect-mcp kz_test_local... --endpoint http://localhost:3000/mcp
+/kc:connect-mcp kz_test_local... --endpoint http://localhost:3000/mcp
 
 # Self-hosted enterprise
-/knowzcode:connect-mcp kz_live_abc123... --endpoint https://knowzcode.mycompany.com/mcp
+/kc:connect-mcp kz_live_abc123... --endpoint https://knowzcode.mycompany.com/mcp
 ```
 
 ## Error Handling
@@ -196,7 +196,7 @@ The KnowzCode MCP server (default: `https://api.dev.knowz.io/mcp`):
 The API key appears to be invalid or expired.
 
 Get a new key at: https://knowz.io/api-keys
-Then run: /knowzcode:connect-mcp <new-key>
+Then run: /kc:connect-mcp <new-key>
 ```
 
 ### Already Configured
@@ -234,17 +234,17 @@ To change from local to project scope:
 claude mcp remove knowzcode
 
 # Re-add with new scope
-/knowzcode:connect-mcp <api-key> --scope project
+/kc:connect-mcp <api-key> --scope project
 ```
 
 ### Switching Endpoints
 To switch between cloud and self-hosted:
 ```bash
 # Switch to self-hosted
-/knowzcode:connect-mcp <api-key> --endpoint https://knowzcode.mycompany.com/mcp
+/kc:connect-mcp <api-key> --endpoint https://knowzcode.mycompany.com/mcp
 
 # Switch back to cloud
-/knowzcode:connect-mcp <api-key>  # Uses default endpoint
+/kc:connect-mcp <api-key>  # Uses default endpoint
 ```
 
 ## Integration with KnowzCode Agents
@@ -271,8 +271,8 @@ Once configured, agents automatically detect and use MCP tools:
 
 After configuration:
 1. **Restart Claude Code** (required to activate MCP server)
-2. **Verify connection**: `/knowzcode:status`
-3. **Start building**: `/knowzcode:work "your feature"`
+2. **Verify connection**: `/kc:status`
+3. **Start building**: `/kc:work "your feature"`
 4. **Watch agents use MCP tools** automatically during workflow
 
 ## Tool Control & Filtering
@@ -291,9 +291,9 @@ See `docs/MCP_SERVER_IMPLEMENTATION.md` for complete server implementation guide
 
 ## Related Commands
 
-- `/knowzcode:status` - Check MCP connection status and available tools
-- `/knowzcode:init` - Initialize KnowzCode in project
-- `/knowzcode:work` - Start feature development (uses MCP tools)
+- `/kc:status` - Check MCP connection status and available tools
+- `/kc:init` - Initialize KnowzCode in project
+- `/kc:work` - Start feature development (uses MCP tools)
 
 ## Implementation Notes
 

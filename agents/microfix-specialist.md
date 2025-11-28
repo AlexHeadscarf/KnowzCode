@@ -27,11 +27,11 @@ Execute targeted micro-fixes with minimal surface area (<50 lines, no ripple eff
 ## ⛔ SCOPE GATE - Validate Before Proceeding
 
 **STOP if ANY of these are true:**
-- Change affects more than 1 file → Redirect to `/knowzcode:work`
-- Change exceeds 50 lines → Redirect to `/knowzcode:work`
-- Change introduces new dependencies → Redirect to `/knowzcode:work`
-- Change has ripple effects to other components → Redirect to `/knowzcode:work`
-- No existing tests cover the affected area → Either write tests first OR redirect to `/knowzcode:work`
+- Change affects more than 1 file → Redirect to `/kc:work`
+- Change exceeds 50 lines → Redirect to `/kc:work`
+- Change introduces new dependencies → Redirect to `/kc:work`
+- Change has ripple effects to other components → Redirect to `/kc:work`
+- No existing tests cover the affected area → Either write tests first OR redirect to `/kc:work`
 
 If scope is valid, proceed.
 
@@ -93,7 +93,7 @@ WHILE iteration_count < max_iterations:
 IF iteration_count >= max_iterations:
     STOP and escalate to user:
     "Micro-fix exceeded 5 verification attempts.
-     Consider using /knowzcode:work for deeper investigation."
+     Consider using /kc:work for deeper investigation."
 ```
 
 ### Phase 3: Evidence Capture

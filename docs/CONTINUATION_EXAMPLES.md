@@ -3,8 +3,8 @@
 ## Quick Reference
 
 **Natural Language**: Just say "continue"
-**Explicit Command**: `/knowzcode:continue`
-**With WorkGroupID**: `/knowzcode:continue kc-feat-20250117-150000`
+**Explicit Command**: `/kc:continue`
+**With WorkGroupID**: `/kc:continue kc-feat-20250117-150000`
 
 ---
 
@@ -15,7 +15,7 @@ You're building a feature, get interrupted for lunch, come back.
 
 ### Before Interruption
 ```bash
-You: /knowzcode:work "Add password reset functionality"
+You: /kc:work "Add password reset functionality"
 
 KnowzCode:
 ✓ Phase 1A: Impact Analysis → 4 NodeIDs identified
@@ -87,7 +87,7 @@ class AuthService {
 
 ### Solution
 ```bash
-You: /knowzcode:continue
+You: /kc:continue
 
 KnowzCode:
 Analyzing current state...
@@ -181,7 +181,7 @@ Option 1: "Continue Feature B"
 Option 2: "Continue Feature A"
 → Resumes product reviews implementation
 
-Option 3: "/knowzcode:continue kc-feat-20250117-143000"
+Option 3: "/kc:continue kc-feat-20250117-143000"
 → Explicitly selects Feature A
 ```
 
@@ -196,7 +196,7 @@ Multi-day feature development with proper state persistence.
 
 ### Day 1 (Friday afternoon)
 ```bash
-You: /knowzcode:work "Implement real-time notifications"
+You: /kc:work "Implement real-time notifications"
 
 KnowzCode:
 Phase 1A: Impact Analysis
@@ -265,7 +265,7 @@ Someone tries to skip the audit phase.
 Implementation finishes, tests pass.
 
 Developer thinks: "Tests pass, I'll just finalize..."
-Developer runs: /knowzcode:step 3
+Developer runs: /kc:step 3
 → Tries to jump to finalization without audit
 ```
 
@@ -331,7 +331,7 @@ Working on feature, production bug found, need to context switch.
 
 ### Feature Work in Progress
 ```bash
-You: /knowzcode:work "Add shopping cart persistence"
+You: /kc:work "Add shopping cart persistence"
 
 KnowzCode:
 Phase 1A: Complete
@@ -343,7 +343,7 @@ Phase 2A: Implementation started (20% done)
 
 ### Handle Bug Fix
 ```bash
-You: /knowzcode:work "Fix critical payment timeout issue"
+You: /kc:work "Fix critical payment timeout issue"
 
 KnowzCode:
 Starting new WorkGroup: kc-fix-20250117-110000

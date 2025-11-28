@@ -44,7 +44,7 @@ KnowzCode is a **Claude Code plugin** that transforms AI-assisted development in
 
 ```bash
 cd your-project/
-/knowzcode:init
+/kc:init
 ```
 
 ### Step 4: Connect to KnowzCode Cloud (Optional)
@@ -52,7 +52,7 @@ cd your-project/
 Unlock enhanced AI-powered features:
 
 ```bash
-/knowzcode:connect-mcp <your-api-key>
+/kc:connect-mcp <your-api-key>
 ```
 
 **Current Environment**: Development (`api.dev.knowz.io`) - Production coming after testing
@@ -72,7 +72,7 @@ Get your API key at [knowz.io/api-keys](https://knowz.io/api-keys)
 ### Start a New Feature
 
 ```bash
-/knowzcode:work "Build user authentication with email and password"
+/kc:work "Build user authentication with email and password"
 ```
 
 KnowzCode will:
@@ -85,24 +85,24 @@ KnowzCode will:
 ### Execute Specific Phases
 
 ```bash
-/knowzcode:step 1A    # Run impact analysis only
-/knowzcode:step 2A    # Jump to implementation
-/knowzcode:step 2B    # Run verification
+/kc:step 1A    # Run impact analysis only
+/kc:step 2A    # Jump to implementation
+/kc:step 2B    # Run verification
 ```
 
 ### Run Quality Audits
 
 ```bash
-/knowzcode:audit spec          # Review specifications
-/knowzcode:audit architecture  # Check architecture health
-/knowzcode:audit security      # Security assessment
-/knowzcode:audit integration   # Integration test coverage
+/kc:audit spec          # Review specifications
+/kc:audit architecture  # Check architecture health
+/kc:audit security      # Security assessment
+/kc:audit integration   # Integration test coverage
 ```
 
 ### Resume Work After Interruptions
 
 ```bash
-/knowzcode:continue           # Restore context and resume current WorkGroup
+/kc:continue           # Restore context and resume current WorkGroup
 # or just say: "continue"     # Automatically triggers continuation
 ```
 
@@ -122,7 +122,7 @@ KnowzCode uses Claude Code's plugin system to provide a clean separation between
 **Global Plugin** (installed once, auto-updates):
 ```
 ~/.claude/plugins/knowzcode/
-├── commands/     # All /knowzcode:* slash commands
+├── commands/     # All /kc:* slash commands
 ├── agents/       # Specialized sub-agents
 └── skills/       # Development skills
 ```
@@ -169,16 +169,16 @@ Each phase has **quality gates** that must pass before proceeding.
 
 | Command | Description | Example |
 |:--------|:------------|:--------|
-| `/knowzcode:init` | Initialize KnowzCode in project | `/knowzcode:init` |
-| `/knowzcode:work <goal>` | Start new feature WorkGroup | `/knowzcode:work "Add dark mode"` |
-| `/knowzcode:continue [wg-id]` | Resume current WorkGroup with context recovery | `/knowzcode:continue` |
-| `/knowzcode:step <phase>` | Execute specific phase | `/knowzcode:step 2A` |
-| `/knowzcode:audit [type]` | Run quality audits | `/knowzcode:audit security` |
-| `/knowzcode:plan [type]` | Generate development plans | `/knowzcode:plan feature` |
-| `/knowzcode:fix <target>` | Quick targeted fix | `/knowzcode:fix auth.js` |
-| `/knowzcode:resolve-conflicts` | Resolve merge conflicts | `/knowzcode:resolve-conflicts` |
-| `/knowzcode:connect-mcp` | Configure MCP server | `/knowzcode:connect-mcp <api-key>` |
-| `/knowzcode:status` | Check MCP connection status | `/knowzcode:status` |
+| `/kc:init` | Initialize KnowzCode in project | `/kc:init` |
+| `/kc:work <goal>` | Start new feature WorkGroup | `/kc:work "Add dark mode"` |
+| `/kc:continue [wg-id]` | Resume current WorkGroup with context recovery | `/kc:continue` |
+| `/kc:step <phase>` | Execute specific phase | `/kc:step 2A` |
+| `/kc:audit [type]` | Run quality audits | `/kc:audit security` |
+| `/kc:plan [type]` | Generate development plans | `/kc:plan feature` |
+| `/kc:fix <target>` | Quick targeted fix | `/kc:fix auth.js` |
+| `/kc:resolve-conflicts` | Resolve merge conflicts | `/kc:resolve-conflicts` |
+| `/kc:connect-mcp` | Configure MCP server | `/kc:connect-mcp <api-key>` |
+| `/kc:status` | Check MCP connection status | `/kc:status` |
 
 ## Example Workflow
 
@@ -187,13 +187,13 @@ Each phase has **quality gates** that must pass before proceeding.
 ```bash
 mkdir my-app && cd my-app
 git init
-/knowzcode:init
+/kc:init
 ```
 
 ### 2. Start First Feature
 
 ```bash
-/knowzcode:work "Build REST API with Express.js for user management"
+/kc:work "Build REST API with Express.js for user management"
 ```
 
 **KnowzCode will:**
@@ -215,7 +215,7 @@ See all WorkGroups, their status, and completion.
 ### 4. Continue Development
 
 ```bash
-/knowzcode:work "Add JWT authentication to API"
+/kc:work "Add JWT authentication to API"
 ```
 
 Each feature gets its own WorkGroup with full tracking.
@@ -290,15 +290,15 @@ Connect to **KnowzCode Cloud** for AI-powered enhancements via Model Context Pro
 
 ```bash
 # One-time setup per project
-/knowzcode:connect-mcp <your-api-key>
+/kc:connect-mcp <your-api-key>
 
 # Optional: Custom endpoint (self-hosted)
-/knowzcode:connect-mcp <your-api-key> --endpoint https://your-domain.com/mcp
+/kc:connect-mcp <your-api-key> --endpoint https://your-domain.com/mcp
 
 # Restart Claude Code to activate
 
 # Verify connection
-/knowzcode:status
+/kc:status
 ```
 
 Once connected, **all KnowzCode agents automatically use MCP tools**:
@@ -319,13 +319,13 @@ Choose how to configure the MCP server:
 
 ```bash
 # Local scope (default)
-/knowzcode:connect-mcp <api-key>
+/kc:connect-mcp <api-key>
 
 # Project-wide (team access)
-/knowzcode:connect-mcp <api-key> --scope project
+/kc:connect-mcp <api-key> --scope project
 
 # Global (all your projects)
-/knowzcode:connect-mcp <api-key> --scope user
+/kc:connect-mcp <api-key> --scope user
 ```
 
 #### Graceful Degradation
@@ -369,7 +369,7 @@ Get your API key: [knowz.io/api-keys](https://knowz.io/api-keys)
 1. **Install plugin**: `/plugin install knowzcode`
 2. **Your data is safe**: `knowzcode/` directory preserved automatically
 3. **Remove `.claude/`**: Commands now come from plugin
-4. **Update command usage**: Old `/kc` → New `/knowzcode:work`
+4. **Update command usage**: Old `/kc` → New `/kc:work`
 
 See **[MIGRATION_GUIDE.md](MIGRATION_GUIDE.md)** for detailed migration steps.
 
@@ -434,16 +434,16 @@ Work on multiple features simultaneously without conflicts:
 ```bash
 # Developer 1
 git checkout -b feature/profiles
-/knowzcode:work "Add user profiles"
+/kc:work "Add user profiles"
 
 # Developer 2
 git checkout -b feature/notifications
-/knowzcode:work "Add email notifications"
+/kc:work "Add email notifications"
 
 # Merge both - conflicts auto-resolve
 git merge feature/profiles          # ✓ Clean
 git merge feature/notifications     # Conflict (expected)
-/knowzcode:resolve-conflicts       # Auto-resolves safely
+/kc:resolve-conflicts       # Auto-resolves safely
 ```
 
 ## Documentation

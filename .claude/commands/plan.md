@@ -7,8 +7,8 @@ argument-hint: "[plan_type]"
 
 Execute strategic planning workflows using KnowzCode v2.0 planning infrastructure.
 
-**Usage**: `/knowzcode:plan [plan_type]`
-**Example**: `/knowzcode:plan strategy` or `/knowzcode:plan "major feature"`
+**Usage**: `/kc:plan [plan_type]`
+**Example**: `/kc:plan strategy` or `/kc:plan "major feature"`
 
 ## Workflow Steps
 
@@ -35,10 +35,10 @@ Execute strategic planning workflows using KnowzCode v2.0 planning infrastructur
 ## Example Usage
 
 ```
-/knowzcode:plan strategy
-/knowzcode:plan "major feature"
-/knowzcode:plan ideas
-/knowzcode:plan
+/kc:plan strategy
+/kc:plan "major feature"
+/kc:plan ideas
+/kc:plan
 ```
 
 ## Context Files

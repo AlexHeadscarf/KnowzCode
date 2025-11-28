@@ -26,7 +26,7 @@ Check the KnowzCode MCP server status and report findings to the user.
    ```
 
    - If configured: Extract scope, endpoint, headers
-   - If not configured: Report and suggest `/knowzcode:connect`
+   - If not configured: Report and suggest `/kc:connect`
 
 2. **Verify connection (if configured)**
    - The MCP server should automatically list its available tools
@@ -72,7 +72,7 @@ Check the KnowzCode MCP server status and report findings to the user.
    Troubleshooting:
      1. Check your internet connection
      2. Verify API key: https://knowz.io/api-keys
-     3. Reconfigure: /knowzcode:connect-mcp <new-key>
+     3. Reconfigure: /kc:connect-mcp <new-key>
      4. Check status: https://status.knowz.io
    ```
 
@@ -87,7 +87,7 @@ Check the KnowzCode MCP server status and report findings to the user.
      • Dependency analysis
 
    To enable these features:
-     /knowzcode:connect-mcp <api-key>
+     /kc:connect-mcp <api-key>
 
    Get an API key at: https://knowz.io/api-keys
    ```
@@ -151,7 +151,7 @@ analyze_dependencies
 ❌ Authentication Error
 The API key is invalid or expired.
 
-Update: /knowzcode:connect-mcp <new-key>
+Update: /kc:connect-mcp <new-key>
 ```
 
 ### Network Issues
@@ -177,39 +177,39 @@ Status: https://status.knowz.io
 
 ### Basic status check
 ```bash
-/knowzcode:status
+/kc:status
 ```
 
 ### After configuration
 ```bash
-/knowzcode:connect-mcp <api-key>
+/kc:connect-mcp <api-key>
 # ... restart Claude Code ...
-/knowzcode:status  # Verify everything works
+/kc:status  # Verify everything works
 ```
 
 ### Troubleshooting
 ```bash
-/knowzcode:status  # Check what's wrong
+/kc:status  # Check what's wrong
 # Follow suggested remediation steps
 ```
 
 ## Integration Notes
 
 This command is useful:
-- **After initial setup**: Verify `/knowzcode:connect` worked
+- **After initial setup**: Verify `/kc:connect` worked
 - **When tools seem unavailable**: Debug MCP connection
 - **Before starting work**: Confirm enhanced features active
 - **Troubleshooting**: Diagnose connectivity issues
 
 ## Related Commands
 
-- `/knowzcode:connect-mcp` - Configure MCP server
-- `/knowzcode:init` - Initialize KnowzCode
-- `/knowzcode:work` - Start feature (uses MCP if available)
+- `/kc:connect-mcp` - Configure MCP server
+- `/kc:init` - Initialize KnowzCode
+- `/kc:work` - Start feature (uses MCP if available)
 
 ## Important Notes
 
-- **Restart required**: After `/knowzcode:connect-mcp`, Claude Code must restart
+- **Restart required**: After `/kc:connect-mcp`, Claude Code must restart
 - **Graceful degradation**: KnowzCode works without MCP (just less powerful)
 - **No credentials shown**: Never display full API keys
 - **Clear guidance**: Always suggest next steps if issues found

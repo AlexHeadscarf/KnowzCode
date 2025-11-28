@@ -7,8 +7,8 @@ argument-hint: "<target> <summary>"
 
 Execute a targeted micro-fix within the KnowzCode v2.0 framework.
 
-**Usage**: `/knowzcode:fix <target> <summary>`
-**Example**: `/knowzcode:fix src/auth/login.ts "Fix null reference in password validation"`
+**Usage**: `/kc:fix <target> <summary>`
+**Example**: `/kc:fix src/auth/login.ts "Fix null reference in password validation"`
 
 ## Workflow Steps
 
@@ -26,8 +26,8 @@ Execute a targeted micro-fix within the KnowzCode v2.0 framework.
 ## Example Usage
 
 ```
-/knowzcode:fix src/auth/login.ts "Fix null reference in password validation"
-/knowzcode:fix NODE_AUTH_123 "Update error message formatting"
+/kc:fix src/auth/login.ts "Fix null reference in password validation"
+/kc:fix NODE_AUTH_123 "Update error message formatting"
 ```
 
 ## Context Files

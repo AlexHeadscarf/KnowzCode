@@ -318,7 +318,7 @@ No WorkGroup needed for micro-fixes
 ## Example Complete Loop Execution
 
 ```
-User: /knowzcode:work "Add user authentication"
+User: /kc:work "Add user authentication"
 
 Orchestrator:
 1. Generate WorkGroupID: kc-feat-20250104-193000
@@ -383,7 +383,7 @@ Orchestrator:
 
 **CRITICAL**: You must handle interruptions gracefully and recover complete context before resuming.
 
-### When Invoked via `/knowzcode:continue`
+### When Invoked via `/kc:continue`
 
 You are in **CONTINUATION MODE**. This is NOT a fresh start - it's a recovery operation.
 
@@ -395,7 +395,7 @@ You are in **CONTINUATION MODE**. This is NOT a fresh start - it's a recovery op
    - If WorkGroupID provided: Use it
    - If no WorkGroupID: Identify active WorkGroups
    - If multiple active: Present list, ask user to select
-   - If none active: Inform user, suggest /knowzcode:work
+   - If none active: Inform user, suggest /kc:work
    ```
 
 2. **Full Context Loading** (Load ALL before acting):

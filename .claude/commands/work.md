@@ -7,8 +7,8 @@ argument-hint: "[feature_description]"
 
 Start a new KnowzCode development workflow session.
 
-**Usage**: `/knowzcode:work "feature description"`
-**Example**: `/knowzcode:work "Build user authentication with JWT"`
+**Usage**: `/kc:work "feature description"`
+**Example**: `/kc:work "Build user authentication with JWT"`
 
 **Primary Goal**: $ARGUMENTS
 

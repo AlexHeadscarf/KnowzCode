@@ -6,7 +6,7 @@ The continuation feature provides robust interruption handling and context recov
 
 ## Components
 
-### 1. `/knowzcode:continue` Command
+### 1. `/kc:continue` Command
 
 **Location**: `commands/continue.md`
 
@@ -21,8 +21,8 @@ The continuation feature provides robust interruption handling and context recov
 
 **Usage**:
 ```bash
-/knowzcode:continue                    # Auto-detect active WorkGroup
-/knowzcode:continue kc-feat-20250117   # Specific WorkGroup
+/kc:continue                    # Auto-detect active WorkGroup
+/kc:continue kc-feat-20250117   # Specific WorkGroup
 ```
 
 **What It Does**:
@@ -52,7 +52,7 @@ The continuation feature provides robust interruption handling and context recov
 1. Detects continuation intent from user message
 2. Verifies knowzcode/ directory exists
 3. Acknowledges the intent to user
-4. Automatically executes `/knowzcode:continue` command
+4. Automatically executes `/kc:continue` command
 5. Lets orchestrator handle full state recovery
 
 **Benefits**:
@@ -69,7 +69,7 @@ The continuation feature provides robust interruption handling and context recov
 **Key Enhancements**:
 
 #### Mandatory Recovery Protocol
-When invoked via `/knowzcode:continue`, orchestrator enters **CONTINUATION MODE**:
+When invoked via `/kc:continue`, orchestrator enters **CONTINUATION MODE**:
 
 1. **State Discovery** (6-step checklist)
 2. **Full Context Loading** (6 file categories in specific order)
@@ -120,7 +120,7 @@ Continue Skill (detects pattern)
         ↓
 Acknowledges & redirects
         ↓
-/knowzcode:continue command
+/kc:continue command
         ↓
 kc-orchestrator (CONTINUATION MODE)
         ↓
@@ -273,14 +273,14 @@ User: "continue"
 ### Context Lost
 ```
 AI starts bypassing TDD discipline.
-User: "/knowzcode:continue"
+User: "/kc:continue"
 → Framework discipline re-established, TDD restored
 ```
 
 ### Switching Tasks
 ```
 Working on Feature A, interrupted by urgent bug.
-Fix bug, then: "/knowzcode:continue"
+Fix bug, then: "/kc:continue"
 → System shows active WorkGroups, user selects Feature A
 → Resumes Feature A with all context intact
 ```
@@ -288,14 +288,14 @@ Fix bug, then: "/knowzcode:continue"
 ### Multi-Session Development
 ```
 Day 1: Start feature, complete Phase 1A-1B
-Day 2: "/knowzcode:continue"
+Day 2: "/kc:continue"
 → Loads specs, detects Phase 2A ready, resumes implementation
 ```
 
 ### Quality Gate Bypassed
 ```
 Implementation claimed "done" without audit.
-User: "/knowzcode:continue"
+User: "/kc:continue"
 → Detects missing audit, triggers Phase 6B immediately
 ```
 
@@ -331,7 +331,7 @@ Potential improvements:
 
 The continuation feature provides **robust interruption recovery** for KnowzCode workflows:
 
-✅ **Command**: `/knowzcode:continue` for explicit resumption
+✅ **Command**: `/kc:continue` for explicit resumption
 ✅ **Skill**: Auto-triggers on "continue" phrases
 ✅ **Orchestrator**: Enhanced with full recovery protocol
 ✅ **Phase Detection**: Multi-signal algorithm for accuracy

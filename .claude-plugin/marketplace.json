@@ -6,14 +6,14 @@
   },
   "metadata": {
     "description": "Official KnowzCode plugin marketplace - AI-powered development workflows",
-    "version": "2.0.3"
+    "version": "2.0.4"
   },
   "plugins": [
     {
       "name": "kc",
       "source": "./",
       "description": "KnowzCode - AI-powered software development workflow framework with TDD, quality gates, and multi-agent orchestration",
-      "version": "2.0.3",
+      "version": "2.0.4",
       "author": {
         "name": "Alex Headscarf"
       },
@@ -22,7 +22,37 @@
       "license": "MIT",
       "keywords": ["tdd", "workflow", "agents", "quality", "automation"],
       "category": "Development Workflow",
-      "tags": ["tdd", "testing", "quality-assurance", "multi-agent", "orchestration"]
+      "tags": ["tdd", "testing", "quality-assurance", "multi-agent", "orchestration"],
+      "commands": [
+        "./commands/work.md",
+        "./commands/init.md",
+        "./commands/step.md",
+        "./commands/fix.md",
+        "./commands/audit.md",
+        "./commands/plan.md",
+        "./commands/continue.md",
+        "./commands/resolve-conflicts.md",
+        "./commands/connect-mcp.md",
+        "./commands/status.md"
+      ],
+      "agents": [
+        "./agents/kc-orchestrator.md",
+        "./agents/impact-analyst.md",
+        "./agents/spec-chief.md",
+        "./agents/implementation-lead.md",
+        "./agents/arc-auditor.md",
+        "./agents/finalization-steward.md",
+        "./agents/microfix-specialist.md",
+        "./agents/planning-strategist.md",
+        "./agents/security-officer.md",
+        "./agents/holistic-auditor.md",
+        "./agents/onboarding-auditor.md",
+        "./agents/architecture-reviewer.md",
+        "./agents/retrofit-specialist.md",
+        "./agents/update-coordinator.md",
+        "./agents/feature-orchestrator.md",
+        "./agents/spec-quality-auditor.md"
+      ]
     }
   ]
 }

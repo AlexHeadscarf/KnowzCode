@@ -6,14 +6,14 @@
   },
   "metadata": {
     "description": "Official KnowzCode plugin marketplace - AI-powered development workflows",
-    "version": "2.0.2"
+    "version": "2.0.3"
   },
   "plugins": [
     {
-      "name": "knowzcode",
+      "name": "kc",
       "source": "./",
-      "description": "AI-powered software development workflow framework with TDD, quality gates, and multi-agent orchestration",
-      "version": "2.0.2",
+      "description": "KnowzCode - AI-powered software development workflow framework with TDD, quality gates, and multi-agent orchestration",
+      "version": "2.0.3",
       "author": {
         "name": "Alex Headscarf"
       },

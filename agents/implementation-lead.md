@@ -131,6 +131,180 @@ After implementing all unit-level features:
 
 ---
 
+## Test Infrastructure Requirements (v2.0.5+)
+
+Before implementing features requiring specific test types, validate test infrastructure exists:
+
+### 1. Check Environment Capabilities
+
+Consult `knowzcode/environment_context.md` Section 9.1 (Test Framework Detection):
+
+```bash
+# Look for detected test frameworks
+grep -A 10 "TEST FRAMEWORK DETECTION" knowzcode/environment_context.md
+```
+
+### 2. Handle Missing Infrastructure
+
+**If E2E tests needed but no Playwright:**
+- Pause implementation
+- Report to user:
+  ```
+  ⚠️  E2E Testing Required
+
+  This feature requires end-to-end testing, but Playwright is not detected.
+
+  Options:
+  1. Install Playwright: npm install -D @playwright/test
+  2. Use Playwright MCP: /plugin install playwright
+  3. Skip E2E tests (not recommended for UI features)
+
+  Would you like me to help install Playwright?
+  ```
+
+**If Integration tests need HTTP client:**
+- Check for supertest, axios, or http test client
+- Suggest installation if missing
+- Example: "npm install -D supertest" for Express apps
+
+### 3. Validate Before Starting TDD
+
+```bash
+# Verify test runner works
+npm test -- --version  # or pytest --version
+
+# Verify test file discovery
+npm test -- --listTests  # or pytest --collect-only
+
+# Check configuration exists
+[[ -f "jest.config.js" ]] || [[ -f "pytest.ini" ]] || [[ -f "vitest.config.ts" ]]
+```
+
+### Integration Test Pattern (API Endpoints)
+
+**Example: Testing REST API endpoint**
+
+```typescript
+// tests/api/users.integration.test.ts
+import request from 'supertest';
+import app from '../../src/app';
+
+describe('POST /api/users', () => {
+  it('Should_CreateUser_WhenValidData', async () => {
+    const userData = {
+      name: 'Test User',
+      email: 'test@example.com',
+      password: 'SecurePass123'
+    };
+
+    const response = await request(app)
+      .post('/api/users')
+      .send(userData);
+
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveProperty('id');
+    expect(response.body.email).toBe(userData.email);
+  });
+
+  it('Should_Return400_WhenEmailInvalid', async () => {
+    const userData = {
+      name: 'Test User',
+      email: 'invalid-email',
+      password: 'SecurePass123'
+    };
+
+    const response = await request(app)
+      .post('/api/users')
+      .send(userData);
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty('error');
+  });
+});
+```
+
+### E2E Test Pattern (Playwright)
+
+**Example: Testing user registration flow**
+
+```typescript
+// tests/e2e/registration.spec.ts
+import { test, expect } from '@playwright/test';
+
+test.describe('User Registration', () => {
+  test('Should_CompleteRegistration_WhenValidInput', async ({ page }) => {
+    // Navigate to registration page
+    await page.goto('/register');
+
+    // Fill registration form
+    await page.fill('[name="email"]', 'user@example.com');
+    await page.fill('[name="password"]', 'SecurePass123');
+    await page.fill('[name="confirmPassword"]', 'SecurePass123');
+
+    // Submit form
+    await page.click('button[type="submit"]');
+
+    // Verify redirect to dashboard
+    await expect(page).toHaveURL('/dashboard');
+
+    // Verify welcome message
+    await expect(page.locator('.welcome-message')).toContainText('Welcome');
+  });
+
+  test('Should_ShowError_WhenPasswordMismatch', async ({ page }) => {
+    await page.goto('/register');
+
+    await page.fill('[name="email"]', 'user@example.com');
+    await page.fill('[name="password"]', 'SecurePass123');
+    await page.fill('[name="confirmPassword"]', 'DifferentPass');
+
+    await page.click('button[type="submit"]');
+
+    // Should remain on registration page
+    await expect(page).toHaveURL('/register');
+
+    // Should show error
+    await expect(page.locator('.error-message')).toBeVisible();
+  });
+});
+```
+
+### Task List Management During Implementation
+
+**MANDATORY**: Use Claude Code TodoWrite tool for granular tracking:
+
+**Per-feature breakdown:**
+```
+✓ Write failing test for email validation
+✓ Implement email validation logic
+✓ Write integration test for POST /api/users endpoint
+✓ Implement endpoint handler
+✓ Write E2E test for registration flow
+✓ Implement registration UI form
+✓ Verify all tests pass
+✓ Run static analysis
+✓ Build project
+```
+
+**Verification gate checklist:**
+```
+⬜ All unit tests pass
+⬜ All integration tests pass
+⬜ E2E tests pass (or N/A with justification)
+⬜ Static analysis clean
+⬜ Build succeeds
+⬜ ARC criteria verified from spec
+```
+
+**Real-time tracker updates:**
+- Mark completed immediately after verification
+- Don't batch-complete multiple tasks
+- Report blockers if verification fails after max iterations
+
+---
+
+---
+
 ## Verification Loop (Step 6A)
 
 **⛔ DO NOT report "implementation complete" until this passes:**

@@ -51,14 +51,26 @@ Initialize the `knowzcode/` directory structure in the current project with all 
    - Detect project language, framework, and tools
    - Populate `environment_context.md` with discovered information
    - Include package managers, test runners, build tools
+   - Run test framework detection (v2.0.5+)
 
-5. **Initialize git ignore (if needed)**
-   - Check if `.gitignore` exists
-   - Add `knowzcode/workgroups/` to gitignore (contains session-specific data)
-   - Keep `knowzcode/*.md` and `knowzcode/specs/` tracked
+5. **Capture user preferences (interactive, v2.0.5+)**
+   - Prompt user: "Would you like to configure development preferences? (optional, press Enter to skip)"
+   - If user responds "yes" or provides input, prompt for:
+     * Core development principles
+     * Testing framework preferences
+     * Code style preferences
+     * Language-specific patterns
+     * Quality priorities
+   - Create `knowzcode/user_preferences.md` with captured preferences
+   - If user skips, note "User preferences: Not configured" in environment_context.md
 
-6. **Report success**
-   - List all created files
+6. **Create knowzcode/.gitignore (v2.0.5+)**
+   - Copy `.gitignore` template to `knowzcode/.gitignore`
+   - This protects environment-specific files from accidental git commits
+   - Includes: environment_context.md, workgroups/, *.local.md, .scratch/
+
+7. **Report success**
+   - List all created files (including .gitignore and user_preferences.md if created)
    - Show next steps for the user
    - Explain how to start using KnowzCode
 
@@ -241,6 +253,8 @@ Created:
   • knowzcode/knowzcode_loop.md
   • knowzcode/automation_manifest.md
   • knowzcode/environment_context.md
+  • knowzcode/.gitignore (v2.0.5+)
+  • knowzcode/user_preferences.md (v2.0.5+, if configured)
   • knowzcode/specs/
   • knowzcode/workgroups/
   • knowzcode/prompts/
@@ -251,7 +265,11 @@ Next steps:
   3. View available commands: /help
 
 The knowzcode/ directory contains all project-specific KnowzCode data
-and is safe to commit to version control (except workgroups/).
+and is safe to commit to version control.
+
+Protected files (via .gitignore):
+  • environment_context.md (local environment details)
+  • workgroups/ (session-specific data)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 

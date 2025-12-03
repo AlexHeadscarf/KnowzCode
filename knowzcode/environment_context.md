@@ -56,6 +56,18 @@ for tool in git node npm python3 python pip pip3 yarn pnpm go rust java mvn grad
     which $tool >/dev/null 2>&1 && echo "✓ $tool: $(which $tool)" || echo "✗ $tool: not available"
 done
 
+# Test Framework Detection (ADDED v2.0.5)
+echo ""
+echo "=== TEST FRAMEWORK DETECTION ==="
+for tool in jest vitest pytest playwright cypress mocha jasmine; do
+    which $tool >/dev/null 2>&1 && echo "✓ $tool: $(which $tool)" || echo "✗ $tool: not available"
+done
+# Check for installed test frameworks via package managers
+npm list jest vitest playwright cypress 2>/dev/null | grep -E "jest|vitest|playwright|cypress" && echo "✓ npm test packages found" || echo "✗ no npm test packages"
+pip list 2>/dev/null | grep -E "pytest|playwright" && echo "✓ pip test packages found" || echo "✗ no pip test packages"
+npx playwright --version 2>/dev/null && echo "✓ Playwright available via npx" || echo "✗ Playwright not available"
+echo "=== END TEST FRAMEWORK DETECTION ==="
+
 # Process & Port Management Detection
 lsof -i :5000 2>/dev/null && echo "✓ lsof available" || echo "✗ lsof not available"
 netstat -tln 2>/dev/null | head -5 && echo "✓ netstat available" || echo "✗ netstat not available"
@@ -118,6 +130,13 @@ environment:
     uses_workflow_system: [true|false]
     uses_container_orchestration: [true|false]
     uses_serverless_deployment: [true|false]
+
+  # User Preferences Integration (ADDED v2.0.5)
+  user_preferences:
+    source: "[Path to knowzcode/user_preferences.md or 'Not configured']"
+    testing_framework: "[User preference or auto-detected]"
+    code_style: "[User preference or language standard]"
+    quality_priorities: "[User-specified priority list]"
 ```
 
 **Profile Name:** [Platform-Stack-Version, e.g., Replit-NodeJS-v20, Lovable-React-v18, AWS-ECS-Python-3.11]  

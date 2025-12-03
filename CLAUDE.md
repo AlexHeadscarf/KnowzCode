@@ -89,14 +89,20 @@ After installing the plugin, you have access to:
 The `knowzcode/` directory should be **committed to git**:
 
 ```gitignore
-# Commit these
+# Commit these (tracked by git)
 knowzcode/*.md
 knowzcode/specs/
 knowzcode/prompts/
+knowzcode/user_preferences.md  # v2.0.5+
 
-# Optional: Exclude session-specific data
-knowzcode/workgroups/
+# Protected by knowzcode/.gitignore (NOT committed)
+knowzcode/environment_context.md  # Local environment details
+knowzcode/workgroups/             # Session-specific data
+knowzcode/*.local.md              # Personal notes
+knowzcode/.scratch/               # Scratch files
 ```
+
+**v2.0.5+**: A `.gitignore` file is automatically created in `knowzcode/` during initialization to protect environment-specific files from accidental commits.
 
 ### What You Edit
 
@@ -144,6 +150,45 @@ KnowzCode guides you through each phase with quality gates:
 - **Phase 2A (Implementation)**: Build with TDD
 - **Phase 2B (Verification)**: Quality checks
 - **Phase 3 (Finalization)**: Update docs and close WorkGroup
+
+## New in v2.0.5
+
+### Environment Protection
+
+- **Automatic .gitignore**: Prevents accidental commit of environment-specific files
+- **Protected files**: `environment_context.md`, `workgroups/`, `*.local.md`
+- **Committed files**: Specs, architecture docs, user preferences
+
+### Enhanced Test Verification
+
+- **Test infrastructure detection**: Automatically detects Jest, Playwright, PyTest, etc.
+- **Helpful error messages**: Prompts installation when test frameworks are missing
+- **Pattern examples**: Integration and E2E test patterns included in implementation-lead agent
+- **Task breakdown guidance**: Better tracking of verification loops
+
+### User Preferences
+
+- **Interactive init**: Optional prompts for development preferences during `/kc:init`
+- **Preference capture**: Testing frameworks, code style, quality priorities, language patterns
+- **Integration**: Preferences work within KnowzCode's mandatory TDD requirements
+- **Storage**: `knowzcode/user_preferences.md` (committed to git)
+
+### Upgrading Existing Projects
+
+Run `/kc:init` and choose "Merge" to add v2.0.5 features:
+
+```bash
+cd existing-project/
+/kc:init
+
+# Choose option: "Merge (add missing files only)"
+# This will:
+#  - Add knowzcode/.gitignore
+#  - Prompt for user preferences (optional)
+#  - Preserve all existing files
+```
+
+No data loss, fully opt-in!
 
 ## For Plugin Developers
 

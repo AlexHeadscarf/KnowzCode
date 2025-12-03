@@ -1,0 +1,13 @@
+# KnowzCode Environment-Specific Files
+# These files contain local development environment details
+# and should remain purely local to each checkout
+
+# Environment context (filled during init, unique per dev environment)
+environment_context.md
+
+# Session-specific WorkGroup data
+workgroups/
+
+# Personal notes and scratch files
+*.local.md
+.scratch/

@@ -36,3 +36,10 @@ dist/
 build/
 *.min.js
 *.min.css
+
+# AI-generated temporary artifacts
+RELEASE_NOTES_*.md
+*_DRAFT.md
+*_PLANNING.md
+*.scratch.md
+.scratch/

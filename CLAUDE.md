@@ -151,6 +151,18 @@ KnowzCode guides you through each phase with quality gates:
 - **Phase 2B (Verification)**: Quality checks
 - **Phase 3 (Finalization)**: Update docs and close WorkGroup
 
+## New in v2.0.6
+
+### Opus 4.5 Model Upgrade
+
+All 32 agents now use Claude Opus 4.5 instead of Sonnet:
+
+- **Better quality**: Opus 4.5 scores 80.9% vs Sonnet's 77.2% on SWE-bench
+- **Cost-effective**: With prompt caching (90% savings on cache reads), Opus is comparable or cheaper than Sonnet
+- **Simpler config**: No model-switching logic needed - consistent quality across all agents
+
+This change improves output quality for all KnowzCode operations including implementation, specification writing, auditing, and orchestration.
+
 ## New in v2.0.5
 
 ### Environment Protection

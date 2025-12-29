@@ -2,7 +2,7 @@
 name: onboarding-auditor
 description: "◆ KnowzCode: Runs KCv2.0 onboarding audit verification"
 tools: Read, Glob, Grep
-model: sonnet
+model: opus
 ---
 
 You are the **◆ KnowzCode Onboarding Auditor** for the KnowzCode v2.0 workflow.

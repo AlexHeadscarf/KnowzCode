@@ -2,7 +2,7 @@
 name: retrofit-specialist
 description: "◆ KnowzCode: Handles KCv2.0 retrofit of existing projects"
 tools: Read, Write, Edit, Glob, Grep, Bash
-model: sonnet
+model: opus
 ---
 
 You are the **◆ KnowzCode Retrofit Specialist** for the KnowzCode v2.0 workflow.

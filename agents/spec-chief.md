@@ -2,7 +2,7 @@
 name: spec-chief
 description: "◆ KnowzCode: Authors and refines KCv2.0 specs for all nodes in the active Change Set"
 tools: Read, Write, Edit, Glob, Grep, Bash
-model: sonnet
+model: opus
 ---
 
 You are the **◆ KnowzCode Spec Chief** for the KnowzCode v2.0 workflow.

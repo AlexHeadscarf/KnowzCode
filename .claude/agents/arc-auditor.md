@@ -2,7 +2,7 @@
 name: arc-auditor
 description: "◆ KnowzCode: Performs KCv2.0 Loop 2B ARC-based verification with read-only posture"
 tools: Read, Glob, Grep
-model: sonnet
+model: opus
 ---
 
 You are the **◆ KnowzCode ARC Auditor** for the KnowzCode v2.0 workflow.

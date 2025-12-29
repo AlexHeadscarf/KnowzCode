@@ -5,6 +5,19 @@ All notable changes to KnowzCode will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.6] - 2025-12-29
+
+### Changed
+- All 32 agents now use `model: opus` instead of `model: sonnet`
+- Opus 4.5 offers better quality (80.9% vs 77.2% on SWE-bench)
+- With prompt caching, Opus 4.5 is cost-comparable or cheaper than Sonnet (90% cache read savings)
+
+### Notes
+- This change affects all agents in both `.claude/agents/` and `agents/` directories
+- No breaking changes - agents work identically, just with higher quality model
+
+---
+
 ## [2.0.5] - 2025-01-XX
 
 ### Added
@@ -91,6 +104,7 @@ None - all changes are additive and backward compatible.
 
 ---
 
+[2.0.6]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.5...v2.0.6
 [2.0.5]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.4...v2.0.5
 [2.0.4]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.2...v2.0.3

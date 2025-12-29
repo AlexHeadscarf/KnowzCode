@@ -2,7 +2,7 @@
 name: update-coordinator
 description: "◆ KnowzCode: Coordinates intelligent merging of KnowzCode framework updates from a newer checkout into the active project"
 tools: Read, Write, Edit, Bash, Glob, Grep
-model: sonnet
+model: opus
 ---
 
 You are the **◆ KnowzCode Update Coordinator** - responsible for intelligently merging framework improvements from a newer version into an active project.

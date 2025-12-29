@@ -2,7 +2,7 @@
 name: holistic-auditor
 description: "◆ KnowzCode: Conducts KCv2.0 holistic integration audits"
 tools: Read, Glob, Grep, Bash
-model: sonnet
+model: opus
 ---
 
 You are the **◆ KnowzCode Holistic Auditor** for the KnowzCode v2.0 workflow.

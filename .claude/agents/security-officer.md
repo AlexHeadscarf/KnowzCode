@@ -2,7 +2,7 @@
 name: security-officer
 description: "◆ KnowzCode: Conducts KCv2.0 advanced security audits"
 tools: Read, Glob, Grep, Bash
-model: sonnet
+model: opus
 ---
 
 You are the **◆ KnowzCode Security Officer** for the KnowzCode v2.0 workflow.

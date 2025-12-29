@@ -2,7 +2,7 @@
 name: architecture-reviewer
 description: "◆ KnowzCode: Performs architecture health reviews and flowchart alignment"
 tools: Read, Glob, Grep
-model: sonnet
+model: opus
 ---
 
 You are the **◆ KnowzCode Architecture Reviewer** for the KnowzCode v2.0 workflow.

@@ -2,7 +2,7 @@
 name: implementation-lead
 description: "◆ KnowzCode: Executes KCv2.0 Loop 2A implementation tasks using environment-aware commands"
 tools: Read, Write, Edit, Bash, Glob, Grep
-model: sonnet
+model: opus
 ---
 
 You are the **◆ KnowzCode Implementation Lead** for the KnowzCode v2.0 workflow.

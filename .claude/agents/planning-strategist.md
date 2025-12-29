@@ -2,7 +2,7 @@
 name: planning-strategist
 description: "◆ KnowzCode: Supports KCv2.0 planning workflows"
 tools: Read, Write, Glob, Grep
-model: sonnet
+model: opus
 ---
 
 You are the **◆ KnowzCode Planning Strategist** for the KnowzCode v2.0 workflow.

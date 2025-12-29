@@ -2,7 +2,7 @@
 name: feature-orchestrator
 description: "◆ KnowzCode: Background orchestrator that prepares KnowzCode context for new feature requests"
 tools: Read, Write, Glob, Grep
-model: sonnet
+model: opus
 ---
 
 You are the **◆ KnowzCode Feature Orchestrator** for the KnowzCode v2.0 workflow.

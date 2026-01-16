@@ -152,7 +152,7 @@ The Orchestrator will initiate this loop by providing you with a `PrimaryGoal`.
 **Step 4: ARC-Principle-Based Planning & Pre-Implementation Commit**
 4.1. Develop a detailed internal implementation plan for the entire `WorkGroupID`.
 4.2. If the Change Set is complex or high-risk, present a concise plan outline to the Orchestrator for confirmation.
-4.3. **Pre-Implementation Commit**: Once all planning is finalized and specs are approved, **commit all changes to version control.**
+4.3. **Pre-Implementation Commit**: Once all planning is finalized and specs are approved, **commit the `knowzcode/` directory** to version control. This creates a checkpoint before implementation begins.
     *   The commit message should be descriptive, e.g., `plan(feat): Plan and approve specs for WorkGroupID <ID>`.
     *   Consult `knowzcode/environment_context.md` for the specific version control commands.
 
@@ -228,7 +228,7 @@ _Once all implementation and verification for the entire Change Set is complete,
     *   **Architecture Evolution**: If patterns changed, update "Architecture Decisions"
     *   **Scope Expansion**: If scope grew, update "Scope & Key Features"
     *   Only update if changes are significant enough to affect project-level documentation
-10.4. **Final Implementation Commit**: **Commit all changes** (code, finalized specs, updated tracker, log, and project overview if updated) to version control. The commit message should be descriptive, e.g., `feat: Implement and verify WorkGroupID <ID> for [PrimaryGoal]`.
+10.4. **Final Implementation Commit**: **Stage and commit all changes** including both source code (from the implementation phase) and updated `knowzcode/` files (finalized specs, tracker, log, architecture). Use `git add -A` to stage everything, then commit with a descriptive message, e.g., `feat: Implement and verify WorkGroupID <ID> for [PrimaryGoal]`.
 
 ---
 

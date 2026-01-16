@@ -5,6 +5,22 @@ All notable changes to KnowzCode will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.13] - 2026-01-16
+
+### Fixed
+- **Git commit contradictions** in finalization phase
+  - Pre-Implementation Commit (Step 4.3) now clearly commits `knowzcode/` directory only
+  - Final Implementation Commit (Step 10.4) explicitly includes both source code AND knowzcode/ files
+  - Added `git add -A` instruction to stage all changes before final commit
+  - Resolved ambiguity between "commit all changes" vs "commit knowzcode/ only"
+
+### Changed
+- `knowzcode/knowzcode_loop.md` - Clarified two distinct commit points with explicit scopes
+- `agents/finalization-steward.md` - Added `git add -A` step before commit in example flow
+- `knowzcode/prompts/KCv2.0__[LOOP_3]__Finalize_And_Commit.md` - Updated to mention staging all changes
+
+---
+
 ## [2.0.10] - 2026-01-16
 
 ### Added

@@ -41,7 +41,7 @@ The implementation and verification for the specified `WorkGroupID` is complete.
         - New libraries/tools → Update "Technology Stack" table
         - Architecture changes → Update "Architecture Decisions"
         - Scope expansion → Update "Scope & Key Features"
-    *   **Final Commit:** Perform the **Final Implementation Commit** with a descriptive `feat:` message.
+    *   **Final Commit:** Stage ALL changes using `git add -A` (this includes source code from implementation AND knowzcode/ files), then commit with a descriptive `feat:` message.
 
 ### Final Report
 

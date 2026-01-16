@@ -98,7 +98,8 @@ SERIAL (Phase B):
 3. Edit knowzcode_architecture.md (add new components)
 4. Edit knowzcode_log.md (append ARC-Completion entry)
 5. Edit knowzcode_tracker.md (change [WIP] → [VERIFIED])
-6. git commit -m "KnowzCode: Finalize WorkGroup {wgid}"
+6. git add -A  # Stage ALL changes (source code + knowzcode/)
+7. git commit -m "feat: Implement and verify WorkGroup {wgid}"
 ```
 
 ---

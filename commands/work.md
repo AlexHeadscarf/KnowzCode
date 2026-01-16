@@ -3,6 +3,27 @@ description: "Start a new KnowzCode development workflow with TDD, quality gates
 argument-hint: "[feature_description]"
 ---
 
+## ⛔ MANDATORY EXECUTION ORDER - DO NOT SKIP
+
+**STOP. Before analyzing the goal or investigating code, execute these steps IN ORDER:**
+
+1. ✅ **Step 0**: Prerequisite Check (verify knowzcode/ initialized)
+2. ✅ **Step 1**: Generate WorkGroup ID
+3. ✅ **Step 2**: Load Context Files
+4. ✅ **Step 3**: Create WorkGroup File
+5. ✅ **Step 4**: Input Classification (question vs implementation)
+6. ✅ **Step 5**: THEN spawn Phase 1A agents
+
+**DO NOT:**
+- ❌ Read source code files before Step 3 is complete
+- ❌ Search the codebase before WorkGroup exists
+- ❌ Investigate the problem before loading context
+- ❌ Skip any steps
+
+The Phase 1A agents (impact-analyst, security-officer, architecture-reviewer) will do the investigation. Your job is to SET UP the workflow first.
+
+---
+
 # Work on New Feature
 
 Start a new KnowzCode development workflow session.
@@ -11,54 +32,6 @@ Start a new KnowzCode development workflow session.
 **Example**: `/kc:work "Build user authentication with JWT"`
 
 **Primary Goal**: $ARGUMENTS
-
----
-
-## Input Classification (Pre-Check)
-
-Before proceeding with full orchestration, classify the input.
-
-### Question Detection
-
-Analyze `$ARGUMENTS` for investigation patterns:
-
-**Question Indicators** (suggest `/kc:plan investigate`):
-- Starts with: `is`, `does`, `how`, `why`, `are`, `what`, `can`, `should`
-- Contains: `properly`, `correctly`, `using`, `following`, `?`
-- Phrased as inquiry: "tell me", "explain", "analyze", "check if"
-
-**Implementation Indicators** (proceed with `/kc:work`):
-- Starts with: `build`, `add`, `create`, `implement`, `fix`, `refactor`, `update`, `remove`
-- Contains: `feature`, `functionality`, `endpoint`, `component`, `service`
-- Action-oriented: imperative verbs requesting creation/modification
-
-### Classification Action
-
-```
-IF question_indicators AND NOT implementation_indicators:
-    SUGGEST: "This looks like an investigation question. Use:
-              /kc:plan investigate '{$ARGUMENTS}'
-              This spawns parallel research agents for efficient exploration.
-              Then say 'implement' to proceed with findings."
-    WAIT for user confirmation before proceeding
-
-IF implementation_indicators:
-    CONTINUE with orchestration below
-```
-
-### Investigation Context Loading
-
-Check for recent investigation context:
-1. Look for `knowzcode/planning/investigation-*.md` files
-2. If recent investigation (< 30 min old) exists:
-   ```
-   Found recent investigation: investigation-{timestamp}.md
-   Load this context for Phase 1A? [y/n]
-   ```
-3. If user confirms or uses `--from-investigation` flag:
-   - Load investigation findings
-   - Pre-populate Phase 1A with discovered NodeIDs
-   - Skip redundant discovery - focus on validation
 
 ---
 
@@ -96,6 +69,30 @@ If genuinely trivial, inform the user: "This appears to be a micro-fix. Would yo
 
 ## Initial Setup (Do Once)
 
+### Step 0: Prerequisite Check (REQUIRED - DO FIRST)
+
+Before proceeding, verify KnowzCode is initialized:
+
+1. Check if `knowzcode/` directory exists
+2. Check if ALL required files exist:
+   - `knowzcode/knowzcode_loop.md`
+   - `knowzcode/knowzcode_tracker.md`
+   - `knowzcode/knowzcode_project.md`
+   - `knowzcode/knowzcode_architecture.md`
+
+**If any files are missing:**
+```
+⚠️ KnowzCode not initialized or missing required files.
+Missing: [list missing files]
+
+Please run `/kc:init` first to set up KnowzCode in this project.
+```
+STOP - do not proceed with workflow.
+
+**If all files exist:** Continue to Step 1.
+
+---
+
 ### Step 1: Generate WorkGroup ID
 ```
 Format: kc-feat-YYYYMMDD-HHMMSS
@@ -131,6 +128,54 @@ Create `knowzcode/workgroups/{WorkGroupID}.md` with initial structure:
 |-------|--------|-----------|
 | 1A | In Progress | {timestamp} |
 ```
+
+---
+
+## Step 4: Input Classification (After Setup Complete)
+
+Now that the WorkGroup exists, classify the input before spawning agents.
+
+### Question Detection
+
+Analyze `$ARGUMENTS` for investigation patterns:
+
+**Question Indicators** (suggest `/kc:plan investigate`):
+- Starts with: `is`, `does`, `how`, `why`, `are`, `what`, `can`, `should`
+- Contains: `properly`, `correctly`, `using`, `following`, `?`
+- Phrased as inquiry: "tell me", "explain", "analyze", "check if"
+
+**Implementation Indicators** (proceed to Phase 1A):
+- Starts with: `build`, `add`, `create`, `implement`, `fix`, `refactor`, `update`, `remove`
+- Contains: `feature`, `functionality`, `endpoint`, `component`, `service`
+- Action-oriented: imperative verbs requesting creation/modification
+
+### Classification Action
+
+```
+IF question_indicators AND NOT implementation_indicators:
+    SUGGEST: "This looks like an investigation question. Use:
+              /kc:plan investigate '{$ARGUMENTS}'
+              This spawns parallel research agents for efficient exploration.
+              Then say 'implement' to proceed with findings."
+    WAIT for user confirmation before proceeding
+
+IF implementation_indicators:
+    CONTINUE to Phase 1A below
+```
+
+### Investigation Context Loading
+
+Check for recent investigation context:
+1. Look for `knowzcode/planning/investigation-*.md` files
+2. If recent investigation (< 30 min old) exists:
+   ```
+   Found recent investigation: investigation-{timestamp}.md
+   Load this context for Phase 1A? [y/n]
+   ```
+3. If user confirms or uses `--from-investigation` flag:
+   - Load investigation findings
+   - Pre-populate Phase 1A with discovered NodeIDs
+   - Skip redundant discovery - focus on validation
 
 ---
 

@@ -193,6 +193,38 @@ Added codebase investigation using parallel research subagents:
 - Research happens efficiently in parallel subagents
 - Seamless handoff from investigation to implementation
 
+## New in v2.0.11
+
+### Enhanced Parallel Execution Philosophy
+
+Extended "PARALLEL is DEFAULT" philosophy comprehensively across both orchestrator and agent levels:
+
+**Two-Level Parallel Guidance:**
+- **Orchestrator level** (commands) - Parallel agent spawning with file conflict analysis
+- **Agent level** - Internal parallel operations guidance for each specialized agent
+
+**Phase 2A Parallel Implementation:**
+- **File Conflict Analysis** - Detects NodeID pairs that share files
+- **Batch Grouping** - Non-conflicting NodeIDs grouped for parallel execution
+- **Sequential Fallback** - Complex conflicts handled safely in sequence
+- **Example**: 4 NodeIDs with 1 conflict → 3 parallel + 1 sequential = faster than all 4 sequential
+
+**Agent-Specific Parallel Guidance:**
+All agents now include standardized parallel execution sections:
+- `implementation-lead` - NodeID batching, file analysis parallel; TDD cycle sequential
+- `finalization-steward` - Prep phase parallel; final atomic writes sequential
+- `spec-chief` - Multi-NodeID drafting parallel; coherence review sequential
+- `impact-analyst` - File scanning, dependency tracing parallel; Change Set consolidation sequential
+- `arc-auditor` - Per-NodeID verification parallel; final report sequential
+- `holistic-auditor` - Integration checks parallel; cross-component analysis sequential
+- `security-officer` - Vulnerability scans parallel; risk assessment sequential
+- `architecture-reviewer` - Pattern detection parallel; coherence evaluation sequential
+
+**Key Principle:**
+- PARALLEL is the DEFAULT for independent operations
+- SEQUENTIAL is the EXCEPTION when data dependencies exist
+- TDD within NodeIDs remains strictly sequential (RED→GREEN→REFACTOR)
+
 ## New in v2.0.7
 
 ### Command-as-Orchestrator Architecture

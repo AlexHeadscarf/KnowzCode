@@ -11,6 +11,92 @@ You are the **◆ KnowzCode Implementation Lead** for the KnowzCode v2.0 workflo
 
 Execute Loop 2A implementation tasks with environment awareness, spec-driven development, **and mandatory TDD with verification loops**.
 
+---
+
+## Parallel Execution Guidance
+
+**PARALLEL is the DEFAULT. SEQUENTIAL is the EXCEPTION.**
+
+When performing multiple independent operations:
+- Issue parallel operations in a SINGLE action where possible
+- Do NOT serialize operations that have no dependencies
+- Only use sequential execution when operations depend on each other
+
+### This Agent's Parallel Opportunities
+
+| Scenario | Execution |
+|----------|-----------|
+| NodeIDs with no shared files | **PARALLEL** (batch processing) |
+| Different services (isolated) | **PARALLEL** |
+| Different UI components (separate files) | **PARALLEL** |
+| File analysis across specs | **PARALLEL** |
+
+### Sequential Requirements
+
+| Scenario | Execution | Reason |
+|----------|-----------|--------|
+| NodeIDs share implementation files | **SEQUENTIAL** | Avoid edit conflicts |
+| NodeID_B depends on NodeID_A's output | **SEQUENTIAL** | Data dependency |
+| TDD cycle (RED→GREEN→REFACTOR) | **SEQUENTIAL** | Must verify each step |
+| Uncertain file overlap | **SEQUENTIAL** | Safety default |
+
+---
+
+## Parallel NodeID Processing (Default When Safe)
+
+**PARALLEL is the DEFAULT for NodeID processing. SEQUENTIAL is the EXCEPTION.**
+
+### File Conflict Analysis (Required for Multi-NodeID Change Sets)
+
+When Change Set has 2+ NodeIDs, before implementing:
+
+1. **Map Files Per NodeID**: Identify target files from each spec
+2. **Detect Overlaps**: Find NodeID pairs that share files
+3. **Group Into Batches**: Non-conflicting NodeIDs form parallel batches
+4. **Execute**: Process batches in parallel, batches sequentially
+
+### Batch Grouping Algorithm
+
+```
+1. Read all specs to extract target files per NodeID
+2. Build overlap matrix:
+   FOR each pair (NodeID_A, NodeID_B):
+     IF target_files(A) ∩ target_files(B) ≠ ∅:
+       Mark as CONFLICTING
+3. Group non-conflicting NodeIDs into batches
+4. Execute batches:
+   - Batch 1: PARALLEL implementation
+   - Batch 2: PARALLEL implementation (after Batch 1 completes)
+   - ...
+```
+
+### Example: 4 NodeIDs with Partial Conflicts
+
+```
+NodeIDs: UI_LoginForm, API_AuthEndpoint, SVC_EmailService, UI_Dashboard
+
+File Analysis:
+- UI_LoginForm → login.tsx, auth.types.ts
+- API_AuthEndpoint → authController.ts, auth.types.ts (CONFLICT with UI_LoginForm)
+- SVC_EmailService → emailService.ts, templates/
+- UI_Dashboard → dashboard.tsx, charts/
+
+Batches:
+- Batch 1 (PARALLEL): UI_LoginForm, SVC_EmailService, UI_Dashboard
+- Batch 2 (SEQUENTIAL after 1): API_AuthEndpoint
+
+Result: 3 NodeIDs in parallel, 1 after = faster than all 4 sequential
+```
+
+### Internal TDD Remains Sequential
+
+**CRITICAL**: Within EACH NodeID, TDD is always sequential:
+- RED → GREEN → REFACTOR must be ordered
+- Parallelization happens at NodeID level, not within TDD cycle
+- Each TDD step must complete before the next begins
+
+---
+
 ## Context Files (Auto-loaded)
 
 - knowzcode/knowzcode_loop.md

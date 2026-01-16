@@ -341,41 +341,107 @@ git commit -m "KnowzCode: Specs approved for {WorkGroupID}"
 
 ---
 
-### Phase 2A: Implementation (With Verification Loop)
+### Phase 2A: Implementation (PARALLEL When Safe)
 
-**SPAWN via Task tool:**
+**PARALLEL is the DEFAULT for NodeID implementation. SEQUENTIAL is the EXCEPTION.**
+
+**Single NodeID**: Spawn one implementation-lead agent.
+
+**Multiple NodeIDs (2+)**: Perform file conflict analysis, then spawn parallel batches.
+
+#### Step 2A.1: File Conflict Analysis
+
+Before spawning implementation agents, analyze file overlaps:
+
 ```
+1. Read each spec to identify target files:
+   FOR each NodeID in Change Set:
+     target_files[NodeID] = extract files from knowzcode/specs/{NodeID}.md
+
+2. Build overlap matrix:
+   FOR each pair (NodeID_A, NodeID_B):
+     IF target_files[NodeID_A] ∩ target_files[NodeID_B] ≠ ∅:
+       conflicts.add((NodeID_A, NodeID_B))
+
+3. Group into non-conflicting batches:
+   Batch 1: NodeIDs with no conflicts among themselves
+   Batch 2: Remaining NodeIDs that conflict with Batch 1
+   ...
+```
+
+#### Step 2A.2: Parallel Batch Execution
+
+For each batch of non-conflicting NodeIDs, spawn PARALLEL implementation-lead instances in a SINGLE response.
+
+**CRITICAL**: Issue ALL Task tool calls for a batch in a SINGLE response.
+
+**Example with 4 NodeIDs (2 batches):**
+
+```
+# Batch 1: Non-conflicting NodeIDs (PARALLEL - SINGLE response)
+
+# Task 1: Implement UI_LoginForm
 subagent_type: "implementation-lead"
 prompt: |
-  Implement the Change Set using strict TDD.
+  Implement a SINGLE NodeID using strict TDD.
 
   Context:
   - WorkGroupID: {wgid}
-  - Phase: 2A - Implementation with verification cycle
-  - Change Set: {NodeIDs}
-  - Approved Specs: All NodeIDs have approved specs at knowzcode/specs/
+  - Phase: 2A - Implementation (Batch 1 of 2)
+  - Target NodeID: UI_LoginForm
+  - Spec: knowzcode/specs/UI_LoginForm.md
 
   Instructions:
-  1. Read each spec from knowzcode/specs/{NodeID}.md
-  2. For EACH feature, follow TDD:
-     - RED: Write failing test
-     - GREEN: Minimal code to pass
-     - REFACTOR: Clean up
-  3. Run verification loop:
-     - All tests pass
-     - Static analysis clean
-     - Build succeeds
-     - ARC criteria met
-  4. If verification fails: Fix and retry (max 10 iterations)
-  5. Report "implementation complete" only when ALL checks pass
+  1. Read spec from knowzcode/specs/UI_LoginForm.md
+  2. Follow TDD for ALL features in spec
+  3. Run verification loop for this NodeID
+  4. Report status when complete
 
-  Return: Implementation status with verification results
+  Return: Implementation status for UI_LoginForm
+
+# Task 2: Implement SVC_EmailService (PARALLEL with Task 1)
+subagent_type: "implementation-lead"
+prompt: |
+  Implement a SINGLE NodeID using strict TDD.
+
+  Context:
+  - WorkGroupID: {wgid}
+  - Phase: 2A - Implementation (Batch 1 of 2)
+  - Target NodeID: SVC_EmailService
+  - Spec: knowzcode/specs/SVC_EmailService.md
+
+  Instructions:
+  1. Read spec from knowzcode/specs/SVC_EmailService.md
+  2. Follow TDD for ALL features in spec
+  3. Run verification loop for this NodeID
+  4. Report status when complete
+
+  Return: Implementation status for SVC_EmailService
+
+# Wait for Batch 1 to complete, then spawn Batch 2
 ```
 
-**When agent returns:**
-1. Review implementation status
-2. If verification failed after max iterations: Present blocker to user
-3. If verification passed: Update workgroup file, proceed to Phase 2B
+#### Step 2A.3: Batch Completion and Continuation
+
+**When Batch N agents return:**
+1. Collect all implementation statuses
+2. If ANY failed after max iterations: Present blocker for that NodeID
+3. If ALL succeeded: Proceed to Batch N+1 (if exists) or Phase 2B
+
+**After ALL batches complete:**
+1. Run unified verification across all NodeIDs
+2. Present consolidated implementation summary
+3. Update workgroup file, proceed to Phase 2B
+
+**Fallback for Complex Conflicts:**
+
+If conflict analysis is uncertain or >50% of NodeIDs conflict:
+```
+Fall back to SEQUENTIAL execution:
+- Spawn one implementation-lead per NodeID
+- Wait for completion before spawning next
+- Safer but slower
+```
 
 ---
 

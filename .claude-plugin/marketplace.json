@@ -6,14 +6,14 @@
   },
   "metadata": {
     "description": "Official KnowzCode plugin marketplace - AI-powered development workflows",
-    "version": "2.0.15"
+    "version": "2.0.16"
   },
   "plugins": [
     {
       "name": "kc",
       "source": "./",
       "description": "KnowzCode - AI-powered software development workflow framework with TDD, quality gates, and multi-agent orchestration",
-      "version": "2.0.15",
+      "version": "2.0.16",
       "author": {
         "name": "Alex Headscarf"
       },
@@ -33,7 +33,8 @@
         "./commands/continue.md",
         "./commands/resolve-conflicts.md",
         "./commands/connect-mcp.md",
-        "./commands/status.md"
+        "./commands/status.md",
+        "./commands/migrate-knowledge.md"
       ],
       "agents": [
         "./agents/impact-analyst.md",
@@ -53,7 +54,8 @@
         "./agents/spec-quality-auditor.md",
         "./agents/impact-analyst-quick.md",
         "./agents/security-officer-quick.md",
-        "./agents/architecture-reviewer-quick.md"
+        "./agents/architecture-reviewer-quick.md",
+        "./agents/knowledge-migrator.md"
       ]
     }
   ]

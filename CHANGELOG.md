@@ -5,6 +5,25 @@ All notable changes to KnowzCode will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.16] - 2026-01-16
+
+### Added
+- **`/kc:migrate-knowledge` command** for importing external knowledge into KnowzCode specs
+  - Supports multiple input types: file paths, folder paths, glob patterns, direct text
+  - Format auto-detection: KnowzCode v1.x, Noderr output, generic markdown analysis
+  - Entity extraction with NodeID inference (UI_, API_, SVC_, DB_, LIB_, CONFIG_, UC_)
+  - Consolidation with existing specs (skip/merge/overwrite strategies)
+  - Options: `--format`, `--dry-run`, `--merge`, `--overwrite`
+  - Migration reports saved to `knowzcode/planning/`
+- **`knowledge-migrator` agent** for format detection, extraction, and consolidation
+- **`KCv2.0__Migrate_Knowledge.md` prompt** with detailed extraction rules
+- **`CLAUDE.local.md`** (gitignored) for local release/versioning instructions
+
+### Changed
+- `.gitignore` updated to exclude `CLAUDE.local.md`
+
+---
+
 ## [2.0.15] - 2026-01-16
 
 ### Added
@@ -259,6 +278,7 @@ None - all changes are additive and backward compatible.
 
 ---
 
+[2.0.16]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.15...v2.0.16
 [2.0.15]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.14...v2.0.15
 [2.0.14]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.13...v2.0.14
 [2.0.13]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.10...v2.0.13

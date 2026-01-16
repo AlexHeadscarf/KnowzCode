@@ -43,3 +43,6 @@ RELEASE_NOTES_*.md
 *_PLANNING.md
 *.scratch.md
 .scratch/
+
+# Local development notes
+CLAUDE.local.md

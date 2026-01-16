@@ -82,6 +82,17 @@ KnowzCode will:
 4. ✓ **Verify quality** - Run automated checks and reviews
 5. 📚 **Update documentation** - Keep architecture current
 
+### Investigate Before Implementing
+
+Have a question about the codebase? Use investigation mode:
+
+```bash
+/kc:plan investigate "is the API using proper error handling?"
+/kc:plan investigate "how is authentication implemented?"
+```
+
+KnowzCode spawns **3 parallel research agents** to explore your question efficiently. After investigation, say "implement" or select an option to auto-transition to `/kc:work` with findings pre-loaded.
+
 ### Execute Specific Phases
 
 ```bash

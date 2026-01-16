@@ -14,6 +14,54 @@ Start a new KnowzCode development workflow session.
 
 ---
 
+## Input Classification (Pre-Check)
+
+Before proceeding with full orchestration, classify the input.
+
+### Question Detection
+
+Analyze `$ARGUMENTS` for investigation patterns:
+
+**Question Indicators** (suggest `/kc:plan investigate`):
+- Starts with: `is`, `does`, `how`, `why`, `are`, `what`, `can`, `should`
+- Contains: `properly`, `correctly`, `using`, `following`, `?`
+- Phrased as inquiry: "tell me", "explain", "analyze", "check if"
+
+**Implementation Indicators** (proceed with `/kc:work`):
+- Starts with: `build`, `add`, `create`, `implement`, `fix`, `refactor`, `update`, `remove`
+- Contains: `feature`, `functionality`, `endpoint`, `component`, `service`
+- Action-oriented: imperative verbs requesting creation/modification
+
+### Classification Action
+
+```
+IF question_indicators AND NOT implementation_indicators:
+    SUGGEST: "This looks like an investigation question. Use:
+              /kc:plan investigate '{$ARGUMENTS}'
+              This spawns parallel research agents for efficient exploration.
+              Then say 'implement' to proceed with findings."
+    WAIT for user confirmation before proceeding
+
+IF implementation_indicators:
+    CONTINUE with orchestration below
+```
+
+### Investigation Context Loading
+
+Check for recent investigation context:
+1. Look for `knowzcode/planning/investigation-*.md` files
+2. If recent investigation (< 30 min old) exists:
+   ```
+   Found recent investigation: investigation-{timestamp}.md
+   Load this context for Phase 1A? [y/n]
+   ```
+3. If user confirms or uses `--from-investigation` flag:
+   - Load investigation findings
+   - Pre-populate Phase 1A with discovered NodeIDs
+   - Skip redundant discovery - focus on validation
+
+---
+
 ## ⚠️ CRITICAL: You ARE the Orchestrator
 
 **DO NOT delegate to kc-orchestrator. You ARE the persistent orchestrator.**

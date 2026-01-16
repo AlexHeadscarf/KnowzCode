@@ -76,6 +76,7 @@ After installing the plugin, you have access to:
 |:--------|:------------|
 | `/kc:init` | Initialize KnowzCode in current project |
 | `/kc:work <goal>` | Start new feature WorkGroup |
+| `/kc:plan investigate <question>` | Investigate codebase with parallel research agents |
 | `/kc:step <phase>` | Execute specific workflow phase |
 | `/kc:audit [type]` | Run quality audits |
 | `/kc:plan [type]` | Generate development plans |
@@ -127,7 +128,22 @@ cd my-new-project/
 
 This creates the `knowzcode/` directory structure.
 
-### 2. Start Feature Development
+### 2. Investigate Before Implementing (Optional)
+
+Have a question about the codebase? Use investigation mode:
+
+```bash
+/kc:plan investigate "is the API using proper error handling?"
+```
+
+This spawns **3 parallel research agents** to explore your question:
+- `impact-analyst` - Code exploration
+- `architecture-reviewer` - Pattern analysis
+- `security-officer` - Risk assessment
+
+After investigation, say "implement" or "do option 1" to auto-transition to `/kc:work` with findings pre-loaded.
+
+### 3. Start Feature Development
 
 ```bash
 /kc:work "Build user registration with email verification"
@@ -141,7 +157,7 @@ This:
 5. Verifies quality (Phase 2B)
 6. Finalizes documentation (Phase 3)
 
-### 3. Work Through Phases
+### 4. Work Through Phases
 
 KnowzCode guides you through each phase with quality gates:
 
@@ -150,6 +166,32 @@ KnowzCode guides you through each phase with quality gates:
 - **Phase 2A (Implementation)**: Build with TDD
 - **Phase 2B (Verification)**: Quality checks
 - **Phase 3 (Finalization)**: Update docs and close WorkGroup
+
+## New in v2.0.10
+
+### Investigation Workflow with Parallel Research
+
+Added codebase investigation using parallel research subagents:
+
+- **`/kc:plan investigate "question"`** - New command for codebase investigation
+- **3 parallel agents** - impact-analyst, architecture-reviewer, security-officer explore simultaneously
+- **Action Listening Mode** - Say "implement" or "option 1" to auto-transition to `/kc:work`
+- **Context preservation** - Investigation findings pre-load into Phase 1A
+- **Question detection** - `/kc:work` suggests investigation for question-like inputs
+
+**Example flow:**
+```bash
+/kc:plan investigate "is the API using proper error handling?"
+# → 3 agents research in parallel
+# → Findings presented with options
+# → Say "implement option 1"
+# → Auto-invokes /kc:work with context loaded
+```
+
+**Benefits:**
+- Questions no longer consume primary context
+- Research happens efficiently in parallel subagents
+- Seamless handoff from investigation to implementation
 
 ## New in v2.0.7
 

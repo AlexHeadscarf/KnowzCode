@@ -5,6 +5,35 @@ All notable changes to KnowzCode will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.10] - 2026-01-16
+
+### Added
+- **Investigation workflow** with parallel research subagents
+  - New `/kc:plan investigate "question"` command for codebase investigation
+  - New prompt: `KCv2.0__Investigate_Codebase.md`
+  - Spawns 3 research agents in parallel: impact-analyst, architecture-reviewer, security-officer
+  - Synthesizes findings into actionable recommendations
+- **Action Listening Mode** after investigation
+  - Detects implementation triggers: "implement", "do it", "fix it", "option 1"
+  - Auto-invokes `/kc:work` with investigation findings pre-loaded
+  - Skips redundant Phase 1A discovery when context is available
+- **Question detection** in `/kc:work`
+  - Detects investigation questions (starts with "is", "how", "why", contains "?")
+  - Suggests `/kc:plan investigate` for efficient parallel research
+  - Supports `--from-investigation` flag for context loading
+
+### Changed
+- `/kc:plan` command now supports "investigate" as a planning type
+- `/kc:work` includes input classification pre-check before orchestration
+- Documentation updated with investigation workflow in README.md and CLAUDE.md
+
+### Notes
+- Investigation findings saved to `knowzcode/planning/investigation-{timestamp}.md`
+- Seamless handoff from research to implementation via action triggers
+- Questions no longer consume primary context - research happens in subagents
+
+---
+
 ## [2.0.9] - 2026-01-16
 
 ### Added
@@ -166,6 +195,7 @@ None - all changes are additive and backward compatible.
 
 ---
 
+[2.0.10]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.9...v2.0.10
 [2.0.9]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.8...v2.0.9
 [2.0.8]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.7...v2.0.8
 [2.0.7]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.6...v2.0.7

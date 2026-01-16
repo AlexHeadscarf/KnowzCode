@@ -5,6 +5,38 @@ All notable changes to KnowzCode will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.7] - 2025-01-15
+
+### Changed
+- Complete rewrite of orchestration architecture - commands now ARE the orchestrator
+- `commands/work.md` - embeds full workflow loop with direct phase agent spawning
+- `commands/step.md` - single-phase execution with direct agent delegation
+- `commands/continue.md` - state recovery with inline orchestration
+- `commands/audit.md` - direct delegation to audit agents
+
+### Fixed
+- **Critical**: KnowzCode now properly delegates to subagents
+  - Root cause: Claude Code filters out agents with `Task` tool to prevent recursion
+  - kc-orchestrator was never available as a spawnable agent
+  - Commands were executing orchestrator logic inline, causing context bloat
+- **Spec Conceptual Model**: NodeIDs now must be domain concepts, not tasks
+  - Specs are permanent documentation, not work items
+  - Two valid spec types: Component Specs (`UI_`, `API_`, `SVC_`, etc.) and Use Case Specs (`UC_`)
+  - Invalid patterns (`FIX-001`, `TASK-X`, `UI-FIX-002`) now explicitly prohibited
+  - Historical context check added - scan completed WorkGroups before proposing Change Sets
+  - Updated files: `agents/impact-analyst.md`, `agents/spec-chief.md`, `knowzcode/knowzcode_loop.md`
+
+### Removed
+- `kc-orchestrator` removed from agents array in marketplace.json
+- Moved `agents/kc-orchestrator.md` to `docs/workflow-reference.md` as documentation
+
+### Notes
+- Anti-recursion guards added to all commands
+- Context loaded ONCE at workflow start, maintained throughout
+- Phase agents work in isolated contexts, return results to calling command
+
+---
+
 ## [2.0.6] - 2025-12-29
 
 ### Changed
@@ -104,6 +136,7 @@ None - all changes are additive and backward compatible.
 
 ---
 
+[2.0.7]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.6...v2.0.7
 [2.0.6]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.5...v2.0.6
 [2.0.5]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.4...v2.0.5
 [2.0.4]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.3...v2.0.4

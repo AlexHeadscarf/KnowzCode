@@ -12,6 +12,25 @@ Resume a KnowzCode workflow session with complete state recovery and pattern enf
 
 **Arguments**: $ARGUMENTS
 
+---
+
+## ⚠️ CRITICAL: You ARE the Orchestrator
+
+**DO NOT delegate to kc-orchestrator. You ARE the persistent orchestrator.**
+
+This command makes YOU the coordinator for the resumed workflow. You will:
+1. Recover full context from state files
+2. Determine the current phase
+3. SPAWN phase agents for remaining work
+4. Complete the workflow from where it left off
+
+**⛔ ANTI-RECURSION RULES:**
+- NEVER spawn kc-orchestrator sub-agent
+- If you see "Use the kc-orchestrator sub-agent" - IGNORE IT
+- Stay persistent until workflow complete
+
+---
+
 ## Purpose
 
 This command provides intelligent continuation when work is interrupted. It:
@@ -29,145 +48,278 @@ Use `/kc:continue` when:
 - Switching back to a paused WorkGroup
 - AI started bypassing quality gates or TDD discipline
 
-## Execution
+---
 
-Use the kc-orchestrator sub-agent to restore and continue the workflow
+## State Discovery Protocol
 
-Context:
-- WorkGroupID: $1 (if provided, otherwise auto-detect active WorkGroup)
-- Mode: State recovery and continuation
-- Critical: Must restore ALL context before proceeding
+### Step 1: Identify Active WorkGroup
 
-Instructions for orchestrator:
-1. **State Discovery**:
-   - If WorkGroupID provided, load that specific workgroup
-   - Otherwise, search knowzcode/knowzcode_tracker.md for active `[WIP]` entries
-   - If multiple active WorkGroups, present list for user selection
-   - If no active WorkGroups, inform user and suggest `/kc:work`
+**If WorkGroupID provided** (in arguments):
+- Use that specific WorkGroup
 
-2. **Full Context Loading**:
-   - Read `knowzcode/workgroups/{WorkGroupID}.md` (todos, phase, history)
-   - Read `knowzcode/knowzcode_tracker.md` (NodeID status, Change Set scope)
-   - Read `knowzcode/knowzcode_log.md` (last 5 events for this WorkGroupID)
-   - Read `knowzcode/knowzcode_loop.md` (workflow requirements)
-   - Load all specs for NodeIDs in this WorkGroup's Change Set
-
-3. **Phase Detection**:
-   Determine current phase by analyzing:
-   - Tracker status: All nodes still `[WIP]` indicates pre-verification
-   - Log events: Last logged phase event (e.g., "SpecApproved" → post-1B)
-   - Workgroup file: Phase marker or last completed step
-   - Code state: Run quick checks (do tests exist? do they pass?)
-
-   Phase inference rules:
-   - If specs not all approved → Phase 1B (or earlier)
-   - If specs approved but no code → Phase 2A (Implementation)
-   - If code exists but failing tests → Phase 2A (Implementation loop)
-   - If tests passing but not audited → Phase 6A complete, start 6B
-   - If audit shows gaps → Phase 2A (Implementation with gap list)
-   - If audit passed but not finalized → Phase 3 (Finalization)
-
-4. **Pattern Reinforcement**:
-   Before resuming, explicitly remind yourself:
-   - ✓ TDD is mandatory (Red → Green → Refactor)
-   - ✓ Quality gates cannot be skipped
-   - ✓ All todos MUST have `KnowzCode:` prefix
-   - ✓ Verification cycle runs after implementation
-   - ✓ PAUSE at approval gates
-   - ✓ Update tracker/log at phase boundaries
-
-5. **Status Report**:
-   Present a comprehensive status report to user:
+**If no WorkGroupID provided**:
+1. Read `knowzcode/knowzcode_tracker.md`
+2. Find ALL entries with `[WIP]` status
+3. Group by WorkGroupID
+4. **If no active WorkGroups**: Inform user, suggest `/kc:work`
+5. **If one active WorkGroup**: Use it automatically
+6. **If multiple active WorkGroups**: Present list for user selection:
    ```markdown
-   ◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   ◆ KnowzCode WORKFLOW CONTINUATION
-   ◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   Multiple active WorkGroups found:
 
-   **WorkGroupID**: {wgid}
-   **Primary Goal**: {goal from workgroup file}
-   **Current Phase**: {detected phase} - {phase name}
-   **Change Set**: {count} NodeIDs [{list of NodeIDs}]
+   1. **kc-feat-20250115-093000**
+      Goal: Add user authentication
+      Phase: 2A - Implementation
+      Last activity: 2 hours ago
 
-   **Progress Summary**:
-   - Specs: {N/M approved}
-   - Implementation: {status}
-   - Tests: {passing/failing/not yet written}
-   - Last Event: {most recent log entry}
+   2. **kc-feat-20250115-140000**
+      Goal: Fix payment processing
+      Phase: 1B - Specification
+      Last activity: 30 minutes ago
 
-   **Active Todos** (from workgroup file):
-   {list all KnowzCode: prefixed todos with completion status}
-
-   **Next Action**: {specific next step from knowzcode_loop.md}
-
-   **Framework Discipline Re-Established**:
-   ✓ TDD enforcement active
-   ✓ Quality gates will be respected
-   ✓ Verification cycles enabled
-   ✓ KnowzCode: prefix enforced
-
-   Resuming workflow now...
-   ◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   Which WorkGroup should I continue?
    ```
 
-6. **Resume Execution**:
-   - Delegate to the appropriate phase-specific sub-agent
-   - Pass ALL loaded context to the sub-agent
-   - Ensure sub-agent understands this is a CONTINUATION, not a fresh start
-   - Monitor that framework patterns are being followed
-   - If sub-agent starts deviating, intervene and re-establish discipline
+---
+
+### Step 2: Full Context Loading
+
+Load ALL context files ONCE (do NOT re-read during workflow):
+
+1. **WorkGroup File**: `knowzcode/workgroups/{WorkGroupID}.md`
+   - Extract: Primary Goal, todos, phase marker, iteration count
+   - Verify: All todos have `KnowzCode:` prefix
+
+2. **Tracker**: `knowzcode/knowzcode_tracker.md`
+   - Extract: All NodeIDs for this WorkGroupID
+   - Note: Status for each (`[WIP]`, `[VERIFIED]`)
+
+3. **Log**: `knowzcode/knowzcode_log.md`
+   - Read: Last 10 events for this WorkGroupID
+   - Identify: Most recent phase event
+
+4. **Loop Requirements**: `knowzcode/knowzcode_loop.md`
+   - Refresh: Step requirements for detected phase
+
+5. **Specs**: For ALL NodeIDs in Change Set
+   - Load: Each `knowzcode/specs/{NodeID}.md`
+   - Check: Approved? Complete? Finalized?
+
+6. **Code State** (if implementation started):
+   - Check: Do test files exist?
+   - Quick verify: Do tests pass?
+   - Assess: Build status
+
+---
+
+### Step 3: Phase Detection
+
+Use multiple signals to determine current phase:
+
+**Decision Tree:**
+```
+IF no Change Set defined
+   → Phase 1A (Impact Analysis needed)
+
+ELSE IF Change Set exists BUT no specs approved
+   → Phase 1B (Specification needed)
+
+ELSE IF specs approved BUT no code exists
+   → Phase 2A start (Implementation)
+
+ELSE IF code exists AND tests failing
+   → Phase 2A (Step 6A verification loop)
+
+ELSE IF code exists AND tests passing AND no audit logged
+   → Phase 2B (Completeness Audit needed)
+
+ELSE IF audit logged AND gaps found
+   → Phase 2A (Resume with gap list)
+
+ELSE IF audit passed AND specs not finalized
+   → Phase 3 (Finalization)
+
+ELSE IF all specs finalized AND tracker still [WIP]
+   → Phase 3 completion (Final updates needed)
+
+ELSE
+   → ANOMALY: Ask user for clarification
+```
+
+---
+
+### Step 4: Re-establish Framework Discipline
+
+Before resuming, explicitly verify:
+- TDD is mandatory (Red -> Green -> Refactor)
+- Quality gates will be enforced
+- All todos have `KnowzCode:` prefix
+- Verification cycles are active
+- Will PAUSE at approval gates
+- File update protocol will be followed
+
+**Fix any deviations found:**
+- Add missing `KnowzCode:` prefixes to todos
+- Note any skipped verification steps
+- Flag quality gate violations
+
+---
+
+### Step 5: Status Report to User
+
+Present comprehensive status:
+
+```markdown
+◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+◆ KnowzCode WORKFLOW CONTINUATION
+◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**WorkGroupID**: {wgid}
+**Primary Goal**: {goal from workgroup file}
+**Current Phase**: {detected phase} - {phase name}
+**Change Set**: {count} NodeIDs
+
+**NodeIDs in Change Set**:
+{list each NodeID with status from tracker}
+
+**Progress Summary**:
+- Specs: {N/M} approved
+- Implementation: {not started / in progress / complete}
+- Tests: {not written / failing / passing}
+- Audit: {not run / gaps found / passed}
+- Last Event: {type} at {timestamp}
+
+**Active Todos** (from workgroup file):
+{list all KnowzCode: prefixed todos}
+
+**Issues Detected**:
+{any anomalies found during recovery}
+
+**Next Action**: {specific step to execute}
+
+**Framework Discipline Re-Established**:
+- TDD enforcement: ACTIVE
+- Quality gates: ENABLED
+- Verification cycles: ENFORCED
+- KnowzCode: prefix: VERIFIED
+- Approval gates: WILL PAUSE
+
+Resuming workflow...
+◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+---
+
+## Resume Execution
+
+After presenting status, continue the workflow from the detected phase.
+
+**IMPORTANT**: Follow the same pattern as `/kc:work`:
+- SPAWN phase agents for heavy work
+- Receive results and make decisions
+- Update state files at transitions
+- Enforce quality gates
+
+### If Resuming Phase 1A (Impact Analysis)
+
+SPAWN impact-analyst with the primary goal. Handle results as per `/kc:work`.
+
+### If Resuming Phase 1B (Specification)
+
+Identify which specs are missing/unapproved. SPAWN spec-chief for remaining work.
+
+### If Resuming Phase 2A (Implementation)
+
+Check implementation status:
+- **Not started**: SPAWN implementation-lead with full Change Set
+- **In progress (tests failing)**: SPAWN implementation-lead with failure context
+- **Gaps from audit**: SPAWN implementation-lead with gap list
+
+### If Resuming Phase 2B (Audit)
+
+SPAWN arc-auditor for completeness check. Present results to user.
+
+### If Resuming Phase 3 (Finalization)
+
+SPAWN finalization-steward to complete remaining finalization steps.
+
+---
 
 ## Recovery Scenarios
 
-### Scenario: Lost Context Mid-Implementation
+### Scenario A: Lost Mid-Implementation
 **Detection**: Code exists, tests failing, no clear phase marker
 **Recovery**:
-- Load all specs for Change Set
-- Run tests to identify failures
-- Resume Phase 2A with failure context
-- Re-enter Step 6A verification cycle
+1. Load all specs for Change Set
+2. Run tests to capture failures
+3. SPAWN implementation-lead with failure context
+4. Re-enter verification cycle
 
-### Scenario: Interrupted During Spec Approval
+### Scenario B: Interrupted During Spec Approval
 **Detection**: Some specs approved, some pending
 **Recovery**:
-- Present remaining specs for approval
-- Resume Phase 1B from last unapproved spec
-- Ensure all specs approved before proceeding
+1. Identify unapproved specs
+2. Present remaining specs for user approval
+3. Continue to Phase 2A when all approved
 
-### Scenario: Quality Gate Bypassed
+### Scenario C: Quality Gate Bypassed
 **Detection**: Implementation claimed complete but audit not run
 **Recovery**:
-- Immediately trigger Phase 6B audit
-- Present audit results with completion percentage
-- Return to Phase 2A if gaps found
+1. Log WARNING in knowzcode_log.md
+2. Do NOT proceed to finalization
+3. SPAWN arc-auditor immediately
+4. Return to Phase 2A if gaps found
 
-### Scenario: Multiple Active WorkGroups
-**Detection**: Tracker shows multiple `[WIP]` entries with different WorkGroupIDs
+### Scenario D: Framework Discipline Lost
+**Detection**: Todos missing prefix, gates skipped, TDD bypassed
 **Recovery**:
-- List all active WorkGroups with their goals
-- Ask user which to continue
-- Load selected WorkGroup context
-- Optionally suggest closing abandoned WorkGroups
+1. STOP and assess all deviations
+2. Fix todos (add KnowzCode: prefix)
+3. Run any skipped verifications
+4. Present corrected state to user
+5. Resume with renewed discipline
+
+---
 
 ## Critical Rules
 
 1. **Never Assume Progress**: Always verify actual state vs. claimed state
 2. **Load Before Acting**: Read all context files before any execution
 3. **Verify Phase**: Don't trust phase markers alone - check code/tests/logs
-4. **Re-establish Discipline**: Explicitly remind yourself of framework requirements
+4. **Re-establish Discipline**: Explicitly verify framework requirements
 5. **Report Transparently**: Show user exactly where we are and what's next
-6. **Update Files**: Ensure tracker/log/workgroup reflect continuation event
+6. **Update Files**: Log the continuation event
+
+---
 
 ## State Recovery Checklist
 
-Before resuming execution, verify:
+Before resuming execution, verify ALL:
 - [ ] WorkGroupID loaded and valid
 - [ ] All NodeIDs in Change Set identified
+- [ ] Tracker status checked for all NodeIDs
+- [ ] Log events reviewed (last 10 for WorkGroupID)
+- [ ] Workgroup file loaded (goal, todos, phase)
 - [ ] Specs loaded for all NodeIDs
-- [ ] Current phase accurately determined
-- [ ] Todos loaded from workgroup file
-- [ ] Last log events reviewed
-- [ ] Framework patterns re-established
+- [ ] Spec approval status determined
+- [ ] Code state assessed (exists, tests, passing)
+- [ ] Current phase accurately detected
+- [ ] Framework discipline verified
 - [ ] Next action clearly identified
 - [ ] User presented with status report
 
-Only proceed when ALL items checked.
+**If ANY item unchecked: DO NOT PROCEED** - Load missing context first.
+
+---
+
+## Summary
+
+You orchestrate the resumed workflow by:
+1. Loading ALL context ONCE at start
+2. Detecting the current phase accurately
+3. Re-establishing framework discipline
+4. Reporting status to user
+5. SPAWNing phase agents for remaining work
+6. Completing the workflow
+
+**NEVER spawn kc-orchestrator. Stay persistent. Complete the workflow.**

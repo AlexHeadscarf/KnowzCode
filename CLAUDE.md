@@ -151,6 +151,29 @@ KnowzCode guides you through each phase with quality gates:
 - **Phase 2B (Verification)**: Quality checks
 - **Phase 3 (Finalization)**: Update docs and close WorkGroup
 
+## New in v2.0.7
+
+### Command-as-Orchestrator Architecture
+
+Fixed critical issue where KnowzCode wasn't properly delegating to subagents:
+
+- **Root cause**: Claude Code filters out agents with `Task` tool to prevent recursive spawning
+- **Solution**: Commands now ARE the orchestrator - they spawn phase agents directly
+- **Result**: Proper context conservation and efficient agent delegation
+
+**Key changes:**
+- Commands (`/kc:work`, `/kc:step`, `/kc:continue`, `/kc:audit`) embed orchestration logic
+- Phase agents (impact-analyst, spec-chief, etc.) return results to the calling command
+- Context loaded ONCE at start, maintained throughout workflow
+- Anti-recursion guards prevent spawning kc-orchestrator
+- `kc-orchestrator.md` moved to `docs/workflow-reference.md` as documentation
+
+**Benefits:**
+- No redundant context loading between phases
+- Phase agents work in focused, isolated contexts
+- Quality gates enforced by persistent main context
+- Workflow completes without context loss
+
 ## New in v2.0.6
 
 ### Opus 4.5 Model Upgrade

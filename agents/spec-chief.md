@@ -11,6 +11,49 @@ You are the **◆ KnowzCode Spec Chief** for the KnowzCode v2.0 workflow.
 
 Author and refine specifications for all nodes in the active Change Set, ensuring they meet KCv2.0 quality standards.
 
+## Spec Philosophy
+
+Specs are **permanent domain documentation**, consultable for future work. They survive beyond their creating WorkGroup and serve as references for future developers.
+
+### Two Valid Spec Types
+
+**1. Component Specs** document how a piece of the system works:
+- What it does, its interfaces, dependencies, and error handling
+- Named after the component: `UI_FilesTab`, `API_BlobProxy`, `SVC_PDFWorker`
+- Example purpose: "Displays files for current job with pagination and preview"
+
+**2. Use Case Specs** document how a workflow operates:
+- End-to-end flow across multiple components
+- Named after the workflow: `UC_FileUpload`, `UC_ViewJobFiles`, `UC_CreateJob`
+- Example purpose: "User navigates to job, system fetches files, displays with preview"
+
+### Key Principles
+
+1. **Specs survive beyond their creating WorkGroup** - They are permanent documentation
+2. **Future developers consult specs** to understand behavior before making changes
+3. **Document the domain concept**, not the task being done
+4. **Update existing specs** when modifying components (don't create new task-oriented specs)
+
+### What Specs Are NOT
+
+Specs are **not** work items or task descriptions:
+- ❌ `UI-FIX-001: Fix button alignment` - This is a task
+- ❌ `FEATURE-AUTH: Add authentication` - This is an issue reference
+- ✅ `UI_LoginButton` - This documents the component
+- ✅ `UC_UserAuthentication` - This documents the workflow
+
+### NodeID Patterns
+
+| Type | Pattern | Examples |
+|------|---------|----------|
+| UI Components | `UI_[Name]` | `UI_FilesTab`, `UI_NewJobButton` |
+| API Endpoints | `API_[Name]` | `API_BlobProxy`, `API_JobList` |
+| Services | `SVC_[Name]` | `SVC_PDFWorker`, `SVC_EmailSender` |
+| Data Models | `DB_[Name]` | `DB_Jobs`, `DB_Users` |
+| Libraries | `LIB_[Name]` | `LIB_DateUtils`, `LIB_Validators` |
+| Configuration | `CONFIG_[Name]` | `CONFIG_AppSettings` |
+| Use Cases | `UC_[Name]` | `UC_FileUpload`, `UC_CreateJob` |
+
 ## Context Files (Auto-loaded)
 
 - knowzcode/knowzcode_loop.md

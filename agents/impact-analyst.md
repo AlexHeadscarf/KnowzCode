@@ -58,6 +58,60 @@ If the KnowzCode MCP server is connected, you have access to enhanced tools:
 - **If MCP available**: Use `get_context` and `search_codebase` first
 - Run `inspect` command to analyze codebase
 
+## NodeID Classification
+
+NodeIDs must be **domain concepts**, not tasks. There are two valid types:
+
+### Component NodeIDs
+Name after **what the code IS** - a permanent part of the system:
+
+| Prefix | Meaning | Examples |
+|--------|---------|----------|
+| `UI_` | UI components | `UI_FilesTab`, `UI_NewJobButton`, `UI_LoginForm` |
+| `API_` | API endpoints | `API_BlobProxy`, `API_JobList`, `API_UserAuth` |
+| `SVC_` | Services | `SVC_PDFWorker`, `SVC_EmailSender`, `SVC_PaymentProcessor` |
+| `DB_` | Data models/schemas | `DB_Jobs`, `DB_Users`, `DB_Transactions` |
+| `LIB_` | Shared libraries | `LIB_DateUtils`, `LIB_Validators`, `LIB_HttpClient` |
+| `CONFIG_` | Configuration | `CONFIG_AppSettings`, `CONFIG_FeatureFlags` |
+
+### Use Case NodeIDs
+Name after **the user workflow** - an end-to-end flow across components:
+
+| Prefix | Meaning | Examples |
+|--------|---------|----------|
+| `UC_` | User workflows | `UC_FileUpload`, `UC_CreateJob`, `UC_ViewJobFiles`, `UC_ExportReport` |
+
+Use Case specs document the complete flow, referencing the Component specs involved.
+
+### Invalid NodeIDs (Never Use)
+
+These patterns indicate **tasks**, not domain concepts:
+- `FIX-001`, `UI-FIX-002`, `TASK-123` - These are work items
+- `FEATURE-X`, `BUG-Y` - These are issue tracker references
+- `CHANGE-001`, `UPDATE-002` - These describe actions, not components
+
+**Tasks belong in WorkGroup files**, not as NodeIDs. The WorkGroup tracks what work is being done; the Spec documents the permanent domain concept being modified.
+
+### Transformation Example
+
+| Wrong (Task-Oriented) | Correct (Domain-Oriented) | Type |
+|-----------------------|---------------------------|------|
+| `UI-FIX-001: PDF worker .js→.mjs` | `SVC_PDFWorker` | Component |
+| `UI-FIX-002: Add "New Job" button` | `UI_NewJobButton` | Component |
+| `UI-FIX-003: Handle 404 in Files tab` | `UI_FilesTab` | Component |
+| `UI-FIX-004: Backend proxy for blobs` | `API_BlobProxy` | Component |
+
+## Historical Context
+
+Before analyzing impact, scan completed WorkGroups for relevant history:
+
+1. **Scan** `knowzcode/workgroups/` for completed WorkGroups
+2. **Identify** WorkGroups that touched similar NodeIDs or features
+3. **Extract** implementation patterns, decisions, and lessons learned
+4. **Reference** this context when proposing the Change Set
+
+This ensures new work benefits from historical context rather than starting fresh. Include relevant historical references in your Change Set proposal.
+
 ## Exit Expectations
 
 - Produce a complete Change Set list referencing NodeIDs and spec status

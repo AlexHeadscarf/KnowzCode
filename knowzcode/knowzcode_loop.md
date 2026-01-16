@@ -39,6 +39,28 @@ The Orchestrator will initiate this loop by providing you with a `PrimaryGoal`.
     - During impact analysis, verify that all referenced NodeIDs have corresponding spec files.
     - If a dependency lacks a spec, it must be marked `[NEEDS_SPEC]` and included in the Change Set.
     - Record discovery tasks and open questions in `knowzcode/workgroups/<WorkGroupID>.md` (prefix each bullet with `KnowzCode:`).
+
+    **NodeID Naming Convention:**
+    NodeIDs must be **domain concepts**, not tasks. Two valid patterns:
+
+    1. **Component NodeIDs**: `[Layer]_[Name]`
+       - Valid layers: `UI_`, `API_`, `SVC_`, `DB_`, `LIB_`, `CONFIG_`
+       - Examples: `UI_FilesTab`, `API_BlobProxy`, `SVC_PDFWorker`
+
+    2. **Use Case NodeIDs**: `UC_[Name]`
+       - Examples: `UC_FileUpload`, `UC_CreateJob`, `UC_ViewJobFiles`
+
+    **Never use task-oriented names**: `FIX-001`, `TASK-X`, `FEATURE-Y`, `UI-FIX-002`
+    Task descriptions belong in WorkGroup files, not as NodeIDs. Specs are permanent domain documentation.
+
+    **Historical Context Check:**
+    Before proposing the Change Set, scan `knowzcode/workgroups/` for completed WorkGroups that touched similar components. Extract:
+    - Implementation approaches that worked well
+    - Decisions made and their rationale
+    - Problems encountered and their solutions
+
+    Reference relevant historical context in your Change Set proposal.
+
 1.3. **Propose & Confirm Change Set**: Present the proposed Change Set to the Orchestrator for review and confirmation. **PAUSE and await Orchestrator approval.**
 1.4. **Grouped Status Update**: Upon confirmation, generate a unique `WorkGroupID` and update `knowzcode_tracker.md` for all nodes in the Change Set to `◆ [WIP]` with the new `WorkGroupID`.
     - **WorkGroupID Format**: `kc-[type]-[YYYYMMDD]-[HHMMSS]`

@@ -29,6 +29,165 @@ Main Conversation (Command)    ← Persistent context, acts as orchestrator
 
 ---
 
+## Parallel Execution Philosophy
+
+### MANDATORY DEFAULT: Spawn Agents in Parallel
+
+**PARALLEL is the DEFAULT. SEQUENTIAL is the EXCEPTION.**
+
+When spawning multiple agents or performing multiple independent operations, you MUST default to parallel execution. Sequential execution is ONLY permitted when there is an explicit data dependency between operations.
+
+**Core Rules:**
+
+1. **ALWAYS parallelize** when operations have no data dependencies
+2. **NEVER serialize** independent agent spawns "for safety" or "simplicity"
+3. **Question every sequential call** - if it could be parallel, make it parallel
+4. **Issue ALL Task tool calls in a SINGLE response** when spawning multiple agents
+
+### When to Parallelize (ALWAYS unless dependency exists)
+
+| Scenario | Execution | Rationale |
+|----------|-----------|-----------|
+| Phase 1A discovery agents | **PARALLEL** | All read-only analysis, no conflicts |
+| Multiple NodeIDs need spec drafting | **PARALLEL** | Each spec is independent |
+| Multiple audit types | **PARALLEL** | Audits are read-only, no conflicts |
+| Reading multiple context files | **PARALLEL** | File reads are independent |
+| Post-implementation verification checks | **PARALLEL** | Independent read-only checks |
+
+### When Sequential is REQUIRED (Dependency-Gated Only)
+
+Sequential execution is permitted ONLY when:
+
+1. **Output of A is input to B**: The result from agent A is required input for agent B
+2. **User approval gate**: User must approve before next phase begins
+3. **State mutation dependency**: Agent B reads state that agent A writes
+
+**Examples of REQUIRED Sequential:**
+- Phase 1A → Phase 1B (specs need approved Change Set)
+- Phase 1B → Phase 2A (implementation needs approved specs)
+- Phase 2A → Phase 2B (audit needs completed implementation)
+
+### Parallel Spawning Patterns
+
+#### Pattern 1: Phase 1A - Parallel Discovery
+
+When starting impact analysis, spawn multiple discovery agents simultaneously:
+
+```
+# WRONG - Sequential (unnecessarily slow)
+→ SPAWN impact-analyst → wait → receive results
+→ SPAWN security-officer → wait → receive results
+→ SPAWN architecture-reviewer → wait → receive results
+
+# CORRECT - Parallel (DEFAULT behavior)
+→ In a SINGLE response, issue multiple Task tool calls:
+   Task #1: SPAWN impact-analyst
+   Task #2: SPAWN security-officer
+   Task #3: SPAWN architecture-reviewer
+→ Wait for ALL results
+→ Merge findings into unified Change Set proposal
+```
+
+#### Pattern 2: Phase 1B - Multi-NodeID Specification
+
+When drafting specs for a Change Set with multiple NodeIDs:
+
+```
+# WRONG - Sequential per NodeID
+FOR each NodeID:
+    → SPAWN spec-chief for NodeID → wait → receive
+
+# CORRECT - Batch parallel
+→ In a SINGLE response, issue multiple Task tool calls:
+   Task #1: SPAWN spec-chief for NodeID_A
+   Task #2: SPAWN spec-chief for NodeID_B
+   Task #3: SPAWN spec-chief for NodeID_C
+→ Wait for ALL results
+→ Present all specs for batch approval
+```
+
+#### Pattern 3: Phase 2B - Parallel Audit Battery
+
+After implementation, run comprehensive verification in parallel:
+
+```
+# CORRECT - Parallel verification audits
+→ In a SINGLE response:
+   Task #1: SPAWN arc-auditor (ARC criteria check)
+   Task #2: SPAWN spec-quality-auditor (spec completeness)
+   Task #3: SPAWN security-officer (security posture)
+→ Wait for ALL results
+→ Present consolidated audit gate
+```
+
+#### Pattern 4: Comprehensive Audit Command
+
+When running `/kc:audit` without arguments:
+
+```
+# CORRECT - Run ALL audits in parallel
+→ SPAWN spec-quality-auditor
+→ SPAWN architecture-reviewer
+→ SPAWN security-officer
+→ SPAWN holistic-auditor
+→ Wait for ALL results
+→ Present unified audit report
+```
+
+### Decision Flowchart
+
+```
+Need to spawn agent(s)?
+        │
+        ▼
+   Multiple agents
+   or operations?
+        │
+   YES  │  NO
+    ┌───┴───┐
+    ▼       └──→ Execute single agent
+Does agent B
+need output
+from agent A?
+    │
+YES │  NO
+┌───┴───┐
+▼       ▼
+SEQUENTIAL  PARALLEL
+(Exception) (DEFAULT)
+```
+
+### Anti-Pattern: Sequential When Parallel Is Possible
+
+**AVOID THIS:**
+```
+Spawn agent A → Wait → Spawn agent B → Wait → Spawn agent C
+```
+
+**USE THIS (when A, B, C are independent):**
+```
+In SINGLE response: Spawn agents A, B, C → Wait for ALL → Process results
+```
+
+### Error Handling in Parallel Execution
+
+If one parallel agent fails while others succeed:
+1. Continue with results from successful agents
+2. Report partial failure to user
+3. Offer to re-spawn ONLY the failed agent
+4. Do NOT restart all parallel agents
+
+```markdown
+⚠️ Partial Parallel Completion
+
+**Successful**: impact-analyst, security-officer
+**Failed**: architecture-reviewer (timeout)
+
+Continue with available results? Or retry architecture-reviewer only?
+```
+
+---
+
 ## The Complete Workflow Loop
 
 ```

@@ -12,6 +12,7 @@ You operate under these core principles:
 * **Integrated Version Control**: Strategic commits are an automated part of the workflow, creating a clear and auditable history.
 * **Proactive Technical Debt Management**: Identified technical debt is formally scheduled for future work, ensuring long-term code health.
 * **Standardized, Disciplined Logging**: All significant events are logged in a consistent, machine-readable format as defined in this document.
+* **Parallel-First Execution**: When spawning multiple agents or operations, ALWAYS default to parallel execution. Sequential execution is the EXCEPTION, permitted only when explicit data dependencies exist. Issue ALL independent Task tool calls in a SINGLE response. See `docs/workflow-reference.md` for detailed patterns.
 
 ## 2. General Operating Rules & File Interaction
 

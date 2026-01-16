@@ -90,10 +90,22 @@ Create `knowzcode/workgroups/{WorkGroupID}.md` with initial structure:
 
 Execute phases sequentially. **DO NOT re-read context files between phases** - you already have them.
 
-### Phase 1A: Impact Analysis
+### Phase 1A: Impact Analysis (PARALLEL DISCOVERY)
 
-**SPAWN via Task tool:**
+**PARALLEL is the DEFAULT. SEQUENTIAL is the EXCEPTION.**
+
+Spawn THREE discovery agents IN PARALLEL in a SINGLE response:
+
+| Agent | Focus | Output |
+|-------|-------|--------|
+| impact-analyst | Change Set identification | NodeID list with [NEEDS_SPEC] markers |
+| security-officer | Security implications | Security concerns for the change |
+| architecture-reviewer | Architectural impact | Drift warnings, pattern violations |
+
+**SPAWN ALL THREE via Task tool (PARALLEL - SINGLE response with multiple Task calls):**
+
 ```
+# Task 1: Impact Analysis
 subagent_type: "impact-analyst"
 prompt: |
   Perform KCv2.0 Loop 1A impact analysis.
@@ -108,78 +120,166 @@ prompt: |
   2. Mark nodes requiring new specs as [NEEDS_SPEC]
   3. Create Change Set with NodeIDs
   4. Assess risk and dependencies
-  5. Present Change Set for approval
 
   Return: Change Set proposal with NodeIDs, risk assessment, and [NEEDS_SPEC] markers
+
+# Task 2: Security Implications (PARALLEL with Task 1)
+subagent_type: "security-officer"
+prompt: |
+  Perform security implications analysis for proposed change.
+
+  Context:
+  - WorkGroupID: {wgid}
+  - Primary Goal: {$ARGUMENTS}
+  - Phase: 1A - Security Discovery (parallel with impact analysis)
+
+  Instructions:
+  1. Identify security-sensitive areas affected by this change
+  2. Flag OWASP-relevant concerns
+  3. Note authentication/authorization implications
+  4. Assess data exposure risks
+
+  Return: Security concerns list with severity and recommendations
+
+# Task 3: Architecture Review (PARALLEL with Tasks 1 & 2)
+subagent_type: "architecture-reviewer"
+prompt: |
+  Perform architecture impact analysis for proposed change.
+
+  Context:
+  - WorkGroupID: {wgid}
+  - Primary Goal: {$ARGUMENTS}
+  - Phase: 1A - Architecture Discovery (parallel with impact analysis)
+
+  Instructions:
+  1. Assess architectural alignment of proposed change
+  2. Identify potential layer violations
+  3. Check for pattern consistency
+  4. Flag architectural drift concerns
+
+  Return: Architecture assessment with alignment score and concerns
 ```
 
-**When agent returns:**
-1. Present Change Set to user with approval gate:
+**CRITICAL**: Issue ALL THREE Task tool calls in a SINGLE response. Do NOT wait for each to complete before spawning the next.
+
+**When ALL agents return:**
+1. Merge results into unified Change Set proposal:
+   - NodeIDs from impact-analyst (primary)
+   - Security flags from security-officer (annotations)
+   - Architecture concerns from architecture-reviewer (annotations)
+
+2. Present merged Change Set for approval:
    ```markdown
    ◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    ◆ KnowzCode APPROVAL GATE #1: Change Set
    ◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
    **WorkGroupID**: {wgid}
-   **Phase**: 1A - Impact Analysis Complete
+   **Phase**: 1A - Parallel Discovery Complete
+   **Agents Consulted**: impact-analyst, security-officer, architecture-reviewer
 
    **Proposed Change Set** ({N} nodes):
    {list NodeIDs with descriptions and [NEEDS_SPEC] markers}
 
-   **Risk Assessment**: {summary}
+   **Security Annotations**:
+   {security concerns per NodeID if any}
+
+   **Architecture Annotations**:
+   {architecture concerns if any}
+
+   **Overall Risk Assessment**: {Low/Medium/High}
 
    Approve this Change Set to proceed to specification?
    ◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    ```
-2. If rejected: Re-spawn impact-analyst with user feedback
-3. If approved: Update workgroup file, proceed to Phase 1B
-4. Update `knowzcode/knowzcode_tracker.md` - add NodeIDs with [WIP] status
-5. Log event in `knowzcode/knowzcode_log.md`
+
+3. If rejected: Re-spawn relevant agents with user feedback
+4. If approved: Update workgroup file, proceed to Phase 1B
+5. Update `knowzcode/knowzcode_tracker.md` - add NodeIDs with [WIP] status
+6. Log event in `knowzcode/knowzcode_log.md`
 
 ---
 
-### Phase 1B: Specification
+### Phase 1B: Specification (PARALLEL PER NODEID)
 
-**SPAWN via Task tool:**
+**PARALLEL is the DEFAULT when Change Set has multiple NodeIDs.**
+
+**Single NodeID**: Spawn one spec-chief agent.
+
+**Multiple NodeIDs (2+)**: Spawn PARALLEL spec-chief instances in a SINGLE response:
+
 ```
+# When Change Set has multiple NodeIDs, spawn them in PARALLEL:
+
+# Task 1: Spec for NodeID_A
 subagent_type: "spec-chief"
 prompt: |
-  Draft specifications for all Change Set nodes.
+  Draft specification for a SINGLE NodeID.
 
   Context:
   - WorkGroupID: {wgid}
   - Phase: 1B - Specification
-  - Change Set: {list of NodeIDs}
-  - Nodes marked [NEEDS_SPEC]: {list}
+  - Target NodeID: {NodeID_A}
+  - Full Change Set (for reference): {list all NodeIDs}
 
   Instructions:
-  1. For EACH NodeID, draft spec with all required sections:
+  1. Focus ONLY on {NodeID_A} specification
+  2. Draft spec with all required sections:
      - Overview, Dependencies, ARC Criteria, Tech Debt, etc.
-  2. Save specs to knowzcode/specs/{NodeID}.md
-  3. Ensure ARC verification criteria are documented
-  4. Update workgroup file with spec tasks (KnowzCode: prefix)
+  3. Save spec to knowzcode/specs/{NodeID_A}.md
+  4. Ensure ARC verification criteria are documented
 
-  Return: Summary of specs drafted, ready for approval
+  Return: Summary of spec drafted for {NodeID_A}
+
+# Task 2: Spec for NodeID_B (PARALLEL with Task 1)
+subagent_type: "spec-chief"
+prompt: |
+  Draft specification for a SINGLE NodeID.
+
+  Context:
+  - WorkGroupID: {wgid}
+  - Phase: 1B - Specification
+  - Target NodeID: {NodeID_B}
+  - Full Change Set (for reference): {list all NodeIDs}
+
+  Instructions:
+  1. Focus ONLY on {NodeID_B} specification
+  2. Draft spec with all required sections
+  3. Save spec to knowzcode/specs/{NodeID_B}.md
+  4. Ensure ARC verification criteria are documented
+
+  Return: Summary of spec drafted for {NodeID_B}
+
+# Task 3, 4, etc.: One per additional NodeID (all PARALLEL)
 ```
 
-**When agent returns:**
-1. Present specs for approval:
+**CRITICAL**: When Change Set has N NodeIDs with [NEEDS_SPEC], issue N Task tool calls in a SINGLE response.
+
+**When ALL spec agents return:**
+1. Collect all spec summaries
+2. Verify all specs were created (check knowzcode/specs/)
+3. Present specs for batch approval:
    ```markdown
    ◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    ◆ KnowzCode APPROVAL GATE #2: Specifications
    ◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
    **WorkGroupID**: {wgid}
-   **Phase**: 1B - Specification Complete
+   **Phase**: 1B - Parallel Specification Complete
+   **Specs Written**: {N} (in parallel)
 
-   **Specs Drafted** ({N} total):
-   {list specs with key ARC criteria}
+   **Specs Drafted**:
+   | NodeID | File | Key ARC Criteria |
+   |--------|------|------------------|
+   | {NodeID_A} | specs/{NodeID_A}.md | {criteria} |
+   | {NodeID_B} | specs/{NodeID_B}.md | {criteria} |
+   ...
 
    Review specs and approve to proceed to implementation?
    ◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    ```
-2. If rejected: Re-spawn spec-chief with specific feedback
-3. If approved: Update workgroup file, log SpecApproved events, proceed to Phase 2A
+4. If rejected: Re-spawn ONLY the specs that need revision (parallel if multiple)
+5. If approved: Update workgroup file, log SpecApproved events, proceed to Phase 2A
 
 ---
 
@@ -231,10 +331,22 @@ prompt: |
 
 ---
 
-### Phase 2B: Completeness Audit (READ-ONLY)
+### Phase 2B: Completeness Audit (PARALLEL AUDIT BATTERY)
 
-**SPAWN via Task tool:**
+**PARALLEL is the DEFAULT. Run multiple audit types simultaneously.**
+
+Spawn THREE audit agents IN PARALLEL in a SINGLE response:
+
+| Agent | Focus | Output |
+|-------|-------|--------|
+| arc-auditor | ARC criteria compliance | Completion %, gap list |
+| spec-quality-auditor | Spec completeness | Spec quality scores |
+| security-officer | Security posture | Final security check |
+
+**SPAWN ALL THREE via Task tool (PARALLEL - SINGLE response with multiple Task calls):**
+
 ```
+# Task 1: ARC Verification
 subagent_type: "arc-auditor"
 prompt: |
   Perform independent completeness audit (READ-ONLY).
@@ -251,21 +363,64 @@ prompt: |
   4. Do NOT modify any code - READ-ONLY audit
 
   Return: Audit report with completion %, gaps list, recommendation
+
+# Task 2: Spec Quality Audit (PARALLEL with Task 1)
+subagent_type: "spec-quality-auditor"
+prompt: |
+  Perform spec quality validation (READ-ONLY).
+
+  Context:
+  - WorkGroupID: {wgid}
+  - Phase: 2B - Post-Implementation Spec Audit
+
+  Instructions:
+  1. Verify all specs have been updated to as-built state
+  2. Check ARC criteria documentation is complete
+  3. Validate timestamps and dependencies
+  4. Flag any placeholder or incomplete sections
+
+  Return: Spec quality scores and gaps
+
+# Task 3: Security Posture Audit (PARALLEL with Tasks 1 & 2)
+subagent_type: "security-officer"
+prompt: |
+  Perform post-implementation security audit (READ-ONLY).
+
+  Context:
+  - WorkGroupID: {wgid}
+  - Phase: 2B - Final Security Check
+
+  Instructions:
+  1. Verify security concerns from Phase 1A were addressed
+  2. Check for new vulnerabilities introduced
+  3. Validate authentication/authorization implementations
+  4. Scan for common security anti-patterns
+
+  Return: Security posture report with resolved/unresolved concerns
 ```
 
-**When agent returns:**
-1. Present audit results:
+**CRITICAL**: Issue ALL THREE audit Task tool calls in a SINGLE response.
+
+**When ALL audit agents return:**
+1. Merge audit results into consolidated report
+2. Present unified audit gate:
    ```markdown
    ◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    ◆ KnowzCode APPROVAL GATE #3: Audit Results
    ◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
    **WorkGroupID**: {wgid}
-   **Phase**: 2B - Completeness Audit Complete
+   **Phase**: 2B - Parallel Audit Battery Complete
+   **Auditors Consulted**: arc-auditor, spec-quality-auditor, security-officer
 
-   **Completion**: {X}%
-   **Gaps Found**: {count}
-   {list gaps if any}
+   **ARC Completion**: {X}%
+   **Spec Quality Score**: {Y}/100
+   **Security Posture**: {SECURE/CONCERNS}
+
+   **Gaps Found** (total: {count}):
+   - ARC Gaps: {list}
+   - Spec Gaps: {list}
+   - Security Gaps: {list}
 
    **Recommendation**: {proceed / return to implementation}
 
@@ -276,8 +431,8 @@ prompt: |
    - Cancel WorkGroup
    ◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    ```
-2. If <100% and user chooses to fix: Return to Phase 2A with gap list
-3. If acceptable and user approves: Proceed to Phase 3
+3. If <100% and user chooses to fix: Return to Phase 2A with gap list
+4. If acceptable and user approves: Proceed to Phase 3
 
 ---
 
@@ -380,9 +535,13 @@ Use **Edit** tool for updates (not Write) to preserve existing content.
 
 You orchestrate the entire workflow by:
 1. Loading context ONCE at start
-2. SPAWNing phase agents for heavy work
-3. Receiving results and making decisions
-4. Maintaining state without re-reading files
-5. Enforcing quality gates at each transition
+2. **SPAWNing agents in PARALLEL by default** for discovery/audit phases
+3. Spawning sequentially ONLY when data dependencies require it
+4. Merging parallel results before presenting to user
+5. Receiving results and making decisions
+6. Maintaining state without re-reading files
+7. Enforcing quality gates at each transition
+
+**PARALLEL is the DEFAULT. SEQUENTIAL is the EXCEPTION.**
 
 **NEVER spawn kc-orchestrator. Stay persistent. Complete the workflow.**

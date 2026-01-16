@@ -44,17 +44,20 @@ This command makes YOU responsible for:
 
 ## Execution Protocol
 
-### Step 1: Determine Audit Type
+### Step 1: Determine Audit Scope
 
-Parse the argument to identify the audit type. If no argument provided, ask user:
-```markdown
-Which audit would you like to run?
+**PARALLEL is the DEFAULT. SEQUENTIAL is the EXCEPTION.**
 
-1. **spec** - Validate specification quality and completeness
-2. **architecture** - Review architecture health and alignment
-3. **security** - Scan for security vulnerabilities
-4. **integration** - Check holistic integration and consistency
-```
+Parse the argument to identify the audit type:
+
+**If NO argument provided → PARALLEL FULL AUDIT (DEFAULT):**
+- DO NOT ask the user which audit to run
+- SPAWN ALL FOUR audit agents IN PARALLEL
+- Present consolidated results
+
+**If argument provided (e.g., `spec`, `security`):**
+- Run only the specified audit type
+- Present single audit results
 
 ### Step 2: Load Context
 
@@ -64,6 +67,121 @@ Read relevant KnowzCode context files:
 - `knowzcode/knowzcode_project.md` - Project context
 
 ---
+
+### Parallel Full Audit (DEFAULT when no argument)
+
+**SPAWN ALL FOUR audit agents IN PARALLEL in a SINGLE response:**
+
+```
+# Task 1: Spec Quality Audit
+subagent_type: "spec-quality-auditor"
+prompt: |
+  Perform comprehensive specification quality audit.
+
+  Context:
+  - Audit Type: Specification Quality (part of parallel full audit)
+  - Specs Location: knowzcode/specs/
+
+  Instructions:
+  1. Load all spec files from knowzcode/specs/
+  2. For each spec, validate completeness and quality
+  3. Score each spec
+  4. Identify gaps and improvement areas
+
+  Return: Spec quality report with scores and gaps
+
+# Task 2: Architecture Audit (PARALLEL with Task 1)
+subagent_type: "architecture-reviewer"
+prompt: |
+  Perform architecture health review.
+
+  Context:
+  - Audit Type: Architecture Health (part of parallel full audit)
+  - Architecture Doc: knowzcode/knowzcode_architecture.md
+
+  Instructions:
+  1. Load architecture documentation
+  2. Analyze component relationships and dependency health
+  3. Identify drift and inconsistencies
+
+  Return: Architecture health report with findings
+
+# Task 3: Security Audit (PARALLEL with Tasks 1 & 2)
+subagent_type: "security-officer"
+prompt: |
+  Perform security vulnerability audit.
+
+  Context:
+  - Audit Type: Security Vulnerability Scan (part of parallel full audit)
+
+  Instructions:
+  1. Scan codebase for common vulnerabilities (OWASP Top 10)
+  2. Check dependencies for known vulnerabilities
+  3. Assess severity and risk for each finding
+
+  Return: Security audit report with vulnerabilities and severity
+
+# Task 4: Integration Audit (PARALLEL with Tasks 1, 2 & 3)
+subagent_type: "holistic-auditor"
+prompt: |
+  Perform holistic integration audit.
+
+  Context:
+  - Audit Type: Holistic Integration (part of parallel full audit)
+
+  Instructions:
+  1. Analyze cross-component integration
+  2. Check for orphaned code and inconsistent patterns
+  3. Verify consistency across specs, implementation, and docs
+
+  Return: Integration audit report with consistency scores
+```
+
+**CRITICAL**: Issue ALL FOUR Task tool calls in a SINGLE response. Do NOT wait for each to complete.
+
+**When ALL audit agents return:**
+Present consolidated results:
+```markdown
+◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+◆ KnowzCode COMPREHENSIVE AUDIT RESULTS
+◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**Timestamp**: {timestamp}
+**Audits Completed**: 4 (parallel execution)
+
+## Summary Scores
+| Audit Type | Health Score | Critical Issues |
+|------------|--------------|-----------------|
+| Spec Quality | {score}% | {count} |
+| Architecture | {score}% | {count} |
+| Security | {score}% | {count} |
+| Integration | {score}% | {count} |
+
+## Critical Issues (All Audits)
+{consolidated list of critical issues, sorted by severity}
+
+## Detailed Reports
+
+### Spec Quality Audit
+{findings from spec-quality-auditor}
+
+### Architecture Audit
+{findings from architecture-reviewer}
+
+### Security Audit
+{findings from security-officer}
+
+### Integration Audit
+{findings from holistic-auditor}
+
+## Prioritized Recommendations
+{combined, deduplicated action items sorted by priority}
+◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+---
+
+## Individual Audit Types (when argument provided)
 
 ### Spec Audit
 
@@ -247,10 +365,13 @@ After each audit, log to `knowzcode/knowzcode_log.md`:
 ## Summary
 
 You execute audits directly by:
-1. Parsing the audit type from arguments
-2. Loading relevant context
-3. SPAWNing the appropriate audit agent
-4. Presenting formatted results to user
-5. Logging the audit event
+1. Checking if argument provided
+2. **If NO argument → SPAWN ALL FOUR audit agents IN PARALLEL (DEFAULT)**
+3. If argument provided → Spawn only the specified audit agent
+4. Loading relevant context
+5. Presenting formatted results to user (consolidated if parallel)
+6. Logging the audit event
+
+**PARALLEL is the DEFAULT. SEQUENTIAL is the EXCEPTION.**
 
 **NEVER spawn kc-orchestrator. Execute audits directly.**

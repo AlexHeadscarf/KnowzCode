@@ -5,16 +5,35 @@ All notable changes to KnowzCode will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.9] - 2026-01-16
+
+### Added
+- Parallel Execution Philosophy section in `docs/workflow-reference.md`
+- Detailed parallel spawning patterns and decision flowchart
+- Error handling guidance for partial parallel failures
+
+### Changed
+- **PARALLEL is now the DEFAULT, SEQUENTIAL is the EXCEPTION**
+- Phase 1A: Now spawns impact-analyst, security-officer, architecture-reviewer in parallel
+- Phase 1B: Multi-NodeID specs now drafted in parallel (one agent per NodeID)
+- Phase 2B: Audit battery now runs arc-auditor, spec-quality-auditor, security-officer in parallel
+- `/kc:audit` without arguments now runs all 4 audits in parallel by default
+- Added "Parallel-First Execution" to core principles in knowzcode_loop.md
+- Consolidated audit results presentation with merged scores and findings
+
+---
+
 ## [2.0.8] - 2026-01-16
 
 ### Added
-- 
+- NodeID granularity rules section in impact-analyst agent
+- Pre-spec verification checklist in spec-chief agent
+- Change Set format example in knowzcode_loop.md
 
 ### Changed
-- 
-
-### Fixed
-- 
+- Clarified NodeID creation: only for NEW capabilities, not every file touched
+- Files that integrate/use a capability are now "affected files" (no NodeIDs needed)
+- Reduced spec proliferation by distinguishing capabilities from integration work
 
 ## [2.0.7] - 2025-01-15
 
@@ -147,6 +166,7 @@ None - all changes are additive and backward compatible.
 
 ---
 
+[2.0.9]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.8...v2.0.9
 [2.0.8]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.7...v2.0.8
 [2.0.7]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.6...v2.0.7
 [2.0.6]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.5...v2.0.6

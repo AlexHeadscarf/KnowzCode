@@ -12,7 +12,8 @@ argument-hint: "[feature_description]"
 3. ✅ **Step 2**: Load Context Files
 4. ✅ **Step 3**: Create WorkGroup File
 5. ✅ **Step 4**: Input Classification (question vs implementation)
-6. ✅ **Step 5**: THEN spawn Phase 1A agents
+6. ✅ **Step 4.5**: Spec Detection & Context Optimization (may skip to Phase 2A)
+7. ✅ **Step 5**: THEN spawn Phase 1A agents (unless Step 4.5 shortcuts)
 
 **DO NOT:**
 - ❌ Read source code files before Step 3 is complete
@@ -176,6 +177,185 @@ Check for recent investigation context:
    - Load investigation findings
    - Pre-populate Phase 1A with discovered NodeIDs
    - Skip redundant discovery - focus on validation
+
+---
+
+## Step 4.5: Spec Detection & Context Optimization
+
+Before spawning Phase 1A agents, check for existing context that can accelerate the workflow.
+
+### 4.5.1: Investigation Context Pre-Loading
+
+If investigation context was loaded in Step 4:
+1. Extract potential NodeIDs from investigation findings
+2. Mark them as `[FROM_INVESTIGATION]` for validation focus
+3. Phase 1A will focus on validation rather than full discovery
+
+### 4.5.2: Spec Discovery
+
+Check for existing specs that may cover the requested work:
+
+1. **Extract key terms** from $ARGUMENTS:
+   - Nouns: component names, domain objects, feature names
+   - Verbs: action types (add, update, refactor, remove)
+   - Domain concepts: authentication, payment, user, etc.
+
+2. **Two-tier spec matching**:
+
+   **Tier 1 (always)**: Pattern-based search
+   ```
+   - Glob knowzcode/specs/*.md for filenames containing keywords
+   - Grep "## 1. Purpose" sections in matching specs
+   - Score by keyword frequency and position (title > purpose > body)
+   ```
+
+   **Tier 2 (if MCP available)**: Semantic search
+   ```
+   - Use query_specs() for semantic matching if KnowzCode MCP is connected
+   - Combines with Tier 1 scores
+   ```
+
+3. **Score relevance** (0-100):
+   - Title match: +40 points
+   - Purpose section match: +30 points
+   - Dependencies/interfaces match: +20 points
+   - Body text match: +10 points
+
+4. **Filter** to specs scoring > 50
+
+### 4.5.3: Spec Quality Assessment
+
+For each matching spec, evaluate quality:
+
+| Criteria | Pass If | Points |
+|----------|---------|--------|
+| **Completeness** | All 7 sections present (Purpose, Dependencies, Interfaces, Core Logic, Data Structures, ARC, Tech Debt) | Required |
+| **Freshness** | Date field < 7 days OR no `[NEEDS_UPDATE]` marker | Required |
+| **No placeholders** | No `[TBD]`, `[TODO]`, `[placeholder]` text | Required |
+| **ARC criteria** | At least 3 testable verification criteria | Required |
+| **Purpose clarity** | Purpose section > 50 characters | Required |
+
+**Quality Score**:
+- **COMPREHENSIVE**: All criteria pass
+- **PARTIAL**: 3-4 criteria pass
+- **INCOMPLETE**: < 3 criteria pass
+
+### 4.5.4: User Decision Gate
+
+**IF matching specs found AND at least one is COMPREHENSIVE:**
+
+Present optimization options to user:
+
+```markdown
+◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+◆ KnowzCode SPEC DETECTION
+◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**Goal**: {$ARGUMENTS}
+**Matching Specs Found**: {count}
+
+| Spec | Relevance | Age | Quality |
+|------|-----------|-----|---------|
+| {spec1}.md | 85% | 3 days | COMPREHENSIVE |
+| {spec2}.md | 62% | 8 days | PARTIAL |
+
+**Options**:
+
+A) **Quick Path** - Skip discovery, proceed to implementation
+   → Uses existing specs as Change Set
+   → Risk: Specs may not reflect recent code changes
+
+B) **Validation Path** (RECOMMENDED)
+   → Quick verification that specs match codebase
+   → ~1 minute, balances speed and safety
+
+C) **Full Workflow** - Complete Phase 1A discovery
+   → Maximum accuracy
+   → May identify new requirements
+
+Choose [A/B/C] or press Enter for (B):
+◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+**IF no matching specs OR all are INCOMPLETE:**
+- Continue to Phase 1A (Step 5) as normal
+- Full discovery required
+
+### 4.5.5: Execute Chosen Path
+
+#### Path A: Quick Path
+
+1. Load matching COMPREHENSIVE specs as approved Change Set
+2. Extract NodeIDs from spec filenames
+3. Skip Phase 1A and 1B entirely
+4. Create WorkGroup with pre-loaded Change Set:
+   ```markdown
+   ## Change Set (Pre-loaded from Specs)
+   - [SPEC_REUSED] NodeID_1: {purpose from spec}
+   - [SPEC_REUSED] NodeID_2: {purpose from spec}
+   ```
+5. Log event: "SpecReused" with risk acknowledgment
+6. Add `[SPEC_REUSED]` marker to WorkGroup file
+7. **Proceed directly to Phase 2A**
+
+#### Path B: Validation Path (Default)
+
+1. Spawn single `impact-analyst` agent in quick-validation mode:
+   ```
+   subagent_type: "impact-analyst"
+   prompt: |
+     Perform QUICK VALIDATION of existing specs against current codebase.
+
+     Context:
+     - WorkGroupID: {wgid}
+     - Mode: Quick Validation (not full discovery)
+     - Specs to validate: {list matching spec files}
+     - Primary Goal: {$ARGUMENTS}
+
+     Instructions:
+     1. For EACH spec, verify:
+        - Dependencies still exist at specified paths
+        - Interfaces match current implementation signatures
+        - External service calls are still valid
+     2. Flag specific concerns if found
+     3. Do NOT perform full impact analysis
+     4. Do NOT identify new NodeIDs
+
+     Return: VALID | NEEDS_UPDATE with specific concerns list
+   ```
+
+2. **If agent returns VALID**:
+   - Proceed like Quick Path (Path A)
+   - Log: "SpecValidated"
+
+3. **If agent returns NEEDS_UPDATE**:
+   - Present concerns to user:
+     ```
+     Validation found concerns:
+     - {concern 1}
+     - {concern 2}
+
+     Falling back to Full Workflow to address these.
+     ```
+   - Continue to Phase 1A with concerns as focus areas
+
+#### Path C: Full Workflow
+
+1. Continue to Phase 1A as normal
+2. No optimization applied
+3. Full parallel discovery with impact-analyst, security-officer, architecture-reviewer
+
+### 4.5.6: Context Flag Summary
+
+After Step 4.5, the WorkGroup file should indicate the path taken:
+
+```markdown
+## Workflow Optimization
+- **Spec Detection**: {count} specs matched
+- **Path Chosen**: {A: Quick | B: Validation | C: Full | N/A: No matches}
+- **Investigation Context**: {Yes/No}
+- **Pre-loaded NodeIDs**: {list if applicable}
+```
 
 ---
 

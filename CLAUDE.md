@@ -167,6 +167,33 @@ KnowzCode guides you through each phase with quality gates:
 - **Phase 2B (Verification)**: Quality checks
 - **Phase 3 (Finalization)**: Update docs and close WorkGroup
 
+## New in v2.0.15
+
+### Start-Work Skill & Spec Detection
+
+Seamless plan-to-implementation transitions and workflow optimization:
+
+**`start-work` Skill:**
+- Detects implementation intent: "implement this plan", "do option 1", "go ahead"
+- Auto-extracts context from recent plans, investigations, or active WorkGroups
+- Handles "option N" parsing from investigation findings
+- Guards against questions and already-executing commands
+
+**Step 4.5: Spec Detection:**
+- Scans existing specs before Phase 1A discovery
+- Two-tier matching: pattern-based + semantic (if MCP available)
+- Quality assessment: COMPREHENSIVE / PARTIAL / INCOMPLETE
+
+**Three Workflow Paths:**
+- **A) Quick Path** - Skip discovery, use existing specs directly
+- **B) Validation Path** (default) - Quick verification specs match codebase
+- **C) Full Workflow** - Complete Phase 1A discovery as before
+
+**Benefits:**
+- Plan mode exits naturally flow into `/kc:work`
+- Comprehensive specs skip redundant discovery
+- Investigation context pre-populates Phase 1A
+
 ## New in v2.0.10
 
 ### Investigation Workflow with Parallel Research

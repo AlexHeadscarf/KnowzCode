@@ -5,6 +5,31 @@ All notable changes to KnowzCode will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.15] - 2026-01-16
+
+### Added
+- **`start-work` skill** for seamless plan-to-implementation transitions
+  - Detects implementation intent phrases: "implement this plan", "do option 1", "go ahead", etc.
+  - Auto-extracts context from recent plans, investigations, or active WorkGroups
+  - Handles "option N" parsing from investigation findings
+  - Guards against questions and already-executing commands
+- **Step 4.5: Spec Detection & Context Optimization** in `/kc:work`
+  - Scans for existing specs matching the goal before Phase 1A
+  - Two-tier matching: pattern-based (always) + semantic (if MCP available)
+  - Quality assessment: COMPREHENSIVE / PARTIAL / INCOMPLETE
+  - Three workflow paths:
+    - **A) Quick Path**: Skip discovery, use existing specs directly
+    - **B) Validation Path** (default): Quick verification that specs match codebase
+    - **C) Full Workflow**: Complete Phase 1A discovery as before
+  - Investigation context pre-loading for reduced redundant discovery
+
+### Changed
+- `/kc:work` mandatory execution order now includes Step 4.5
+- WorkGroup files now include "Workflow Optimization" section tracking path chosen
+- Investigation context can now pre-populate Phase 1A NodeIDs
+
+---
+
 ## [2.0.14] - 2026-01-16
 
 ### Added
@@ -234,6 +259,7 @@ None - all changes are additive and backward compatible.
 
 ---
 
+[2.0.15]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.14...v2.0.15
 [2.0.14]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.13...v2.0.14
 [2.0.13]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.10...v2.0.13
 [2.0.10]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.9...v2.0.10

@@ -41,6 +41,32 @@ When performing multiple independent operations:
 
 ---
 
+## Efficiency Constraints
+
+To balance thoroughness with token efficiency:
+
+- **Max tool calls**: 12 (target, not hard limit)
+- **Skip**: Full drift analysis unless explicitly auditing
+- **Focus**: Layers and patterns directly affected by the task
+- **Smart context**: Read only specs for components in the affected layers
+
+### Task-Scoped Analysis
+
+When invoked for a specific WorkGroup or task (not a full audit):
+1. Focus on architectural impact of the proposed changes
+2. Check layer interactions only for affected components
+3. Skip unrelated architectural domains
+4. Example: "Add email verification" → focus on service layer, auth flow; skip UI patterns, DB schema
+
+### Full Audit Mode
+
+When invoked via `/kc:audit architecture`:
+- Comprehensive drift analysis
+- Full layer coherence review
+- No efficiency constraints apply
+
+---
+
 ## Context Files (Auto-loaded)
 
 - knowzcode/knowzcode_architecture.md

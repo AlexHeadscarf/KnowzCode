@@ -5,6 +5,29 @@ All notable changes to KnowzCode will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.14] - 2026-01-16
+
+### Added
+- **Quick agent variants** for investigation workflow
+  - `impact-analyst-quick.md` - Max 10 tool calls, haiku model
+  - `security-officer-quick.md` - Max 8 tool calls, haiku model
+  - `architecture-reviewer-quick.md` - Max 8 tool calls, haiku model
+- **Efficiency constraints** added to full agents for `/kc:work` Phase 1A
+  - `impact-analyst.md` - Max 20 tool calls, smart historical context scanning
+  - `security-officer.md` - Max 15 tool calls, task-scoped OWASP analysis
+  - `architecture-reviewer.md` - Max 12 tool calls, focused layer analysis
+- **Selective agent spawning** in investigation prompt (1-3 agents based on question type)
+
+### Changed
+- Investigation workflow now uses two-tier token targets:
+  - `/kc:plan investigate` uses quick agents (~60-90k tokens)
+  - `/kc:work` Phase 1A uses full agents with efficiency constraints (~120-150k tokens)
+  - `/kc:audit *` uses full agents without constraints (~200-300k tokens)
+- Full agents now distinguish between task-scoped analysis and full audit mode
+- Historical context scanning is now relevance-based (not time-limited or reading all files)
+
+---
+
 ## [2.0.13] - 2026-01-16
 
 ### Fixed
@@ -211,6 +234,8 @@ None - all changes are additive and backward compatible.
 
 ---
 
+[2.0.14]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.13...v2.0.14
+[2.0.13]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.10...v2.0.13
 [2.0.10]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.9...v2.0.10
 [2.0.9]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.8...v2.0.9
 [2.0.8]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.7...v2.0.8

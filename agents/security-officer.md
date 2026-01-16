@@ -41,6 +41,32 @@ When performing multiple independent operations:
 
 ---
 
+## Efficiency Constraints
+
+To balance thoroughness with token efficiency:
+
+- **Max tool calls**: 15 (target, not hard limit)
+- **OWASP focus**: Only categories relevant to the task
+- **Skip**: Full vulnerability scan unless explicitly auditing
+- **Smart context**: Read only specs/workgroups relevant to the security domain being assessed
+
+### Task-Scoped Analysis
+
+When invoked for a specific WorkGroup or task (not a full audit):
+1. Focus on security implications of the proposed changes
+2. Check OWASP categories related to the change (e.g., auth changes → A01, A07)
+3. Skip unrelated security domains
+4. Example: "Add email verification" → focus on injection, broken auth; skip SSRF, deserialization
+
+### Full Audit Mode
+
+When invoked via `/kc:audit security`:
+- Comprehensive OWASP Top 10 coverage
+- No efficiency constraints apply
+- Full vulnerability scanning enabled
+
+---
+
 ## Context Files (Auto-loaded)
 
 - knowzcode/prompts/KCv2.0__Advanced_Security_Audit.md

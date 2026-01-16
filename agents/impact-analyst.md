@@ -143,6 +143,37 @@ Before analyzing impact, scan completed WorkGroups for relevant history:
 
 This ensures new work benefits from historical context rather than starting fresh. Include relevant historical references in your Change Set proposal.
 
+## Efficiency Constraints
+
+To balance thoroughness with token efficiency:
+
+- **Max tool calls**: 20 (target, not hard limit)
+- **File reads**: Max 10 deep-read files
+- **Search strategy**:
+  1. Start with architecture.md for component map
+  2. Targeted grep for goal keywords
+  3. Read only files directly in the change path
+
+### Smart Historical Context (Not Time-Limited)
+
+**WorkGroup scanning**:
+1. Scan tracker for completed WorkGroups
+2. Find WorkGroups that touched similar NodeIDs OR features
+3. Read ONLY those relevant WorkGroups (not all, not arbitrary limit)
+4. Example: Goal is "add email verification" → find WorkGroups that touched auth, email, or user registration
+
+**Spec scanning**:
+1. Scan knowzcode/specs/ directory
+2. Read specs that match goal keywords or affected components
+3. Skip specs for unrelated domains
+4. Example: Goal is "add email verification" → read UC_UserRegistration, SVC_EmailSender (skip UI_Dashboard, API_Reports)
+
+### Skip for Efficiency
+- Reading ALL specs (read only relevant ones)
+- Reading ALL historical WorkGroups (read only relevant ones)
+- Deep-diving into dependencies of dependencies
+- Reading files clearly outside the change path
+
 ## NodeID Granularity Rules
 
 **Core principle**: One NodeID per new capability being created, not per file being modified.

@@ -4,7 +4,7 @@
 
 ## Your Mission
 
-You are performing a parallel investigation of the codebase to answer a specific question. You will spawn multiple research agents simultaneously to gather evidence from different perspectives, then synthesize findings into actionable recommendations.
+You are performing a focused investigation of the codebase to answer a specific question. You will spawn 1-3 quick research agents (based on question relevance) to gather evidence, then synthesize findings into actionable recommendations.
 
 **Investigation Question**: $ARGUMENTS
 
@@ -15,11 +15,12 @@ You are performing a parallel investigation of the codebase to answer a specific
 **DO NOT delegate to kc-orchestrator. You ARE the persistent orchestrator.**
 
 This prompt makes YOU the investigation coordinator. You will:
-1. Spawn multiple research agents IN PARALLEL
-2. Wait for ALL results before proceeding
-3. Synthesize findings into a cohesive answer
-4. Enter "Action Listening Mode" for implementation triggers
-5. Auto-invoke `/kc:work` if user wants to implement findings
+1. Analyze the question and select relevant agents (1-3)
+2. Spawn selected agents IN PARALLEL (quick variants)
+3. Wait for ALL results before proceeding
+4. Synthesize findings into a cohesive answer
+5. Enter "Action Listening Mode" for implementation triggers
+6. Auto-invoke `/kc:work` if user wants to implement findings
 
 **⛔ ANTI-RECURSION RULES:**
 - NEVER spawn kc-orchestrator sub-agent
@@ -37,81 +38,83 @@ Read these files ONCE at the start:
 
 ---
 
-## Phase 2: Parallel Research (SPAWN THREE AGENTS)
+## Phase 2: Selective Agent Spawning
 
-**PARALLEL is the DEFAULT. SEQUENTIAL is the EXCEPTION.**
+**PARALLEL is the DEFAULT. But spawn ONLY agents that are relevant to the question.**
 
-Spawn THREE research agents IN PARALLEL in a SINGLE response:
+### Step 1: Determine Which Agents Are Needed
 
-| Agent | Focus | Output |
-|-------|-------|--------|
-| impact-analyst | Code exploration, trace patterns | Evidence and code locations |
-| architecture-reviewer | Pattern assessment, design evaluation | Architecture analysis |
-| security-officer | Security/performance implications | Risk assessment |
+Analyze the question and select agents based on relevance:
 
-**SPAWN ALL THREE via Task tool (PARALLEL - SINGLE response with multiple Task calls):**
+| Agent | When to Include | Skip When |
+|-------|-----------------|-----------|
+| **impact-analyst-quick** | ALWAYS (provides code evidence) | Never skip - always needed |
+| **architecture-reviewer-quick** | Question involves patterns, design, structure, consistency, layers | Simple lookup questions, bug hunts, "where is X?" |
+| **security-officer-quick** | Question involves auth, security, performance, data handling, risk | Code organization questions, refactoring questions |
+
+**Question Type → Agent Selection Guide:**
+
+| Question Type | Example | Agents |
+|---------------|---------|--------|
+| Code location | "Where is user auth handled?" | impact-analyst-quick only |
+| Implementation check | "How is error handling done?" | impact-analyst-quick + architecture-reviewer-quick |
+| Security concern | "Is the API properly secured?" | impact-analyst-quick + security-officer-quick |
+| Full assessment | "Is the auth system well designed and secure?" | All 3 agents |
+| Pattern consistency | "Are we consistent in how we handle dates?" | impact-analyst-quick + architecture-reviewer-quick |
+
+### Step 2: Spawn Selected Agents (PARALLEL)
+
+**Use the quick variants** - they are optimized for investigation (low-token, focused):
 
 ```
-# Task 1: Code Exploration
-subagent_type: "impact-analyst"
+# Task 1: Code Exploration (ALWAYS INCLUDE)
+subagent_type: "kc:impact-analyst-quick"
 prompt: |
-  Investigate the codebase to answer this question.
+  Quick investigation: Find code evidence to answer this question.
 
   Question: {$ARGUMENTS}
 
-  Instructions:
-  1. Search for relevant code areas
-  2. Trace implementations and patterns
-  3. Find all usages and relationships
-  4. Document specific file locations with line numbers
-  5. Gather concrete evidence
+  Constraints: Max 10 tool calls. Focus on 5 most relevant files.
 
-  Return: Code exploration findings with evidence (file paths, line numbers, code snippets)
+  Return: Code evidence with file paths and line numbers.
 
-# Task 2: Architecture & Pattern Analysis (PARALLEL with Task 1)
-subagent_type: "architecture-reviewer"
+# Task 2: Architecture & Pattern Analysis (INCLUDE IF RELEVANT)
+subagent_type: "kc:architecture-reviewer-quick"
 prompt: |
-  Analyze architecture and patterns to answer this question.
+  Quick assessment: Evaluate patterns and design for this question.
 
   Question: {$ARGUMENTS}
 
-  Instructions:
-  1. Assess current patterns and approaches used
-  2. Compare against best practices
-  3. Evaluate design decisions
-  4. Identify improvements or concerns
-  5. Assess consistency across codebase
+  Constraints: Max 8 tool calls. Focus on pattern consistency.
 
-  Return: Pattern analysis with conformance assessment and recommendations
+  Return: Pattern observations with examples.
 
-# Task 3: Security & Performance Implications (PARALLEL with Tasks 1 & 2)
-subagent_type: "security-officer"
+# Task 3: Security & Performance (INCLUDE IF RELEVANT)
+subagent_type: "kc:security-officer-quick"
 prompt: |
-  Analyze security and performance implications for this question.
+  Quick assessment: Check security/performance aspects for this question.
 
   Question: {$ARGUMENTS}
 
-  Instructions:
-  1. Identify security-relevant aspects
-  2. Assess performance implications
-  3. Flag potential risks or concerns
-  4. Note compliance considerations
-  5. Suggest security/performance improvements
+  Constraints: Max 8 tool calls. Only check relevant OWASP categories.
 
-  Return: Risk assessment with severity levels and recommendations
+  Return: Risk observations with severity levels.
 ```
 
-**CRITICAL**: Issue ALL THREE Task tool calls in a SINGLE response. Do NOT wait for each to complete before spawning the next.
+**CRITICAL**:
+- Issue selected Task calls IN PARALLEL (single response)
+- Use `kc:*-quick` agents, NOT the full agents
+- Omit agents that aren't relevant to the question
 
 ---
 
 ## Phase 3: Synthesize Findings
 
-**When ALL agents return:**
+**When ALL spawned agents return:**
 
 1. Merge results into unified investigation report
-2. Cross-reference findings from all three agents
-3. Identify agreements and conflicts between agents
+2. Cross-reference findings from agents consulted
+3. Identify agreements and conflicts (if multiple agents)
 4. Formulate direct answer to the original question
 5. Generate actionable recommendations
 
@@ -124,7 +127,7 @@ Save findings to `knowzcode/planning/investigation-{timestamp}.md`:
 
 **Question**: {$ARGUMENTS}
 **Timestamp**: {timestamp}
-**Agents Consulted**: impact-analyst, architecture-reviewer, security-officer
+**Agents Consulted**: {list agents actually spawned}
 
 ## Executive Summary
 
@@ -173,7 +176,7 @@ Present investigation results to user:
 ◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 **Question**: {$ARGUMENTS}
-**Agents Consulted**: 3 (in parallel)
+**Agents Consulted**: {N} (quick variants, in parallel)
 
 ## Summary
 
@@ -276,12 +279,13 @@ After investigation, log to `knowzcode/knowzcode_log.md`:
 
 You orchestrate investigations by:
 1. Loading context ONCE at start
-2. **SPAWNing THREE research agents IN PARALLEL** (single response)
-3. Waiting for ALL results before proceeding
-4. Synthesizing findings into unified answer
-5. Saving investigation report to `knowzcode/planning/`
-6. Presenting findings with implementation options
-7. Entering Action Listening Mode for implementation triggers
-8. Auto-invoking `/kc:work` when user wants to implement
+2. Analyzing the question to select relevant agents (1-3)
+3. **SPAWNing selected QUICK agents IN PARALLEL** (single response)
+4. Waiting for ALL results before proceeding
+5. Synthesizing findings into unified answer
+6. Saving investigation report to `knowzcode/planning/`
+7. Presenting findings with implementation options
+8. Entering Action Listening Mode for implementation triggers
+9. Auto-invoking `/kc:work` when user wants to implement
 
 **PARALLEL is the DEFAULT. NEVER spawn kc-orchestrator.**

@@ -15,10 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Makes WorkGroup files easier to identify and scan
 
 ### Fixed
-- **`start-work` skill not triggering** on Claude Code plan mode exit
-  - Registered skill in `marketplace.json` (was missing from `skills` array)
-- **`continue` skill not auto-triggering** on continuation phrases
-  - Registered skill in `marketplace.json` (handles "continue", "keep going", "resume", etc.)
+- **Skills not auto-triggering** - added missing `skills` array to `marketplace.json`
+  - `start-work` skill: triggers on "implement this plan", "go ahead", "let's implement", etc.
+  - `continue` skill: triggers on "continue", "keep going", "resume", "carry on", etc.
+  - Root cause: skill files existed but were never registered with the plugin system
 
 ---
 

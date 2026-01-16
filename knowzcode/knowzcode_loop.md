@@ -36,9 +36,28 @@ The Orchestrator will initiate this loop by providing you with a `PrimaryGoal`.
 **Step 1: Work Session Initiation & Scope Definition**
 1.1. Receive the `PrimaryGoal` from the Orchestrator.
 1.2. **Upfront Impact Analysis**: Identify the **"Change Set"**.
+
+    **NodeID Granularity**: Create NodeIDs only for NEW capabilities being built, not for every file touched. Files that integrate/use a new capability are "affected files" - they don't need separate NodeIDs or specs.
+
     - During impact analysis, verify that all referenced NodeIDs have corresponding spec files.
     - If a dependency lacks a spec, it must be marked `[NEEDS_SPEC]` and included in the Change Set.
     - Record discovery tasks and open questions in `knowzcode/workgroups/<WorkGroupID>.md` (prefix each bullet with `KnowzCode:`).
+
+    **Change Set Format:**
+    ```markdown
+    ## Change Set for WorkGroup [ID]
+
+    ### New Capabilities (NodeIDs)
+    | NodeID | Description |
+    |--------|-------------|
+    | LIB_DateTimeFormat | Timezone formatting utility |
+
+    ### Affected Files (no NodeIDs needed)
+    - JobsPage.tsx - integrate formatDateTime
+    - IntakeJobsPage.tsx - integrate formatDateTime
+
+    **Specs Required**: 1
+    ```
 
     **NodeID Naming Convention:**
     NodeIDs must be **domain concepts**, not tasks. Two valid patterns:

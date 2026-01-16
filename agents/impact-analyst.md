@@ -112,6 +112,61 @@ Before analyzing impact, scan completed WorkGroups for relevant history:
 
 This ensures new work benefits from historical context rather than starting fresh. Include relevant historical references in your Change Set proposal.
 
+## NodeID Granularity Rules
+
+**Core principle**: One NodeID per new capability being created, not per file being modified.
+
+### Before Proposing a NodeID, Ask:
+
+1. "Is this creating NEW functionality, or using existing/new functionality?"
+   - Creating new → NodeID warranted
+   - Using existing → Just an "affected file"
+
+2. "Would this be a reusable domain concept that future developers reference?"
+   - Yes → NodeID warranted
+   - No, just integration work → Affected file
+
+3. "Does an existing spec already cover this?"
+   - Search `knowzcode/specs/` first
+   - Update existing spec rather than create new
+
+### What Gets a NodeID (Needs Spec)
+
+- New utility/library being created (e.g., `LIB_DateTimeFormat`)
+- New UI component (e.g., `UI_TimezoneSelector`)
+- New API endpoint or service
+- New use case workflow
+
+### What Does NOT Get a NodeID
+
+- Files that import/use the new capability
+- Existing components being modified to integrate the new capability
+- These are listed as "Affected Files" in the Change Set
+
+### Example: "Add timezone formatting to 15 components"
+
+**Wrong**: 15 NodeIDs (one per component)
+**Right**: 1 NodeID (`LIB_DateTimeFormat`) + 14 affected files
+
+### Change Set Format
+
+```markdown
+## Change Set for WorkGroup [ID]
+
+### New Capabilities (NodeIDs)
+| NodeID | Description |
+|--------|-------------|
+| LIB_DateTimeFormat | Timezone formatting utility |
+
+### Affected Files (no NodeIDs needed)
+- JobsPage.tsx - integrate formatDateTime
+- IntakeJobsPage.tsx - integrate formatDateTime
+- DashboardCard.tsx - integrate formatDateTime
+...
+
+**Specs Required**: 1
+```
+
 ## Exit Expectations
 
 - Produce a complete Change Set list referencing NodeIDs and spec status

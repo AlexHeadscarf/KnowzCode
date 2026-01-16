@@ -54,6 +54,14 @@ Specs are **not** work items or task descriptions:
 | Configuration | `CONFIG_[Name]` | `CONFIG_AppSettings` |
 | Use Cases | `UC_[Name]` | `UC_FileUpload`, `UC_CreateJob` |
 
+## Before Creating Any Spec
+
+1. **Verify it's in the Change Set as a NodeID** - not just an "affected file"
+2. **Search existing specs** - `Glob: knowzcode/specs/*.md`
+3. **If similar exists** - update it instead of creating new
+
+Only items listed with NodeIDs in the Change Set need specs. "Affected files" are just files that use/integrate the new capability - they don't need separate specs.
+
 ## Context Files (Auto-loaded)
 
 - knowzcode/knowzcode_loop.md

@@ -13,6 +13,8 @@ trigger: User expresses intent to implement a plan, findings, or spec
 Activate when user message matches ANY of these patterns:
 - "implement this plan"
 - "implement the plan"
+- "Implement the following plan"
+- "implement the following"
 - "let's implement"
 - "start implementing"
 - "execute the plan"

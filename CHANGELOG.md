@@ -5,6 +5,23 @@ All notable changes to KnowzCode will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.17] - 2026-01-16
+
+### Added
+- **Descriptive WorkGroup IDs** with meaningful slugs extracted from goal
+  - New format: `kc-{type}-{slug}-YYYYMMDD-HHMMSS`
+  - Example: `kc-feat-user-auth-jwt-20250115-143022` instead of `kc-feat-20250115-143022`
+  - Slug extraction removes common words and takes 2-4 key descriptive terms
+  - Makes WorkGroup files easier to identify and scan
+
+### Fixed
+- **`start-work` skill not triggering** on Claude Code plan mode exit
+  - Registered skill in `marketplace.json` (was missing from `skills` array)
+- **`continue` skill not auto-triggering** on continuation phrases
+  - Registered skill in `marketplace.json` (handles "continue", "keep going", "resume", etc.)
+
+---
+
 ## [2.0.16] - 2026-01-16
 
 ### Added
@@ -278,6 +295,7 @@ None - all changes are additive and backward compatible.
 
 ---
 
+[2.0.17]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.16...v2.0.17
 [2.0.16]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.15...v2.0.16
 [2.0.15]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.14...v2.0.15
 [2.0.14]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.13...v2.0.14

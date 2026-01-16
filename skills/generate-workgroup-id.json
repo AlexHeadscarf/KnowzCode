@@ -1,19 +1,25 @@
 {
   "name": "generate-workgroup-id",
-  "version": "0.1.0",
-  "description": "Generates a WorkGroupID following the KCv2.0 convention [type]-YYYYMMDD-HHMMSS.",
+  "version": "0.2.0",
+  "description": "Generates a WorkGroupID following the KCv2.0 convention [type]-[slug]-YYYYMMDD-HHMMSS. The slug is a 2-4 word descriptor extracted from the goal.",
   "parameters": [
     {
       "name": "type",
       "type": "string",
       "required": true,
       "description": "One of feat, fix, refactor, issue"
+    },
+    {
+      "name": "slug",
+      "type": "string",
+      "required": false,
+      "description": "A 2-4 word kebab-case descriptor (e.g., 'auth-jwt', 'dark-mode'). If not provided, generates ID without slug."
     }
   ],
   "actions": [
     {
       "type": "python",
-      "code": "import datetime\nallowed = {'feat', 'fix', 'refactor', 'issue'}\nwg_type = inputs['type']\nif wg_type not in allowed:\n    raise ValueError(f'Invalid type {wg_type!r}, expected one of {sorted(allowed)}')\ntimestamp = datetime.datetime.utcnow().strftime('%Y%m%d-%H%M%S')\noutputs['workgroup_id'] = f'{wg_type}-{timestamp}'"
+      "code": "import datetime\nimport re\nallowed = {'feat', 'fix', 'refactor', 'issue'}\nwg_type = inputs['type']\nif wg_type not in allowed:\n    raise ValueError(f'Invalid type {wg_type!r}, expected one of {sorted(allowed)}')\ntimestamp = datetime.datetime.utcnow().strftime('%Y%m%d-%H%M%S')\nslug = inputs.get('slug', '')\nif slug:\n    # Sanitize slug: lowercase, replace spaces with hyphens, remove non-alphanumeric\n    slug = re.sub(r'[^a-z0-9-]', '', slug.lower().replace(' ', '-'))\n    slug = re.sub(r'-+', '-', slug).strip('-')[:25]  # Max 25 chars\n    outputs['workgroup_id'] = f'{wg_type}-{slug}-{timestamp}'\nelse:\n    outputs['workgroup_id'] = f'{wg_type}-{timestamp}'"
     }
   ]
 }

@@ -95,10 +95,28 @@ STOP - do not proceed with workflow.
 ---
 
 ### Step 1: Generate WorkGroup ID
-```
-Format: kc-feat-YYYYMMDD-HHMMSS
-Example: kc-feat-20250115-143022
-```
+
+**Format**: `kc-{type}-{slug}-YYYYMMDD-HHMMSS`
+
+Where:
+- `{type}`: feat, fix, refactor, or issue
+- `{slug}`: 2-4 word kebab-case descriptor extracted from goal
+- `YYYYMMDD-HHMMSS`: UTC timestamp
+
+**Slug Extraction Algorithm**:
+1. Extract key words from `$ARGUMENTS`
+2. Remove common words: build, add, create, implement, update, fix, the, a, an, with, for, to, and, or
+3. Take first 2-4 remaining words
+4. Convert to kebab-case
+5. Truncate to max 25 characters
+
+**Examples**:
+| Goal | WorkGroup ID |
+|------|--------------|
+| "Build user authentication with JWT" | `kc-feat-user-auth-jwt-20250115-143022` |
+| "Add dark mode toggle to settings" | `kc-feat-dark-mode-toggle-20250115-143022` |
+| "Fix null reference in login form" | `kc-fix-null-login-form-20250115-143022` |
+| "Refactor payment processing module" | `kc-refactor-payment-processing-20250115-143022` |
 
 ### Step 2: Load Context Files
 Read these files ONCE at the start (do NOT re-read between phases):

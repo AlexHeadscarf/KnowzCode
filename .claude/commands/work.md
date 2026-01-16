@@ -23,7 +23,7 @@ Context:
 
 Instructions for orchestrator:
 1. Load KnowzCode context from knowzcode/*.md files
-2. Generate a new WorkGroupID (format: kc-feat-YYYYMMDD-HHMMSS)
+2. Generate a new WorkGroupID (format: kc-{type}-{slug}-YYYYMMDD-HHMMSS, e.g., kc-feat-user-auth-jwt-20250115-143022)
 3. Create workgroup file at knowzcode/workgroups/{WorkGroupID}.md
 4. Begin with Phase 1A (Impact Analysis)
 5. Proceed through phases with user approval at each gate

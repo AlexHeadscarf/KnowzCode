@@ -5,6 +5,63 @@ All notable changes to KnowzCode will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.18] - 2026-01-16
+
+### Added
+- **`/kc:telemetry` command** for investigating production telemetry across multiple sources
+  - Query Sentry, Azure App Insights, and other telemetry sources
+  - **Natural language parsing** - describe everything in plain English
+  - Auto-extracts environment, timeframe, and search terms from description
+  - Examples:
+    - `/kc:telemetry "in staging in the last 20 min, error 500"`
+    - `/kc:telemetry "NullReferenceException in production over the past hour"`
+    - `/kc:telemetry "checkout failures in dev since this morning"`
+- **`/kc:telemetry-setup` command** for guided telemetry configuration
+  - Detects installed telemetry tools (sentry-cli, az CLI)
+  - Verifies authentication status for each tool
+  - Auto-discovers available Sentry projects and App Insights resources
+  - Interactive environment mapping (production, staging, dev)
+  - Persists configuration to `knowzcode/telemetry_config.md`
+- **`knowzcode/telemetry_config.md`** configuration file template
+  - Stores environment-to-resource mappings for Sentry and App Insights
+  - Team-shareable (git-committable) telemetry configuration
+  - Supports organization, project, subscription, and App ID settings
+- **`telemetry-investigator` parent agent** that orchestrates parallel telemetry investigation
+  - **Phase 0: NLP extraction** - parses environment, timeframe, search query from natural language
+  - **Phase 0.5: Configuration resolution** - maps environment to specific project/App ID
+  - Spawns source-specific subagents in parallel (single response)
+  - Passes resolved resource IDs (not placeholders) to subagents
+  - Synthesizes findings into unified timeline
+  - Generates root cause hypothesis with confidence levels
+  - Callable by other agents (e.g., implementation-lead during debugging)
+- **`sentry-investigator-quick` agent** for focused Sentry error investigation
+  - Max 8 tool calls, haiku model
+  - Returns: errors, stack traces, breadcrumbs, affected users
+  - Supports Sentry CLI, MCP, and API methods
+  - Uses configured organization and project from entry context
+- **`appinsights-investigator-quick` agent** for Azure App Insights investigation
+  - Max 10 tool calls, haiku model
+  - Returns: exceptions, failed requests, failed dependencies
+  - Supports Azure CLI with KQL queries
+  - Uses configured App ID from entry context
+
+### Changed
+- **`/kc:telemetry` command** enhanced with configuration loading
+  - Loads `knowzcode/telemetry_config.md` before investigation
+  - Verifies tool authentication (not just installation)
+  - Passes environment→resource mappings to telemetry-investigator
+  - Reports helpful setup instructions if not configured
+- **Subagents use resolved IDs** instead of placeholders
+  - Sentry queries use actual `org/project` from config
+  - App Insights queries use actual `app-id` from config
+  - Error handling includes configuration troubleshooting guidance
+
+### Integration
+- Other agents can spawn `telemetry-investigator` for debugging support
+- Results link to `/kc:fix` or `/kc:work` for remediation
+
+---
+
 ## [2.0.17] - 2026-01-16
 
 ### Added
@@ -295,6 +352,7 @@ None - all changes are additive and backward compatible.
 
 ---
 
+[2.0.18]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.17...v2.0.18
 [2.0.17]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.16...v2.0.17
 [2.0.16]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.15...v2.0.16
 [2.0.15]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.14...v2.0.15

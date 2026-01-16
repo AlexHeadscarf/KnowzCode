@@ -6,14 +6,14 @@
   },
   "metadata": {
     "description": "Official KnowzCode plugin marketplace - AI-powered development workflows",
-    "version": "2.0.17"
+    "version": "2.0.18"
   },
   "plugins": [
     {
       "name": "kc",
       "source": "./",
       "description": "KnowzCode - AI-powered software development workflow framework with TDD, quality gates, and multi-agent orchestration",
-      "version": "2.0.17",
+      "version": "2.0.18",
       "author": {
         "name": "Alex Headscarf"
       },
@@ -34,7 +34,9 @@
         "./commands/resolve-conflicts.md",
         "./commands/connect-mcp.md",
         "./commands/status.md",
-        "./commands/migrate-knowledge.md"
+        "./commands/migrate-knowledge.md",
+        "./commands/telemetry.md",
+        "./commands/telemetry-setup.md"
       ],
       "agents": [
         "./agents/impact-analyst.md",
@@ -55,7 +57,10 @@
         "./agents/impact-analyst-quick.md",
         "./agents/security-officer-quick.md",
         "./agents/architecture-reviewer-quick.md",
-        "./agents/knowledge-migrator.md"
+        "./agents/knowledge-migrator.md",
+        "./agents/telemetry-investigator.md",
+        "./agents/sentry-investigator-quick.md",
+        "./agents/appinsights-investigator-quick.md"
       ],
       "skills": [
         "./skills/start-work.md",

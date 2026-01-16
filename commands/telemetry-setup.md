@@ -28,12 +28,37 @@ Configure telemetry sources for `/kc:telemetry` investigations.
 
 ### Step 1: Detect Available Tools
 
-Check which telemetry CLI tools are installed:
+Check which telemetry tools are available. **CLI is preferred when properly configured; MCP is a fallback.**
+
+#### 1.1 Check Sentry CLI (Preferred)
 
 ```bash
-# Check Sentry CLI
+# Check Sentry CLI installation
 which sentry-cli 2>/dev/null && echo "SENTRY_CLI_INSTALLED" || echo "NO_SENTRY_CLI"
+```
 
+If installed, verify authentication:
+```bash
+# Verify Sentry CLI is authenticated
+sentry-cli info 2>&1 | grep -q "Organization" && echo "SENTRY_AUTHENTICATED" || echo "SENTRY_NOT_AUTHENTICATED"
+```
+
+**If Sentry CLI installed + authenticated → use CLI method, skip MCP check for Sentry.**
+
+#### 1.2 Check Sentry MCP (Fallback)
+
+**Only check MCP if CLI is not available or not authenticated.**
+
+Attempt to detect MCP by checking if Sentry MCP tools respond. The agent should:
+1. Try to use `sentry_search_issues` or `mcp__sentry__search_issues` with a minimal test query
+2. If it responds (even with "no results") → MCP is available
+3. If it errors with "tool not found" → MCP not configured
+
+**If MCP available → use MCP method for Sentry.**
+
+#### 1.3 Check Azure CLI + App Insights
+
+```bash
 # Check Azure CLI
 which az 2>/dev/null && echo "AZURE_CLI_INSTALLED" || echo "NO_AZURE_CLI"
 
@@ -41,7 +66,23 @@ which az 2>/dev/null && echo "AZURE_CLI_INSTALLED" || echo "NO_AZURE_CLI"
 az extension list --query "[?name=='application-insights'].name" -o tsv 2>/dev/null || echo "NO_APPINSIGHTS_EXTENSION"
 ```
 
-**Report detected tools** before proceeding.
+**Report detected tools and methods** before proceeding:
+
+```markdown
+**Detection Results:**
+
+| Source | Status | Method |
+|--------|--------|--------|
+| Sentry | ✓ Available | CLI (preferred) |
+| App Insights | ✓ Available | CLI |
+
+or
+
+| Source | Status | Method |
+|--------|--------|--------|
+| Sentry | ✓ Available | MCP (CLI not configured) |
+| App Insights | ✗ Not available | - |
+```
 
 ### Step 2: Verify Authentication
 
@@ -149,7 +190,9 @@ Use the AskUserQuestion tool to collect mappings if multiple resources exist.
 
 Update `knowzcode/telemetry_config.md` with the discovered and mapped values.
 
-**Example result**:
+**Include the detection method** (cli or mcp) for each source.
+
+**Example result** (CLI method):
 
 ```markdown
 ## Sentry
@@ -157,6 +200,7 @@ Update `knowzcode/telemetry_config.md` with the discovered and mapped values.
 | Field | Value |
 |-------|-------|
 | Enabled | true |
+| Method | cli |
 | Organization | my-company |
 
 ### Environment Mapping
@@ -184,9 +228,29 @@ Update `knowzcode/telemetry_config.md` with the discovered and mapped values.
 | dev | appinsights-dev | mno-789-pqr |
 ```
 
+**Example result** (MCP method - when CLI not available):
+
+```markdown
+## Sentry
+
+| Field | Value |
+|-------|-------|
+| Enabled | true |
+| Method | mcp |
+| Organization | my-company |
+
+### Environment Mapping
+
+| Environment | Project |
+|-------------|---------|
+| production | my-company/backend-api |
+| staging | my-company/backend-staging |
+| dev | my-company/backend-dev |
+```
+
 ### Step 6: Confirm Setup
 
-After saving, show a summary:
+After saving, show a summary **including the detection method**:
 
 ```markdown
 ◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -194,10 +258,12 @@ After saving, show a summary:
 ◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 **Sentry**: ✓ Configured
+- Method: CLI (preferred)
 - Organization: my-company
 - Environments mapped: production, staging, dev
 
 **App Insights**: ✓ Configured
+- Method: CLI
 - Subscription: my-subscription
 - Environments mapped: production, staging, dev
 
@@ -217,18 +283,31 @@ project/resource for the specified environment.
 
 ### No Tools Installed
 
+If NEITHER CLI nor MCP is available for a source, ask which to install:
+
 ```markdown
-⚠️ No telemetry tools detected.
+⚠️ No Sentry connection detected.
 
-To enable telemetry investigation, install at least one:
+Would you like to set up Sentry? Choose an option:
 
-**For Sentry**:
+**Option 1: Sentry CLI** (Recommended)
+- Better error details and breadcrumbs
+- Full issue management capabilities
 \`\`\`bash
 npm install -g @sentry/cli
 sentry-cli login
 \`\`\`
 
-**For Azure App Insights**:
+**Option 2: Sentry MCP**
+- Configure Sentry MCP server in Claude Code settings
+- Tools: `sentry_search_issues`, `sentry_get_issue_details`, `sentry_list_events`
+- See: https://github.com/modelcontextprotocol/servers/tree/main/sentry
+
+---
+
+⚠️ No Azure App Insights connection detected.
+
+**For Azure App Insights** (CLI only):
 \`\`\`bash
 # Install Azure CLI (if not installed)
 brew install azure-cli  # macOS

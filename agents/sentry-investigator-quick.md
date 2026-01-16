@@ -1,7 +1,7 @@
 ---
 name: sentry-investigator-quick
 description: "◆ KnowzCode: Quick Sentry error investigation (focused, low-token)"
-tools: Bash, WebFetch
+tools: Bash, WebFetch, mcp__sentry__search_issues, mcp__sentry__get_issue, mcp__sentry__list_events, sentry_search_issues, sentry_get_issue_details, sentry_list_events
 model: haiku
 ---
 
@@ -35,18 +35,25 @@ You will receive:
 - **Environment**: dev/staging/production
 - **Timeframe**: 15m, 1h, 4h, or 24h
 - **Sentry Configuration** (REQUIRED):
+  - **Method**: `cli` (preferred) or `mcp` (fallback) - which connection method to use
   - **Organization**: Sentry organization slug (e.g., `my-company`)
   - **Project**: Resolved project for this environment (e.g., `my-company/backend-staging`)
 
-**CRITICAL**: Use the provided Organization and Project values - do NOT use placeholders like `{project}`.
+**CRITICAL**:
+- Use the provided Organization and Project values - do NOT use placeholders like `{project}`.
+- Use the specified **Method** to query Sentry. CLI is preferred when available.
 
 ---
 
 ## Query Methods
 
+**Use the Method specified in entry context.** CLI is preferred when available.
+
 Use the **Organization** and **Project** values from entry context in all queries.
 
-### Method 1: Sentry CLI (Preferred)
+### Method: CLI (When `Method: cli` in config)
+
+Use Sentry CLI commands:
 
 ```bash
 # List recent issues matching the error
@@ -66,14 +73,23 @@ sentry-cli events list --issue <issue_id> --max-results 10
 sentry-cli issues list --project my-company/backend-staging --query "NullReferenceException" --max-results 5
 ```
 
-### Method 2: Sentry MCP (If Available)
+### Method: MCP (When `Method: mcp` in config)
 
-Use the Sentry MCP tools if configured:
-- `sentry_search_issues` - Search for matching issues
-- `sentry_get_issue_details` - Get full issue context
-- `sentry_list_events` - Get recent events
+Use Sentry MCP tools. **Note**: Tool names may vary based on MCP configuration. Common patterns:
+- `mcp__sentry__search_issues` or `sentry_search_issues`
+- `mcp__sentry__get_issue` or `sentry_get_issue_details`
+- `mcp__sentry__list_events` or `sentry_list_events`
 
-### Method 3: Sentry API (Fallback)
+**Usage:**
+```
+sentry_search_issues(query="{error_description}", project="{project}")
+sentry_get_issue_details(issue_id="{issue_id}")
+sentry_list_events(issue_id="{issue_id}", limit=10)
+```
+
+If the exact tool names don't match, check which Sentry MCP tools are available and use those.
+
+### Fallback: Sentry API (If neither CLI nor MCP work)
 
 ```bash
 # Requires SENTRY_AUTH_TOKEN environment variable

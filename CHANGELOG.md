@@ -5,6 +5,32 @@ All notable changes to KnowzCode will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.19] - 2026-01-16
+
+### Added
+- **Sentry MCP support** as fallback when CLI is not available
+  - Detection priority: CLI (preferred) → MCP (fallback)
+  - Auto-detects MCP tools: `sentry_search_issues`, `mcp__sentry__*` variants
+  - Only asks user to install if BOTH CLI and MCP are unavailable
+- **Method field** in telemetry configuration (`cli` or `mcp`)
+  - Stored in `knowzcode/telemetry_config.md` Sentry section
+  - Passed through telemetry-investigator to sentry-investigator-quick
+- **MCP tools in sentry-investigator-quick** agent header
+  - Supports both `mcp__sentry__*` and `sentry_*` tool name patterns
+  - Agent uses whichever method is configured
+
+### Changed
+- **`/kc:telemetry-setup`** now checks for MCP when CLI unavailable
+  - Step 1 restructured: CLI check → MCP fallback check → ask user
+  - Presents both CLI and MCP installation options if neither available
+- **`sentry-investigator-quick`** Query Methods section restructured
+  - Method: CLI section (when `Method: cli` in config)
+  - Method: MCP section (when `Method: mcp` in config)
+  - Fallback: API section (if neither work)
+- **Configuration examples** now include Method field
+
+---
+
 ## [2.0.18] - 2026-01-16
 
 ### Added
@@ -352,6 +378,7 @@ None - all changes are additive and backward compatible.
 
 ---
 
+[2.0.19]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.18...v2.0.19
 [2.0.18]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.17...v2.0.18
 [2.0.17]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.16...v2.0.17
 [2.0.16]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.15...v2.0.16

@@ -38,7 +38,7 @@ You will receive:
 - **Telemetry Configuration**: Environment→resource mappings from `knowzcode/telemetry_config.md`
 
 The configuration contains:
-- **Sentry**: Organization slug and environment→project mappings
+- **Sentry**: **Method** (cli or mcp), organization slug, and environment→project mappings
 - **App Insights**: Subscription and environment→app ID mappings
 
 You must:
@@ -197,12 +197,13 @@ prompt: |
   **Timeframe**: {timeframe}
 
   **Sentry Configuration** (REQUIRED):
+  - Method: {cli or mcp from config}
   - Organization: {sentry_org from config}
   - Project: {resolved sentry_project from Phase 0.5}
 
   Constraints:
   - Max 8 tool calls
-  - Query via Sentry CLI using the project above
+  - Use the specified Method (CLI preferred, MCP fallback)
   - Return: errors, stack traces, breadcrumbs, affected users
 
   Return format:

@@ -72,7 +72,7 @@ cat knowzcode/telemetry_config.md 2>/dev/null | head -50
 ```
 
 **Parse the config** to extract:
-- **Sentry**: Enabled status, organization, environment→project mappings
+- **Sentry**: Enabled status, **method** (cli or mcp), organization, environment→project mappings
 - **App Insights**: Enabled status, subscription, environment→app ID mappings
 
 #### 2.2 Detect Tool Installation
@@ -144,6 +144,7 @@ prompt: |
 
   Sentry:
   - Enabled: {true/false}
+  - Method: {cli or mcp from config}
   - Organization: {org-slug from config}
   - Environment Mappings:
     - production: {project for production}
@@ -162,10 +163,11 @@ prompt: |
   1. Parse the natural language query to extract environment, timeframe, and search terms
   2. Use the environment to look up the correct project/app ID from config
   3. Spawn available source-specific subagents IN PARALLEL with resolved IDs
-  4. Wait for ALL results
-  5. Synthesize into unified timeline
-  6. Generate root cause hypothesis
-  7. Return structured findings
+  4. **Pass the Sentry method (cli or mcp) to sentry-investigator-quick**
+  5. Wait for ALL results
+  6. Synthesize into unified timeline
+  7. Generate root cause hypothesis
+  8. Return structured findings
 ```
 
 ### Step 4: Present Findings

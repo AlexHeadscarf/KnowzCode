@@ -11,6 +11,7 @@
 | Field | Value |
 |-------|-------|
 | Enabled | false |
+| Method | |
 | Organization | |
 
 ### Environment Mapping
@@ -43,6 +44,7 @@
 
 ## Configuration Notes
 
+- **Sentry Method**: How to connect to Sentry (`cli` for Sentry CLI, `mcp` for MCP tools)
 - **Sentry Organization**: Your Sentry organization slug (e.g., `my-company`)
 - **Sentry Project**: Format is `org-slug/project-slug` (e.g., `my-company/backend-api`)
 - **App Insights App ID**: The Application ID from Azure portal (GUID format)
@@ -67,6 +69,7 @@ Edit the tables above directly to configure telemetry sources:
 | Field | Value |
 |-------|-------|
 | Enabled | true |
+| Method | cli |
 | Organization | my-company |
 
 ### Environment Mapping

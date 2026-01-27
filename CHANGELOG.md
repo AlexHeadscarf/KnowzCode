@@ -5,6 +5,27 @@ All notable changes to KnowzCode will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.20] - 2026-01-26
+
+### Added
+- **Shell script installers** as fallback when Claude Code marketplace isn't working
+  - `install.sh` for Linux/macOS (Bash)
+  - `install.ps1` for Windows (PowerShell)
+  - Options: `--target`, `--global`, `--force`, `--help`
+  - Installs commands, agents, and framework files
+  - Initializes fresh tracker and log with timestamp
+- **Alternative installation section** in README
+  - Documents manual installation via shell scripts
+  - Provides command reference table
+
+### Changed
+- **README simplified** to plugin-focused format
+  - Cleaner structure with badges and navigation
+  - Emphasizes marketplace installation as primary method
+  - Shell scripts as documented fallback option
+
+---
+
 ## [2.0.19] - 2026-01-16
 
 ### Added

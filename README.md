@@ -67,6 +67,26 @@ Get your API key at [knowz.io/api-keys](https://knowz.io/api-keys)
 
 **Done!** You're ready to start building with KnowzCode.
 
+### Alternative: Manual Installation
+
+If the plugin marketplace isn't working, use the shell scripts:
+
+```bash
+# Clone repository
+git clone https://github.com/AlexHeadscarf/KnowzCode.git
+cd KnowzCode
+
+# Install to your project
+./install.sh --target /path/to/your/project      # Linux/macOS
+.\install.ps1 -Target C:\path\to\your\project    # Windows
+```
+
+| Option | Bash | PowerShell | Description |
+|--------|------|------------|-------------|
+| Target | `--target <path>` | `-Target <path>` | Install to specific directory |
+| Global | `--global` | `-Global` | Install commands to `~/.claude/` |
+| Force | `--force` | `-Force` | Overwrite existing installation |
+
 ## Quick Start
 
 ### Start a New Feature

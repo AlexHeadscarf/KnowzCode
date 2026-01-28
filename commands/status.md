@@ -87,9 +87,8 @@ Check the KnowzCode MCP server status and report findings to the user.
      • Dependency analysis
 
    To enable these features:
-     /kc:connect-mcp <api-key>
-
-   Get an API key at: https://knowz.io/api-keys
+     New user?     /kc:register              (creates account + configures)
+     Have a key?   /kc:connect-mcp <api-key>
    ```
 
 4. **Additional diagnostics (if helpful)**

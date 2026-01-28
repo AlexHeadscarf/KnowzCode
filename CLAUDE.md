@@ -75,6 +75,7 @@ After installing the plugin, you have access to:
 | Command | Description |
 |:--------|:------------|
 | `/kc:init` | Initialize KnowzCode in current project |
+| `/kc:register` | Register for KnowzCode and configure MCP automatically |
 | `/kc:work <goal>` | Start new feature WorkGroup |
 | `/kc:plan investigate <question>` | Investigate codebase with parallel research agents |
 | `/kc:step <phase>` | Execute specific workflow phase |

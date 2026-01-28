@@ -5,6 +5,31 @@ All notable changes to KnowzCode will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.21] - 2026-01-28
+
+### Added
+- **`/kc:register` command** for guided account registration and MCP configuration
+  - Collects name, email, password interactively
+  - Calls `POST /api/v1/auth/register` endpoint
+  - Automatically configures MCP server with generated API key
+  - Supports `--scope` flag (local, project, user)
+  - Supports `--dev` flag to use development environment
+  - Security: passwords transmitted via HTTPS, never stored locally
+  - Handles all error cases: email exists, validation errors, rate limiting
+
+### Changed
+- **Production endpoints now default** for both `/kc:register` and `/kc:connect-mcp`
+  - Production: `https://api.knowz.io` (default)
+  - Development: `https://api.dev.knowz.io` (use `--dev` flag)
+- **`/kc:connect-mcp`** updated with `--dev` flag for development environment
+  - Default endpoint changed from dev to production
+  - Use `--dev` flag explicitly for development/testing
+- **`/kc:init`** now suggests `/kc:register` alongside `/kc:connect-mcp` for new users
+- **`/kc:status`** "not configured" message now includes `/kc:register` option
+- **CLAUDE.md** command table updated with `/kc:register`
+
+---
+
 ## [2.0.20] - 2026-01-26
 
 ### Added

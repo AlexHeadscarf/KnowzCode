@@ -9,34 +9,42 @@ You are the **KnowzCode MCP Connection Agent**. Your task is to configure the Kn
 ## Command Syntax
 
 ```bash
-/kc:connect-mcp <api-key> [--endpoint <url>] [--scope <local|project|user>]
+/kc:connect-mcp <api-key> [--endpoint <url>] [--scope <local|project|user>] [--dev]
 ```
+
+**Note:** If you don't have an API key yet, run `/kc:register` to create an account and get one automatically.
 
 **Parameters:**
 - `<api-key>` - Required. Your KnowzCode API key (or omit for interactive prompt)
-- `--endpoint <url>` - Optional. Custom MCP endpoint (default: https://api.dev.knowz.io/mcp)
+- `--endpoint <url>` - Optional. Custom MCP endpoint (overrides environment default)
 - `--scope <scope>` - Optional. Configuration scope: local (default), project, or user
+- `--dev` - Optional. Use development environment instead of production
 
-**Current Environment:**
-- **Development** (default): `https://api.dev.knowz.io/mcp` - Active for testing
-- **Production** (future): `https://api.knowz.io/mcp` - Available after dev testing completes
+**Environments:**
+| Environment | Endpoint | When to Use |
+|:------------|:---------|:------------|
+| **Production** (default) | `https://api.knowz.io/mcp` | Normal usage |
+| **Development** | `https://api.dev.knowz.io/mcp` | Testing new features |
 
 **Examples:**
 ```bash
-# Basic usage (uses dev environment by default)
-/kc:connect-mcp kz_test_abc123...
+# Basic usage (production - default)
+/kc:connect-mcp kz_live_abc123...
 
-# Interactive mode
+# Interactive mode (production)
 /kc:connect-mcp
 
-# Production environment (when available)
-/kc:connect-mcp kz_live_abc123... --endpoint https://api.knowz.io/mcp
+# Development environment
+/kc:connect-mcp kz_test_abc123... --dev
 
 # Self-hosted endpoint
 /kc:connect-mcp kz_live_abc123... --endpoint https://your-domain.com/mcp
 
-# Project-wide dev testing
-/kc:connect-mcp kz_test_team456... --scope project
+# Project-wide configuration (production)
+/kc:connect-mcp kz_live_team456... --scope project
+
+# Development with project scope
+/kc:connect-mcp kz_test_team456... --dev --scope project
 ```
 
 ## What This Enables
@@ -58,7 +66,10 @@ Configure the KnowzCode MCP server using Claude Code's built-in MCP management.
 
 1. **Parse command arguments**
    - Extract API key from first positional argument (if provided)
-   - Parse `--endpoint <url>` flag (default: `https://api.dev.knowz.io/mcp`)
+   - Parse `--dev` flag to determine environment
+   - Parse `--endpoint <url>` flag (overrides environment default if provided)
+   - Default endpoint: `https://api.knowz.io/mcp` (production)
+   - With `--dev` flag: `https://api.dev.knowz.io/mcp` (development)
    - Parse `--scope <scope>` flag (default: `local`)
    - Store parsed values for use in configuration
 
@@ -157,7 +168,7 @@ Configure the KnowzCode MCP server using Claude Code's built-in MCP management.
 
 ### MCP Server Details
 
-The KnowzCode MCP server (default: `https://api.dev.knowz.io/mcp`):
+The KnowzCode MCP server (default: `https://api.knowz.io/mcp`):
 - **Protocol:** HTTP transport with JSON-RPC
 - **Authentication:** Bearer token in `Authorization` header
 - **Project Context:** `X-Project-Path` header identifies project
@@ -168,20 +179,20 @@ The KnowzCode MCP server (default: `https://api.dev.knowz.io/mcp`):
 
 **Available Environments:**
 
-| Environment | Endpoint | Status | Use Case |
-|:------------|:---------|:-------|:---------|
-| **Development** | `https://api.dev.knowz.io/mcp` | ✅ Active | Current testing environment |
-| **Production** | `https://api.knowz.io/mcp` | 🚧 Pending | After dev testing completes |
+| Environment | Endpoint | Flag | Use Case |
+|:------------|:---------|:-----|:---------|
+| **Production** (default) | `https://api.knowz.io/mcp` | (none) | Normal usage |
+| **Development** | `https://api.dev.knowz.io/mcp` | `--dev` | Testing new features |
 
 **Switching Environments:**
 ```bash
-# Development (default for testing)
-/kc:connect-mcp kz_test_abc123...
+# Production (default)
+/kc:connect-mcp kz_live_abc123...
 
-# Production (when ready)
-/kc:connect-mcp kz_live_abc123... --endpoint https://api.knowz.io/mcp
+# Development
+/kc:connect-mcp kz_test_abc123... --dev
 
-# Local development
+# Local development server
 /kc:connect-mcp kz_test_local... --endpoint http://localhost:3000/mcp
 
 # Self-hosted enterprise
@@ -219,10 +230,10 @@ Please restart Claude Code or report this issue.
 ### Network/Connection Error
 ```
 ❌ Cannot reach KnowzCode API
-Failed to connect to https://api.dev.knowz.io
+Failed to connect to {endpoint}
 
 Check your internet connection and try again.
-If using dev environment, verify the server is running.
+If using --dev environment, verify the dev server is running.
 ```
 
 ## Advanced Usage
@@ -238,13 +249,16 @@ claude mcp remove knowzcode
 ```
 
 ### Switching Endpoints
-To switch between cloud and self-hosted:
+To switch between environments or self-hosted:
 ```bash
+# Switch to development
+/kc:connect-mcp <api-key> --dev
+
+# Switch back to production (default)
+/kc:connect-mcp <api-key>
+
 # Switch to self-hosted
 /kc:connect-mcp <api-key> --endpoint https://knowzcode.mycompany.com/mcp
-
-# Switch back to cloud
-/kc:connect-mcp <api-key>  # Uses default endpoint
 ```
 
 ## Integration with KnowzCode Agents
@@ -277,7 +291,7 @@ After configuration:
 
 ## Tool Control & Filtering
 
-Tools are controlled **server-side** at `https://api.dev.knowz.io/mcp`:
+Tools are controlled **server-side** at the MCP endpoint:
 
 **Server controls which tools to expose based on:**
 - API key tier (free/pro/enterprise)
@@ -291,6 +305,7 @@ See `docs/MCP_SERVER_IMPLEMENTATION.md` for complete server implementation guide
 
 ## Related Commands
 
+- `/kc:register` - Register for KnowzCode and configure MCP automatically
 - `/kc:status` - Check MCP connection status and available tools
 - `/kc:init` - Initialize KnowzCode in project
 - `/kc:work` - Start feature development (uses MCP tools)

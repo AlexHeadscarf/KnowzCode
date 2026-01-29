@@ -80,8 +80,7 @@ After installing the plugin, you have access to:
 | `/kc:continue` | Resume current WorkGroup with context recovery |
 | `/kc:step <phase>` | Execute specific workflow phase |
 | `/kc:audit [type]` | Run quality audits |
-| `/kc:plan [type]` | Generate development plans |
-| `/kc:plan investigate <question>` | Investigate codebase with parallel research agents |
+| `/kc:plan <topic>` | Research and investigate before implementing |
 | `/kc:fix <target>` | Quick targeted fixes |
 | `/kc:resolve-conflicts` | Resolve merge conflicts |
 | `/kc:connect-mcp` | Configure MCP server connection |
@@ -136,20 +135,24 @@ cd my-new-project/
 
 This creates the `knowzcode/` directory structure.
 
-### 2. Investigate Before Implementing (Optional)
+### 2. Research Before Implementing (Recommended)
 
-Have a question about the codebase? Use investigation mode:
+Use `/kc:plan` to research any topic, feature, or question before implementing:
 
 ```bash
-/kc:plan investigate "is the API using proper error handling?"
+/kc:plan "is the API using proper error handling?"
+/kc:plan "add user authentication with JWT"
+/kc:plan "refactor the database layer"
 ```
 
-This spawns **3 parallel research agents** to explore your question:
-- `impact-analyst` - Code exploration
-- `architecture-reviewer` - Pattern analysis
-- `security-officer` - Risk assessment
+This spawns **3 parallel research agents** simultaneously:
+- `impact-analyst-quick` - Code exploration and evidence gathering
+- `architecture-reviewer-quick` - Pattern and design assessment
+- `security-officer-quick` - Security and performance implications
 
-After investigation, say "implement" or "do option 1" to auto-transition to `/kc:work` with findings pre-loaded.
+It also checks existing specs and WorkGroups for prior knowledge.
+
+After investigation, say "implement" or "option 1" to auto-transition to `/kc:work` with findings pre-loaded.
 
 ### 3. Start Feature Development
 
@@ -174,6 +177,43 @@ KnowzCode guides you through each phase with quality gates:
 - **Phase 2A (Implementation)**: Build with TDD
 - **Phase 2B (Verification)**: Quality checks
 - **Phase 3 (Finalization)**: Update docs and close WorkGroup
+
+## New in v2.0.25
+
+### Consolidated `/kc:plan` Command
+
+**Breaking Change:** The `/kc:plan` command has been simplified and consolidated.
+
+**Before (v2.0.24 and earlier):**
+```bash
+/kc:plan strategy          # High-level strategic planning
+/kc:plan ideas             # Brainstorming
+/kc:plan investigate "Q"   # Codebase investigation
+/kc:plan "major feature"   # Feature planning
+```
+
+**After (v2.0.25):**
+```bash
+/kc:plan "<topic>"         # All-in-one research and investigation
+```
+
+**What changed:**
+- Removed planning "types" (strategy, ideas, pre-flight, project overview, major feature, expansion)
+- Removed `investigate` keyword - no longer needed
+- All `/kc:plan` calls now spawn 3 parallel research agents
+- Checks existing specs and WorkGroups automatically
+- Clean separation: `/kc:plan` = research, `/kc:work` = implement
+
+**Migration:** Just remove the `investigate` keyword if you were using it:
+```bash
+# Old
+/kc:plan investigate "how does auth work?"
+
+# New
+/kc:plan "how does auth work?"
+```
+
+---
 
 ## New in v2.0.24
 
@@ -487,24 +527,23 @@ Seamless plan-to-implementation transitions and workflow optimization:
 
 ### Investigation Workflow with Parallel Research
 
-Added codebase investigation using parallel research subagents:
+Added codebase investigation using parallel research subagents.
 
-- **`/kc:plan investigate "question"`** - New command for codebase investigation
-- **3 parallel agents** - impact-analyst, architecture-reviewer, security-officer explore simultaneously
-- **Action Listening Mode** - Say "implement" or "option 1" to auto-transition to `/kc:work`
-- **Context preservation** - Investigation findings pre-load into Phase 1A
-- **Question detection** - `/kc:work` suggests investigation for question-like inputs
+**v2.0.25 Update:** Consolidated `/kc:plan investigate` into just `/kc:plan`. The `investigate` keyword is no longer needed - all `/kc:plan` calls now use the parallel research workflow.
 
 **Example flow:**
 ```bash
-/kc:plan investigate "is the API using proper error handling?"
+/kc:plan "is the API using proper error handling?"
+/kc:plan "add user authentication"
 # → 3 agents research in parallel
+# → Checks existing specs and WorkGroups
 # → Findings presented with options
 # → Say "implement option 1"
 # → Auto-invokes /kc:work with context loaded
 ```
 
 **Benefits:**
+- Simple mental model: `/kc:plan` = research, `/kc:work` = implement
 - Questions no longer consume primary context
 - Research happens efficiently in parallel subagents
 - Seamless handoff from investigation to implementation

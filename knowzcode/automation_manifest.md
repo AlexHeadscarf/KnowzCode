@@ -9,7 +9,7 @@ This manifest describes the Claude Code resources that support the KnowzCode wor
 | `/kc` | Captures the PrimaryGoal, initializes WorkGroup state (feature / bug / refactor aliases), and launches Loop 1A | `claude/commands/kc.yaml` |
 | `/kc-step` | Runs a KCv2.0 loop phase (natural aliases like "draft specs" or "verify") after loading the active WorkGroup context | `claude/commands/kc_step.yaml` |
 | `/kc-audit` | Launches read-only audit routines (spec, implementation, architecture, security, integration) with friendly aliases | `claude/commands/kc_audit.yaml` |
-| `/kc-plan` | Facilitates planning prompts (strategic blueprint, feature ideation, pre-flight analysis, expansion) with alias support | `claude/commands/kc_plan.yaml` |
+| `/kc-plan` | Research and investigate using parallel agents before implementing | `claude/commands/kc_plan.yaml` |
 | `/kc-microfix` | Executes the KCv2.0 micro-fix workflow | `claude/commands/kc_microfix.yaml` |
 
 ## Subagents

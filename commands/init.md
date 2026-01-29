@@ -69,7 +69,18 @@ Initialize the `knowzcode/` directory structure in the current project with all 
    - This protects environment-specific files from accidental git commits
    - Includes: environment_context.md, workgroups/, *.local.md, .scratch/
 
-7. **Report success**
+7. **Optional: Set up enterprise compliance (v2.0.26+)**
+   - Prompt user: "Would you like to set up enterprise compliance features? (optional, press Enter to skip)"
+   - If user responds "yes":
+     * Create `knowzcode/enterprise/` directory structure
+     * Create `compliance_manifest.md` (disabled by default)
+     * Create `guidelines/` with security.md and code-quality.md templates
+     * Create `templates/guideline-template.md`
+     * Create `compliance_status.md`
+     * Note: Compliance is **disabled** by default - user must enable in manifest
+   - If user skips, do not create enterprise directory (fully optional)
+
+8. **Report success**
    - List all created files (including .gitignore and user_preferences.md if created)
    - Show next steps for the user
    - Explain how to start using KnowzCode
@@ -255,6 +266,7 @@ Created:
   • knowzcode/environment_context.md
   • knowzcode/.gitignore (v2.0.5+)
   • knowzcode/user_preferences.md (v2.0.5+, if configured)
+  • knowzcode/enterprise/ (v2.0.26+, if configured)
   • knowzcode/specs/
   • knowzcode/workgroups/
   • knowzcode/prompts/
@@ -270,6 +282,7 @@ and is safe to commit to version control.
 Protected files (via .gitignore):
   • environment_context.md (local environment details)
   • workgroups/ (session-specific data)
+  • enterprise/reports/ (compliance audit reports)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 

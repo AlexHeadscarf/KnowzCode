@@ -1,7 +1,7 @@
 {
   "name": "kc",
   "description": "KnowzCode - AI-powered software development workflow framework with TDD, quality gates, and multi-agent orchestration",
-  "version": "2.0.25",
+  "version": "2.0.26",
   "author": {
     "name": "Alex Headscarf"
   }

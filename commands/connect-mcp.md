@@ -9,44 +9,64 @@ You are the **KnowzCode MCP Connection Agent**. Your task is to configure the Kn
 ## Command Syntax
 
 ```bash
-/kc:connect-mcp <api-key> [--endpoint <url>] [--scope <local|project|user>]
+/kc:connect-mcp <api-key> [--endpoint <url>] [--scope <local|project|user>] [--dev] [--configure-vaults]
 ```
+
+**Note:** If you don't have an API key yet, run `/kc:register` to create an account and get one automatically.
+Registration also auto-configures your vault - no manual setup needed!
 
 **Parameters:**
 - `<api-key>` - Required. Your KnowzCode API key (or omit for interactive prompt)
-- `--endpoint <url>` - Optional. Custom MCP endpoint (default: https://api.dev.knowz.io/mcp)
+- `--endpoint <url>` - Optional. Custom MCP endpoint (overrides environment default)
 - `--scope <scope>` - Optional. Configuration scope: local (default), project, or user
+- `--dev` - Optional. Use development environment instead of production
+- `--configure-vaults` - Optional. Force vault configuration prompts (even if already configured)
 
-**Current Environment:**
-- **Development** (default): `https://api.dev.knowz.io/mcp` - Active for testing
-- **Production** (future): `https://api.knowz.io/mcp` - Available after dev testing completes
+**Environments:**
+| Environment | Endpoint | When to Use |
+|:------------|:---------|:------------|
+| **Production** (default) | `https://api.knowz.io/mcp` | Normal usage |
+| **Development** | `https://api.dev.knowz.io/mcp` | Testing new features |
 
 **Examples:**
 ```bash
-# Basic usage (uses dev environment by default)
-/kc:connect-mcp kz_test_abc123...
+# Basic usage (production - default)
+/kc:connect-mcp kz_live_abc123...
 
-# Interactive mode
+# Interactive mode (production)
 /kc:connect-mcp
 
-# Production environment (when available)
-/kc:connect-mcp kz_live_abc123... --endpoint https://api.knowz.io/mcp
+# Development environment
+/kc:connect-mcp kz_test_abc123... --dev
 
 # Self-hosted endpoint
 /kc:connect-mcp kz_live_abc123... --endpoint https://your-domain.com/mcp
 
-# Project-wide dev testing
-/kc:connect-mcp kz_test_team456... --scope project
+# Project-wide configuration (production)
+/kc:connect-mcp kz_live_team456... --scope project
+
+# Development with project scope
+/kc:connect-mcp kz_test_team456... --dev --scope project
 ```
 
 ## What This Enables
 
 Once connected, you gain access to powerful vector-based tools:
 
-- **`search_codebase`** - Vector similarity search across indexed code
-- **`query_specs`** - Query KnowzCode specifications and documentation
-- **`get_context`** - Retrieve relevant context for the current task
-- **`analyze_dependencies`** - Understand code relationships and impact
+- **`search_knowledge`** - Vector similarity search across vaults (code or research)
+- **`ask_question`** - AI-powered Q&A with optional research mode
+- **`create_knowledge`** - Save learnings to research vault (used by finalization)
+- **`update_knowledge`** - Update existing knowledge items
+- **`find_entities`** - Find people, locations, or events in your knowledge
+
+### Dual Vault Architecture
+
+KnowzCode uses two vault types for optimal search:
+
+| Vault Type | Purpose | Query Examples |
+|------------|---------|----------------|
+| **Code Vault** | Indexed source code (AST-chunked) | "Find auth middleware", "JWT validation" |
+| **Research Vault** | Architecture, conventions, learnings | "Error handling conventions", "Why Redis?" |
 
 These tools integrate seamlessly with all KnowzCode agents, enhancing their capabilities with project-wide context awareness.
 
@@ -58,8 +78,12 @@ Configure the KnowzCode MCP server using Claude Code's built-in MCP management.
 
 1. **Parse command arguments**
    - Extract API key from first positional argument (if provided)
-   - Parse `--endpoint <url>` flag (default: `https://api.dev.knowz.io/mcp`)
+   - Parse `--dev` flag to determine environment
+   - Parse `--endpoint <url>` flag (overrides environment default if provided)
+   - Default endpoint: `https://api.knowz.io/mcp` (production)
+   - With `--dev` flag: `https://api.dev.knowz.io/mcp` (development)
    - Parse `--scope <scope>` flag (default: `local`)
+   - Parse `--configure-vaults` flag (forces vault prompts)
    - Store parsed values for use in configuration
 
 2. **Check for existing configuration**
@@ -89,7 +113,41 @@ Configure the KnowzCode MCP server using Claude Code's built-in MCP management.
    - Ensure it starts with `https://` (or `http://` for local dev)
    - Show which endpoint will be used
 
-6. **Add MCP server using CLI**
+6. **Configure Vault IDs (Conditional)**
+
+   First, check if vaults are already configured in `knowzcode/mcp_config.md`:
+   - Read the file and check for Research Vault ID
+
+   **If Research Vault already configured AND `--configure-vaults` NOT set:**
+   - Skip vault prompts entirely
+   - Display:
+     ```
+     Vault already configured (from previous setup or /kc:register):
+       • Research Vault: {vault_name} ({vault_id prefix...})
+       • Code Vault: {configured or "Not configured"}
+
+     To reconfigure vaults, run: /kc:connect-mcp --configure-vaults
+     ```
+
+   **If Research Vault NOT configured OR `--configure-vaults` IS set:**
+   - Prompt user for vault configuration:
+     ```
+     Configure Vault IDs for enhanced search capabilities:
+
+     Research Vault (required for /kc:learn):
+       • Enter vault ID or name (e.g., "my-org-knowledge")
+       • This vault stores learnings, conventions, decisions
+       • Get your vault ID from: https://knowz.io/vaults
+
+     Code Vault (optional - for large codebases):
+       • Enter vault ID or name (e.g., "my-project-code")
+       • This vault contains AST-chunked source files
+       • Leave blank to use grep/glob for code search (recommended for most projects)
+     ```
+   - If vault IDs provided, validate format (GUID or name)
+   - Store vault configuration in `knowzcode/mcp_config.md`
+
+7. **Add MCP server using CLI**
    ```bash
    claude mcp add --transport http \
      --scope <chosen-scope> \
@@ -99,32 +157,46 @@ Configure the KnowzCode MCP server using Claude Code's built-in MCP management.
      --header "X-Project-Path: $(pwd)"
    ```
 
-7. **Verify configuration**
+8. **Verify configuration**
    - Run: `claude mcp get knowzcode`
    - Confirm server appears in the list
    - Check for any error messages
 
-8. **Test connection (optional)**
-   - If verification succeeds, optionally test with a simple tool call
-   - This validates the API key is valid
+9. **Update mcp_config.md**
+   - Update `knowzcode/mcp_config.md` with connection details:
+     - Set `Connected: Yes`
+     - Set `Endpoint: <endpoint-url>`
+     - Set `Last Verified: <timestamp>`
+     - Set Research Vault ID and name (if provided or already set)
+     - Set Code Vault ID and name (if provided)
+     - Set `Auto-configured: No` (to distinguish from /kc:register setup)
 
-9. **Report success**
-   ```
-   ✅ KnowzCode MCP server configured!
+10. **Test connection (optional)**
+    - If verification succeeds, optionally test with a simple tool call
+    - This validates the API key is valid
 
-   Scope: <chosen-scope>
-   Endpoint: <endpoint-url>
+11. **Report success**
+    ```
+    ✅ KnowzCode MCP server configured!
 
-   🔄 Please restart Claude Code to activate these features:
-      • search_codebase - Vector search across code
-      • query_specs - Query specifications
-      • get_context - Get relevant context
-      • analyze_dependencies - Analyze relationships
+    Scope: <chosen-scope>
+    Endpoint: <endpoint-url>
 
-   After restart, these tools will be available to all KnowzCode agents.
+    Vaults Configured:
+      • Code Vault: <vault-name or "Not configured">
+      • Research Vault: <vault-name or "Not configured">
 
-   Check connection status: /kc:status
-   ```
+    🔄 Please restart Claude Code to activate these features:
+       • search_knowledge - Vector search across vaults
+       • ask_question - AI Q&A with research mode
+       • create_knowledge - Save learnings (via finalization)
+       • update_knowledge - Update existing items
+       • find_entities - Find people/locations/events
+
+    After restart, these tools will be available to all KnowzCode agents.
+
+    Check connection status: /kc:status
+    ```
 
 ## Configuration Details
 
@@ -157,7 +229,7 @@ Configure the KnowzCode MCP server using Claude Code's built-in MCP management.
 
 ### MCP Server Details
 
-The KnowzCode MCP server (default: `https://api.dev.knowz.io/mcp`):
+The KnowzCode MCP server (default: `https://api.knowz.io/mcp`):
 - **Protocol:** HTTP transport with JSON-RPC
 - **Authentication:** Bearer token in `Authorization` header
 - **Project Context:** `X-Project-Path` header identifies project
@@ -168,20 +240,20 @@ The KnowzCode MCP server (default: `https://api.dev.knowz.io/mcp`):
 
 **Available Environments:**
 
-| Environment | Endpoint | Status | Use Case |
-|:------------|:---------|:-------|:---------|
-| **Development** | `https://api.dev.knowz.io/mcp` | ✅ Active | Current testing environment |
-| **Production** | `https://api.knowz.io/mcp` | 🚧 Pending | After dev testing completes |
+| Environment | Endpoint | Flag | Use Case |
+|:------------|:---------|:-----|:---------|
+| **Production** (default) | `https://api.knowz.io/mcp` | (none) | Normal usage |
+| **Development** | `https://api.dev.knowz.io/mcp` | `--dev` | Testing new features |
 
 **Switching Environments:**
 ```bash
-# Development (default for testing)
-/kc:connect-mcp kz_test_abc123...
+# Production (default)
+/kc:connect-mcp kz_live_abc123...
 
-# Production (when ready)
-/kc:connect-mcp kz_live_abc123... --endpoint https://api.knowz.io/mcp
+# Development
+/kc:connect-mcp kz_test_abc123... --dev
 
-# Local development
+# Local development server
 /kc:connect-mcp kz_test_local... --endpoint http://localhost:3000/mcp
 
 # Self-hosted enterprise
@@ -219,10 +291,10 @@ Please restart Claude Code or report this issue.
 ### Network/Connection Error
 ```
 ❌ Cannot reach KnowzCode API
-Failed to connect to https://api.dev.knowz.io
+Failed to connect to {endpoint}
 
 Check your internet connection and try again.
-If using dev environment, verify the server is running.
+If using --dev environment, verify the dev server is running.
 ```
 
 ## Advanced Usage
@@ -238,30 +310,42 @@ claude mcp remove knowzcode
 ```
 
 ### Switching Endpoints
-To switch between cloud and self-hosted:
+To switch between environments or self-hosted:
 ```bash
+# Switch to development
+/kc:connect-mcp <api-key> --dev
+
+# Switch back to production (default)
+/kc:connect-mcp <api-key>
+
 # Switch to self-hosted
 /kc:connect-mcp <api-key> --endpoint https://knowzcode.mycompany.com/mcp
-
-# Switch back to cloud
-/kc:connect-mcp <api-key>  # Uses default endpoint
 ```
 
 ## Integration with KnowzCode Agents
 
-Once configured, agents automatically detect and use MCP tools:
+Once configured, agents automatically detect and use MCP tools with dual vault support:
 
 **impact-analyst**:
-- Uses `search_codebase` to find related code during impact analysis
-- Uses `analyze_dependencies` to map change ripple effects
+- Uses `search_knowledge` with **code vault** to find related code
+- Uses `search_knowledge` with **research vault** to find past decisions
+- Uses `ask_question` with **research vault** for architectural context
 
 **spec-chief**:
-- Uses `query_specs` to retrieve existing specifications
-- Uses `get_context` to understand component relationships
+- Uses `search_knowledge` with **code vault** for implementation examples
+- Uses `ask_question` with **research vault** for conventions
 
 **implementation-lead**:
-- Uses `search_codebase` to find implementation examples
-- Uses `get_context` to understand code patterns
+- Uses `search_knowledge` with **code vault** for similar patterns
+- Uses `search_knowledge` with **research vault** for best practices
+
+**architecture-reviewer**:
+- Uses `search_knowledge` with **research vault** for standards
+- Uses `search_knowledge` with **code vault** for precedent checks
+
+**finalization-steward**:
+- Uses `search_knowledge` with **research vault** to check for duplicate learnings
+- Uses `create_knowledge` to save new learnings to **research vault**
 
 **All agents**:
 - Automatically leverage MCP tools when available
@@ -277,7 +361,7 @@ After configuration:
 
 ## Tool Control & Filtering
 
-Tools are controlled **server-side** at `https://api.dev.knowz.io/mcp`:
+Tools are controlled **server-side** at the MCP endpoint:
 
 **Server controls which tools to expose based on:**
 - API key tier (free/pro/enterprise)
@@ -291,6 +375,7 @@ See `docs/MCP_SERVER_IMPLEMENTATION.md` for complete server implementation guide
 
 ## Related Commands
 
+- `/kc:register` - Register for KnowzCode and configure MCP automatically
 - `/kc:status` - Check MCP connection status and available tools
 - `/kc:init` - Initialize KnowzCode in project
 - `/kc:work` - Start feature development (uses MCP tools)

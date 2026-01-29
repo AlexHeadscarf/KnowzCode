@@ -29,7 +29,7 @@ When performing multiple independent operations:
 | File scanning across directories | **PARALLEL** |
 | Dependency tracing (independent paths) | **PARALLEL** |
 | Reading multiple existing specs | **PARALLEL** |
-| MCP queries (search_codebase, get_context) | **PARALLEL** |
+| MCP queries (search_knowledge, ask_question) | **PARALLEL** |
 | Historical WorkGroup scanning | **PARALLEL** |
 
 ### Sequential Requirements
@@ -60,23 +60,18 @@ When performing multiple independent operations:
 
 If the KnowzCode MCP server is connected, you have access to enhanced tools:
 
-- **search_codebase(query, limit)** - Vector search across indexed code
+- **search_knowledge(query, vaultId, limit)** - Vector search across indexed knowledge
   - Use to find related code, similar patterns, or affected components
-  - Example: `search_codebase("authentication logic", 10)`
+  - Example: `search_knowledge("authentication logic", vault_id, 10)`
 
-- **analyze_dependencies(component)** - Understand code relationships
-  - Use to map change ripple effects and dependency chains
-  - Example: `analyze_dependencies("UserService")`
-
-- **get_context(task_description)** - Retrieve relevant context
-  - Use to understand how components interact for the given task
-  - Example: `get_context("add email verification to user registration")`
+- **ask_question(question, vaultId, researchMode)** - AI-powered Q&A
+  - Use to understand architectural context and past decisions
+  - Example: `ask_question("What patterns do we use for authentication?", vault_id, true)`
 
 **When MCP tools are available:**
-1. Start with `get_context` to understand the change domain
-2. Use `search_codebase` to find all related implementations
-3. Use `analyze_dependencies` to map impact across components
-4. Combine MCP insights with traditional grep/glob analysis
+1. Start with `ask_question` to understand the change domain
+2. Use `search_knowledge` to find all related implementations
+3. Combine MCP insights with traditional grep/glob analysis
 
 **Fallback:** If MCP tools unavailable, use standard Grep/Glob/Read tools.
 
@@ -86,7 +81,7 @@ If the KnowzCode MCP server is connected, you have access to enhanced tools:
 - Use workgroup-todo-manager to append discovery tasks (prefix 'KnowzCode: ')
 - **CRITICAL**: Every todo line MUST start with `KnowzCode:` prefix
   - Format: `- KnowzCode: Task description here`
-- **If MCP available**: Use `get_context` and `search_codebase` first
+- **If MCP available**: Use `ask_question` and `search_knowledge` first
 - Run `inspect` command to analyze codebase
 
 ## NodeID Classification

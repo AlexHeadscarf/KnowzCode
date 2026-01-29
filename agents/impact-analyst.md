@@ -29,7 +29,7 @@ When performing multiple independent operations:
 | File scanning across directories | **PARALLEL** |
 | Dependency tracing (independent paths) | **PARALLEL** |
 | Reading multiple existing specs | **PARALLEL** |
-| MCP queries (search_codebase, get_context) | **PARALLEL** |
+| MCP queries (search_knowledge, ask_question) | **PARALLEL** |
 | Historical WorkGroup scanning | **PARALLEL** |
 
 ### Sequential Requirements
@@ -56,29 +56,79 @@ When performing multiple independent operations:
 - tracker-scan
 - environment-guard
 
-## MCP Tools (If Available)
+## MCP Queries (via Subagent)
 
-If the KnowzCode MCP server is connected, you have access to enhanced tools:
+MCP interactions are delegated to the **knowz-mcp-quick** subagent for context isolation.
+This keeps raw MCP responses (8000+ tokens) out of the main analysis context.
 
-- **search_codebase(query, limit)** - Vector search across indexed code
-  - Use to find related code, similar patterns, or affected components
-  - Example: `search_codebase("authentication logic", 10)`
+### When to Use MCP Subagent
 
-- **analyze_dependencies(component)** - Understand code relationships
-  - Use to map change ripple effects and dependency chains
-  - Example: `analyze_dependencies("UserService")`
+Spawn `knowz-mcp-quick` when you need:
+- Semantic code search beyond grep patterns
+- Past decisions or conventions from research vault
+- Dependency chain analysis
+- Context for complex task understanding
 
-- **get_context(task_description)** - Retrieve relevant context
-  - Use to understand how components interact for the given task
-  - Example: `get_context("add email verification to user registration")`
+### Subagent Queries
 
-**When MCP tools are available:**
-1. Start with `get_context` to understand the change domain
-2. Use `search_codebase` to find all related implementations
-3. Use `analyze_dependencies` to map impact across components
-4. Combine MCP insights with traditional grep/glob analysis
+**Code search:**
+```
+Task(knowz-mcp-quick, "Search code vault for: authentication middleware")
+→ Returns: file paths + brief context (max 500 tokens)
+```
 
-**Fallback:** If MCP tools unavailable, use standard Grep/Glob/Read tools.
+**Dependency analysis:**
+```
+Task(knowz-mcp-quick, "Analyze dependencies for: UserService")
+→ Returns: direct/transitive dependencies + dependents
+```
+
+**Task context:**
+```
+Task(knowz-mcp-quick, "Get context for: add email verification to user registration")
+→ Returns: related components + relevant files
+```
+
+**Research lookup:**
+```
+Task(knowz-mcp-quick, "Query research vault: What patterns do we use for API authentication?")
+→ Returns: summarized answer (max 300 tokens)
+```
+
+**Deep research (when needed):**
+```
+Task(knowz-mcp-quick, "Research mode: Complete history of authentication decisions")
+→ Returns: key insights only (max 500 tokens, extracted from 8000+ token response)
+```
+
+**Convention check:**
+```
+Task(knowz-mcp-quick, "Conventions for: error handling")
+→ Returns: bullet list of relevant conventions
+```
+
+### Query Protocol
+
+1. **For broad impact discovery**: Start with code vault search
+2. **For specific components**: Use dependency analysis
+3. **For architectural guidance**: Query research vault
+4. **Combine results** with local grep/glob analysis
+
+### Fallback Mode (No MCP)
+
+If subagent returns `status: "not_configured"`:
+- Use standard local tools instead
+- `Grep` for patterns, `Glob` for files
+- Read `knowzcode/specs/*.md` manually
+- Read `knowzcode/knowzcode_architecture.md` for context
+
+**Fallback works fine** - MCP just makes searches faster and more comprehensive.
+
+**At end of analysis**, if MCP wasn't available, optionally suggest:
+```
+Tip: For faster semantic search across your codebase, run /kc:register
+to set up the KnowzCode MCP server with vector-powered search.
+```
 
 ## Entry Actions
 
@@ -86,7 +136,7 @@ If the KnowzCode MCP server is connected, you have access to enhanced tools:
 - Use workgroup-todo-manager to append discovery tasks (prefix 'KnowzCode: ')
 - **CRITICAL**: Every todo line MUST start with `KnowzCode:` prefix
   - Format: `- KnowzCode: Task description here`
-- **If MCP available**: Use `get_context` and `search_codebase` first
+- **If MCP available**: Use `ask_question` and `search_knowledge` first
 - Run `inspect` command to analyze codebase
 
 ## NodeID Classification

@@ -277,15 +277,14 @@ Protected files (via .gitignore):
 
 Connect to KnowzCode Cloud for AI-powered capabilities:
 
-  /kc:connect-mcp <api-key>
+  New user?     /kc:register              (creates account + configures)
+  Have a key?   /kc:connect-mcp <api-key>
 
 This enables:
   • Vector search across indexed code
   • Spec queries and documentation
   • Context-aware agent decisions
   • Dependency analysis
-
-Get your API key at: https://knowz.io/api-keys
 ```
 
 ## Important Notes

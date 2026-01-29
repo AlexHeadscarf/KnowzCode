@@ -75,13 +75,21 @@ After installing the plugin, you have access to:
 | Command | Description |
 |:--------|:------------|
 | `/kc:init` | Initialize KnowzCode in current project |
+| `/kc:register` | Register for KnowzCode and configure MCP automatically |
 | `/kc:work <goal>` | Start new feature WorkGroup |
-| `/kc:plan investigate <question>` | Investigate codebase with parallel research agents |
+| `/kc:continue` | Resume current WorkGroup with context recovery |
 | `/kc:step <phase>` | Execute specific workflow phase |
 | `/kc:audit [type]` | Run quality audits |
 | `/kc:plan [type]` | Generate development plans |
+| `/kc:plan investigate <question>` | Investigate codebase with parallel research agents |
 | `/kc:fix <target>` | Quick targeted fixes |
 | `/kc:resolve-conflicts` | Resolve merge conflicts |
+| `/kc:connect-mcp` | Configure MCP server connection |
+| `/kc:status` | Check MCP connection status |
+| `/kc:migrate-knowledge` | Import external knowledge into specs |
+| `/kc:telemetry` | Investigate production telemetry |
+| `/kc:telemetry-setup` | Configure telemetry sources |
+| `/kc:learn` | Capture learnings to research vault |
 
 ## Project Structure
 
@@ -166,6 +174,287 @@ KnowzCode guides you through each phase with quality gates:
 - **Phase 2A (Implementation)**: Build with TDD
 - **Phase 2B (Verification)**: Quality checks
 - **Phase 3 (Finalization)**: Update docs and close WorkGroup
+
+## New in v2.0.24
+
+### Auto-Vault Configuration After Registration
+
+**Problem Solved:**
+- After `/kc:register`, users had API key but NO configured vaults
+- `mcp_config.md` showed "(not configured)" for vault IDs
+- Users couldn't use `/kc:learn` or any vault-dependent features
+- Dead end requiring manual `/kc:connect-mcp` and knowing vault IDs
+
+**Solution: Fully automatic vault configuration**
+1. Registration API returns a vault ID (auto-created "KnowzCode" vault)
+2. `/kc:register` automatically populates `mcp_config.md` with vault ID
+3. User is immediately ready to use `/kc:learn` and MCP features
+
+**Single Vault Model (Simplified Onboarding):**
+```
+┌─────────────────────────────────────────────────────────┐
+│                    KnowzCode Vault                       │
+│                                                         │
+│  Purpose: Learnings, conventions, decisions, patterns   │
+│  Used by: /kc:learn, finalization-steward, agents       │
+│  Code search: Uses local grep/glob (no code vault)      │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+**Why single vault?**
+- Simpler onboarding (no "what's code vault vs research vault?")
+- Code search works fine with grep/glob for most projects
+- MCP vault is for organizational knowledge, not code indexing
+- Advanced users can add code vault later
+
+**New Flow After Registration:**
+```bash
+/kc:register
+# → Creates account, configures MCP, sets vault ID automatically
+# → mcp_config.md shows vault configured
+# → Ready to use immediately!
+
+/kc:learn "JWT tokens better than sessions for stateless APIs"
+# → Works immediately - no manual vault setup needed!
+```
+
+**Updated Commands:**
+- `/kc:register` - Now parses `vault_id` from API response and auto-configures
+- `/kc:connect-mcp --configure-vaults` - New flag to force vault reconfiguration
+- `/kc:learn` - Improved error messages with clear setup guidance
+
+## New in v2.0.23
+
+### MCP Subagent for Context Isolation
+
+Introduced dedicated **knowz-mcp-quick** subagent to handle all MCP interactions in isolated context:
+
+**Problem Solved:**
+- MCP responses (especially `ask_question` with `researchMode: true`) return 8000+ tokens
+- Raw responses were polluting main agent context
+- Main conversation context filling up with MCP response data
+
+**Solution:**
+- New `knowz-mcp-quick` subagent handles ALL MCP interactions
+- Returns **summarized results only** (max 500 tokens)
+- Uses `haiku` model for speed and efficiency
+- Raw MCP responses stay isolated in subagent context
+
+**Architecture:**
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    MAIN CONTEXT (Clean)                         │
+│                                                                 │
+│  ┌─────────────┐   ┌─────────────┐   ┌─────────────────────┐   │
+│  │ spec-chief  │   │ impl-lead   │   │ impact-analyst      │   │
+│  └──────┬──────┘   └──────┬──────┘   └──────────┬──────────┘   │
+│         │                 │                      │              │
+│         └────────────────┬┴──────────────────────┘              │
+│                          │                                      │
+│                          ▼                                      │
+│              ┌───────────────────────┐                          │
+│              │   Task(knowz-mcp-     │  ← Spawn subagent        │
+│              │        quick)         │                          │
+│              └───────────┬───────────┘                          │
+└──────────────────────────┼──────────────────────────────────────┘
+                           │
+                           ▼
+┌──────────────────────────────────────────────────────────────────┐
+│                 SUBAGENT CONTEXT (Isolated)                      │
+│                                                                  │
+│  Process 8000+ tokens → Return 500 token summary                 │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+**Supported Operations:**
+| Operation | Input Pattern | Returns |
+|-----------|--------------|---------|
+| Code search | `"Search code vault for: {query}"` | File paths + brief context |
+| Research query | `"Query research vault: {question}"` | Summarized answer |
+| Deep research | `"Research mode: {question}"` | Key insights from 8000+ token response |
+| Convention lookup | `"Conventions for: {topic}"` | Bullet list |
+| Pattern search | `"Find patterns for: {desc}"` | Similar patterns + snippets |
+| Create learning | `"Create learning: {content} \| Title: {title} \| Tags: {tags}"` | Confirmation |
+| Check duplicate | `"Check duplicate: {summary}"` | Similar exists? Yes/No |
+
+**Updated Agents:**
+- `impact-analyst` - Now delegates MCP queries to subagent
+- `spec-chief` - Now delegates MCP queries to subagent
+- `implementation-lead` - Now delegates MCP queries to subagent
+- `architecture-reviewer` - Now delegates MCP queries to subagent
+- `finalization-steward` - Uses subagent for duplicate check + create learning
+
+**Example Usage (in agent):**
+```markdown
+Task(knowz-mcp-quick, "Search code vault for: authentication middleware")
+→ Returns: {"status": "success", "summary": "Found 3 files", "sources": [...]}
+
+Task(knowz-mcp-quick, "Query research vault: What are our error handling conventions?")
+→ Returns: {"status": "success", "summary": "1. Always use Result type...", "sources": [...]}
+```
+
+**Benefits:**
+- Main context stays clean (no 8000+ token pollution)
+- Agents work with concise summaries
+- MCP queries properly isolated
+- Fallback still works when MCP unavailable
+
+## New in v2.0.22
+
+### MCP Vault Architecture & Learning Capture
+
+Dual-vault architecture for enhanced semantic search and organizational learning:
+
+**Dual Vault System:**
+- **Code Vault** - Indexed source code (AST-chunked) for semantic code search
+- **Research Vault** - Architecture docs, conventions, learnings, best practices
+
+**MCP Tools (11 Active):**
+
+| Tool | Purpose | Key Parameters |
+|:-----|:--------|:---------------|
+| `search_knowledge` | Vector search across vaults | `query`, `vaultId`, `tags`, `limit` |
+| `ask_question` | AI Q&A with research mode | `question`, `vaultId`, `researchMode` |
+| `create_knowledge` | Save learnings to vault | `content`, `title`, `tags`, `vaultId` |
+| `update_knowledge` | Update existing items | `id`, `content`, `title`, `tags` |
+| `get_knowledge_item` | Get item by ID | `id`, `includeRelated` |
+| `bulk_get_knowledge_items` | Batch fetch (max 100) | `ids[]` |
+| `list_vaults` | List accessible vaults | `includeStats` |
+| `list_vault_contents` | Browse vault items | `vaultId`, `tags`, `knowledgeType` |
+| `list_topics` | List all topics | `limit` |
+| `get_topic_details` | Topic with related items | `id` |
+| `find_entities` | Find people/locations/events | `entityType`, `query` |
+
+**New Command:**
+- **`/kc:learn "insight"`** - Manually capture learnings to research vault
+- Supports `--category` (pattern, decision, workaround, performance, security, convention)
+- Supports `--tags` for categorization
+- Auto-detects category from insight content
+
+**Agent Enhancements:**
+All key agents now support dual-vault queries:
+- `impact-analyst` - Code vault for affected code + research vault for past decisions
+- `spec-chief` - Code vault for examples + research vault for conventions
+- `implementation-lead` - Code vault for patterns + research vault for best practices
+- `architecture-reviewer` - Research vault for standards + code vault for precedents
+- `finalization-steward` - Auto-detects and captures learnings to research vault
+
+**Automatic Learning Capture:**
+During WorkGroup finalization, the system detects insights worth capturing:
+- Pattern signals: "created utility for", "new helper", "reusable"
+- Decision signals: "chose X over Y", "decided to", "opted for"
+- Workaround signals: "workaround", "limitation", "instead"
+- Performance/Security signals detected automatically
+
+**New Configuration:**
+- `knowzcode/mcp_config.md` - Vault IDs and MCP configuration
+- `/kc:connect-mcp` now prompts for vault configuration
+- `/kc:status` shows vault connection status
+
+**Example Flow:**
+```bash
+# Configure MCP with vaults
+/kc:connect-mcp kz_live_abc123...
+# → Prompts for Code Vault ID and Research Vault ID
+
+# Manual learning capture
+/kc:learn "Always use Repository pattern for data access" --category pattern
+
+# Automatic capture during finalization
+/kc:work "Add user auth"
+# → At Phase 3, system detects "chose JWT over sessions"
+# → Prompts to capture as organizational learning
+```
+
+## New in v2.0.21
+
+### Registration Command & Production Defaults
+
+**`/kc:register` Command:**
+- Guided account registration with interactive name, email, password collection
+- Calls `POST /api/v1/auth/register` endpoint
+- Automatically configures MCP server with generated API key
+- Supports `--scope` flag (local, project, user)
+- Supports `--dev` flag for development environment
+- Security: passwords transmitted via HTTPS, never stored locally
+
+**Production Defaults:**
+- Production endpoints now default for both `/kc:register` and `/kc:connect-mcp`
+- Production: `https://api.knowz.io` (default)
+- Development: `https://api.dev.knowz.io` (use `--dev` flag)
+
+## New in v2.0.20
+
+### Shell Script Installers
+
+Fallback installation when Claude Code marketplace isn't working:
+
+- `install.sh` for Linux/macOS (Bash)
+- `install.ps1` for Windows (PowerShell)
+- Options: `--target`, `--global`, `--force`, `--help`
+- Installs commands, agents, and framework files
+
+## New in v2.0.19
+
+### Sentry MCP Support
+
+Fallback telemetry when CLI is not available:
+
+- Detection priority: CLI (preferred) → MCP (fallback)
+- Auto-detects MCP tools: `sentry_search_issues`, `mcp__sentry__*` variants
+- Method field in telemetry configuration (`cli` or `mcp`)
+- Only asks user to install if BOTH CLI and MCP are unavailable
+
+## New in v2.0.18
+
+### Telemetry Commands
+
+Production telemetry investigation across multiple sources:
+
+**`/kc:telemetry` Command:**
+- Query Sentry, Azure App Insights, and other telemetry sources
+- Natural language parsing - describe everything in plain English
+- Auto-extracts environment, timeframe, and search terms
+- Examples: `/kc:telemetry "in staging in the last 20 min, error 500"`
+
+**`/kc:telemetry-setup` Command:**
+- Guided telemetry configuration
+- Detects installed tools (sentry-cli, az CLI)
+- Verifies authentication status
+- Auto-discovers available projects and resources
+- Interactive environment mapping (production, staging, dev)
+
+**New Agents:**
+- `telemetry-investigator` - Orchestrates parallel telemetry investigation
+- `sentry-investigator-quick` - Focused Sentry error investigation
+- `appinsights-investigator-quick` - Azure App Insights investigation
+
+## New in v2.0.17
+
+### Descriptive WorkGroup IDs
+
+Meaningful slugs extracted from goal:
+
+- New format: `kc-{type}-{slug}-YYYYMMDD-HHMMSS`
+- Example: `kc-feat-user-auth-jwt-20250115-143022`
+- Makes WorkGroup files easier to identify and scan
+
+### Skills Registration Fix
+
+- Added missing `skills` array to `marketplace.json`
+- `start-work` and `continue` skills now auto-trigger properly
+
+## New in v2.0.16
+
+### Knowledge Migration
+
+**`/kc:migrate-knowledge` Command:**
+- Import external knowledge into KnowzCode specs
+- Supports file paths, folder paths, glob patterns, direct text
+- Format auto-detection: KnowzCode v1.x, Noderr output, generic markdown
+- Entity extraction with NodeID inference
+- Options: `--format`, `--dry-run`, `--merge`, `--overwrite`
 
 ## New in v2.0.15
 

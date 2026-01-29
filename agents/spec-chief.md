@@ -122,34 +122,75 @@ Only items listed with NodeIDs in the Change Set need specs. "Affected files" ar
 - spec-quality-check
 - tracker-update
 
-## MCP Tools (If Available)
+## MCP Queries (via Subagent)
 
-If the KnowzCode MCP server is connected, you have access to enhanced tools:
+MCP interactions are delegated to the **knowz-mcp-quick** subagent for context isolation.
+This keeps raw MCP responses (8000+ tokens) out of the spec authoring context.
 
-- **query_specs(component, spec_type)** - Query existing specifications
-  - Use to retrieve existing specs for reference or updates
-  - Example: `query_specs("UserService", "component")`
+### When to Use MCP Subagent
 
-- **search_codebase(query, limit)** - Vector search for implementation examples
-  - Use to find similar components and their patterns
-  - Example: `search_codebase("service authentication pattern", 5)`
+Spawn `knowz-mcp-quick` when you need:
+- Implementation examples from code vault
+- Naming conventions from research vault
+- Required sections for specific spec types
+- Past decisions affecting the spec
 
-- **get_context(task_description)** - Retrieve component relationships
-  - Use to understand how a component fits in the architecture
-  - Example: `get_context("UserService authentication dependencies")`
+### Subagent Queries
 
-**When MCP tools are available:**
-1. Use `query_specs` to check for existing related specs
-2. Use `get_context` to understand component relationships
-3. Use `search_codebase` to find implementation examples
-4. Incorporate MCP insights into spec drafts for accuracy
+**Find implementation examples:**
+```
+Task(knowz-mcp-quick, "Search code vault for: service authentication pattern")
+→ Returns: file paths + brief context
+```
 
-**Fallback:** If MCP tools unavailable, use Grep/Read to gather information manually.
+**Find similar patterns:**
+```
+Task(knowz-mcp-quick, "Find patterns for: repository pattern with caching")
+→ Returns: files using similar patterns + snippets
+```
+
+**Query conventions:**
+```
+Task(knowz-mcp-quick, "Conventions for: API endpoint specs")
+→ Returns: bullet list of conventions
+```
+
+**Check spec requirements:**
+```
+Task(knowz-mcp-quick, "Query research vault: What sections are required for service specs?")
+→ Returns: summarized requirements
+```
+
+**Understand component context:**
+```
+Task(knowz-mcp-quick, "Get context for: UserService authentication dependencies")
+→ Returns: related components + file locations
+```
+
+### Query Protocol
+
+1. **Before writing specs**: Query conventions for the spec type
+2. **For implementation reference**: Search code vault for examples
+3. **For consistency**: Check existing similar patterns
+4. **Incorporate insights** into spec drafts
+
+### Fallback Mode (No MCP)
+
+If subagent returns `status: "not_configured"`:
+
+| Need | Fallback Approach |
+|------|-------------------|
+| Existing specs | `Glob: knowzcode/specs/*.md` then Read |
+| Implementation examples | `Grep` for similar patterns in codebase |
+| Conventions | Read `knowzcode/user_preferences.md` |
+| Component relationships | Read `knowzcode/knowzcode_architecture.md` |
+
+**Specs can be written perfectly well without MCP** - it just helps find patterns faster.
 
 ## Entry Actions
 
 - Ensure each NodeID marked [WIP] has an up-to-date spec draft
-- **If MCP available**: Use `query_specs` to check existing specifications
+- **If MCP available**: Use `search_knowledge` to check existing specifications
 - Capture outstanding spec tasks in knowzcode/workgroups/<WorkGroupID>.md (prefix 'KnowzCode: ')
 - **CRITICAL**: Every todo line MUST start with `KnowzCode:` prefix
   - Format: `- KnowzCode: Task description here`

@@ -5,6 +5,76 @@ All notable changes to KnowzCode will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.26] - 2026-01-29
+
+### Added
+- **Enterprise Compliance Features** (optional)
+  - `knowzcode/enterprise/` directory structure for organizational guidelines
+  - `compliance_manifest.md` - Controls which guidelines are active (disabled by default)
+  - `guidelines/security.md` - Security guideline template with ARC criteria
+  - `guidelines/code-quality.md` - Code quality guideline template
+  - `templates/guideline-template.md` - Template for creating custom guidelines
+  - `compliance_status.md` - Per-WorkGroup compliance tracking
+- **`enterprise-compliance-reviewer` agent** - Read-only agent for compliance review
+  - Reviews specs for compliance (required sections, ARC criteria)
+  - Reviews implementation for pattern violations
+  - Returns structured compliance report with blocking/advisory issues
+  - Gracefully handles missing/empty guidelines
+- **`/kc:compliance` command** - Standalone compliance review
+  - `/kc:compliance` - Full review (spec + implementation)
+  - `/kc:compliance spec` - Specs only
+  - `/kc:compliance impl` - Implementation only
+- **CI/CD Compliance Scripts** for deterministic enforcement
+  - `scripts/compliance-check.sh` - Bash script for Linux/macOS
+  - `scripts/compliance-check.ps1` - PowerShell script for Windows
+  - Exit codes: 0 (passed), 1 (blocking issues), 2 (config error)
+  - Environment variables: `KC_COMPLIANCE_STRICT`, `KC_COMPLIANCE_VERBOSE`
+
+### Changed
+- **`spec-chief` agent** - Optional compliance integration
+  - Loads active guidelines when compliance enabled
+  - Merges guideline ARC criteria into spec Section 7
+  - Spawns compliance review before presenting specs for approval
+- **`arc-auditor` agent** - Optional compliance delegation
+  - Spawns `enterprise-compliance-reviewer` in parallel with existing audits
+  - Merges compliance results into unified audit report
+- **`/kc:init` command** - Optional enterprise setup
+  - Prompts "Would you like to set up enterprise compliance features?"
+  - Creates enterprise directory structure if user accepts
+  - Compliance disabled by default - user must enable in manifest
+
+### Notes
+- Enterprise compliance is **fully optional** - all existing workflows work unchanged
+- Guidelines use YAML frontmatter + structured Markdown format
+- Supports blocking (hard fail) and advisory (warning) enforcement levels
+
+---
+
+## [2.0.25] - 2026-01-29
+
+### Changed
+- **Consolidated `/kc:plan` command** - Simplified investigation workflow
+  - Removed planning "types" (strategy, ideas, pre-flight, project overview, major feature, expansion)
+  - Removed `investigate` keyword - no longer needed
+  - All `/kc:plan` calls now spawn 3 parallel research agents
+  - Clean separation: `/kc:plan` = research, `/kc:work` = implement
+
+### Migration
+```bash
+# Old (v2.0.24 and earlier)
+/kc:plan investigate "how does auth work?"
+
+# New (v2.0.25)
+/kc:plan "how does auth work?"
+```
+
+### Notes
+- `/kc:plan` now always spawns: `impact-analyst-quick`, `architecture-reviewer-quick`, `security-officer-quick`
+- Checks existing specs and WorkGroups automatically
+- Say "implement" or "option 1" to auto-transition to `/kc:work` with findings pre-loaded
+
+---
+
 ## [2.0.24] - 2026-01-28
 
 ### Added
@@ -495,6 +565,8 @@ None - all changes are additive and backward compatible.
 
 ---
 
+[2.0.26]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.25...v2.0.26
+[2.0.25]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.24...v2.0.25
 [2.0.24]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.23...v2.0.24
 [2.0.23]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.22...v2.0.23
 [2.0.22]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.21...v2.0.22

@@ -46,6 +46,7 @@ You are the **KnowzCode Registration Agent**. Your task is to guide users throug
 Registering for KnowzCode gives you:
 
 - **API Key** - Unique key for MCP server authentication
+- **KnowzCode Vault** - Auto-created vault for learnings, conventions, and patterns
 - **Vector Search** - AI-powered code search across your projects
 - **Spec Queries** - Query your specifications and documentation
 - **Context Retrieval** - Intelligent context for agent decisions
@@ -57,6 +58,20 @@ Registering for KnowzCode gives you:
 - Basic vector search
 
 **Upgrades available at:** https://knowz.io/pricing
+
+## API Response Structure
+
+The registration API returns:
+
+```json
+{
+  "api_key": "kz_live_abc123...",
+  "vault_id": "vault_xyz789...",
+  "vault_name": "KnowzCode"
+}
+```
+
+This vault is automatically configured for you - no manual setup required.
 
 ## Your Task
 
@@ -268,17 +283,25 @@ curl -X POST https://api.dev.knowz.io/api/v1/auth/register \
 
 | Code | Meaning | Action |
 |------|---------|--------|
-| 200/201 | Success | Extract API key, continue to Step 9 |
+| 200/201 | Success | Extract API key AND vault_id, continue to Step 9 |
 | 400 | Validation error | Show error details, return to relevant step |
 | 409 | Email exists | Show recovery options (see Error Handling) |
 | 429 | Rate limited | Show wait message (see Error Handling) |
 | 500+ | Server error | Show error and support link |
 
-#### Step 9: Configure MCP and Show Success
+**Parse Response:**
+- Extract `api_key` (or `apiKey` or `token` field)
+- Extract `vault_id` (auto-created "KnowzCode" vault)
+- Extract `vault_name` (typically "KnowzCode")
+
+#### Step 9: Configure MCP, Vault, and Show Success
 
 **On successful registration:**
 
-1. **Extract API key** from response (look for `apiKey`, `api_key`, or `token` field)
+1. **Extract from response:**
+   - API key (look for `apiKey`, `api_key`, or `token` field)
+   - Vault ID (look for `vault_id` or `vaultId` field)
+   - Vault name (look for `vault_name` or `vaultName` field, default: "KnowzCode")
 
 2. **Parse scope** from command arguments (default: `local`)
 
@@ -318,52 +341,97 @@ curl -X POST https://api.dev.knowz.io/api/v1/auth/register \
      --header "X-Project-Path: $(pwd)"
    ```
 
-5. **Verify configuration**:
+5. **Verify MCP configuration**:
    ```bash
    claude mcp get knowzcode
    ```
 
-6. **Display success message** (show appropriate endpoint based on environment):
+6. **Configure vault in mcp_config.md**:
+
+   Check if `knowzcode/mcp_config.md` exists:
+   - If exists: **Merge** vault configuration (preserve existing Code Vault if set)
+   - If not exists: Create from template with vault configured
+
+   Update `knowzcode/mcp_config.md` with:
+   ```markdown
+   # KnowzCode MCP Configuration
+
+   ## Connection Status
+   - **Connected**: Yes
+   - **Endpoint**: {endpoint}
+   - **Last Verified**: {ISO timestamp}
+
+   ---
+
+   ## Vaults
+
+   ### Research Vault (Primary)
+   - **Vault ID**: {vault_id from registration}
+   - **Vault Name**: {vault_name from registration}
+   - **Purpose**: Learnings, conventions, decisions, patterns
+   - **Auto-configured**: Yes (via /kc:register)
+
+   ### Code Vault (Optional)
+   - **Vault ID**: (not configured)
+   - **Purpose**: Indexed source code for semantic search
+   - **Note**: Code search uses local grep/glob by default.
+            Configure code vault for large codebases with /kc:connect-mcp --configure-vaults
+   ```
+
+   **Edge case - existing vault config**:
+   If `knowzcode/mcp_config.md` already has a Research Vault ID configured:
+   - Use AskUserQuestion: "You already have a vault configured. Replace with new vault from registration? [Yes/No/Keep both]"
+   - If "Yes": Replace Research Vault ID
+   - If "No": Keep existing vault config
+   - If "Keep both": Add new vault as secondary
+
+7. **Display success message** with vault info:
 
 ```
 ◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ◆ KnowzCode REGISTRATION COMPLETE
 ◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-✅ Account created and MCP server configured!
+✅ Account created and configured!
 
 Account Details:
   • Email: {email}
-  • API Key: {masked_key} (e.g., kz_abc1...xyz9)
+  • API Key: {masked_key}
 
 MCP Configuration:
   • Scope: {chosen-scope}
-  • Endpoint: {https://api.knowz.io/mcp OR https://api.dev.knowz.io/mcp}
+  • Endpoint: {endpoint}
   • Environment: {Production OR Development}
   • Status: Configured
+
+Vault Configuration:
+  • Vault: {vault_name} ({vault_id prefix...})
+  • Purpose: Learnings, conventions, patterns
+  • Status: Ready for use
 
 🔄 Please restart Claude Code to activate MCP features.
 
 After restart, you'll have access to:
-  • search_codebase - Vector search across code
-  • query_specs - Query specifications
-  • get_context - Get relevant context
-  • analyze_dependencies - Analyze relationships
+  • search_knowledge - Vector search across vaults
+  • ask_question - AI Q&A with research mode
+  • create_knowledge - Save learnings (via /kc:learn)
+  • update_knowledge - Update existing knowledge items
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 📋 Next Steps:
   1. Restart Claude Code
   2. Verify connection: /kc:status
-  3. Start building: /kc:work "your feature"
+  3. Try learning capture: /kc:learn "Your first insight"
+  4. Start building: /kc:work "your feature"
 
 Need help? https://knowz.io/docs
 ◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-**API Key Masking:**
-- Show only first 6 and last 4 characters
-- Example: `kz_test_abc123...wxyz` displays as `kz_tes...wxyz`
+**Masking:**
+- API Key: Show only first 6 and last 4 characters (e.g., `kz_liv...wxyz`)
+- Vault ID: Show only first 8 characters (e.g., `vault_xy...`)
 
 ## Error Handling
 
@@ -448,6 +516,7 @@ If registration succeeds but MCP configuration fails:
 Your account was created successfully:
   • Email: {email}
   • API Key: {masked_key}
+  • Vault: {vault_name} ({vault_id prefix...})
 
 However, automatic MCP configuration failed:
   {error_details}
@@ -456,6 +525,28 @@ You can configure manually:
   /kc:connect-mcp {masked_key}
 
 Or visit https://knowz.io/api-keys to retrieve your key later.
+```
+
+### API Response Missing Vault ID
+
+If registration succeeds but API returns no vault_id:
+
+```
+⚠️ Account Created, but Vault Not Provisioned
+
+Your account was created and MCP is configured:
+  • Email: {email}
+  • API Key: {masked_key}
+  • MCP: Configured
+
+However, no vault was auto-created. This may indicate:
+  • Account provisioning is still in progress
+  • Server-side configuration needed
+
+You can:
+  1. Wait a few minutes and run /kc:status to check
+  2. Contact support: https://knowz.io/support
+  3. Manually configure vault later: /kc:connect-mcp --configure-vaults
 ```
 
 ## Security Considerations

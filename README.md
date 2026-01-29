@@ -201,15 +201,20 @@ Each phase has **quality gates** that must pass before proceeding.
 | Command | Description | Example |
 |:--------|:------------|:--------|
 | `/kc:init` | Initialize KnowzCode in project | `/kc:init` |
+| `/kc:register` | Register and configure MCP automatically | `/kc:register` |
 | `/kc:work <goal>` | Start new feature WorkGroup | `/kc:work "Add dark mode"` |
 | `/kc:continue [wg-id]` | Resume current WorkGroup with context recovery | `/kc:continue` |
 | `/kc:step <phase>` | Execute specific phase | `/kc:step 2A` |
 | `/kc:audit [type]` | Run quality audits | `/kc:audit security` |
 | `/kc:plan [type]` | Generate development plans | `/kc:plan feature` |
+| `/kc:plan investigate` | Investigate codebase with parallel agents | `/kc:plan investigate "how does auth work?"` |
 | `/kc:fix <target>` | Quick targeted fix | `/kc:fix auth.js` |
 | `/kc:resolve-conflicts` | Resolve merge conflicts | `/kc:resolve-conflicts` |
 | `/kc:connect-mcp` | Configure MCP server | `/kc:connect-mcp <api-key>` |
 | `/kc:status` | Check MCP connection status | `/kc:status` |
+| `/kc:migrate-knowledge` | Import external knowledge into specs | `/kc:migrate-knowledge ./docs` |
+| `/kc:telemetry` | Investigate production telemetry | `/kc:telemetry "error 500 in prod"` |
+| `/kc:telemetry-setup` | Configure telemetry sources | `/kc:telemetry-setup` |
 
 ## Example Workflow
 
@@ -312,10 +317,24 @@ Connect to **KnowzCode Cloud** for AI-powered enhancements via Model Context Pro
 
 #### What You Get
 
-- **Vector Code Search** - Find implementations across your indexed codebase using semantic search
-- **Spec Queries** - Query specifications and documentation with natural language
+- **Vector Knowledge Search** - Semantic search across indexed code and documentation
+- **AI-Powered Q&A** - Ask questions with optional research mode (8000+ token comprehensive answers)
+- **Learning Capture** - Save patterns, decisions, and conventions to your knowledge vault
 - **Smart Context** - Agents automatically receive relevant context for their tasks
-- **Dependency Analysis** - Understand code relationships and impact before making changes
+
+#### Available MCP Tools
+
+| Tool | Purpose |
+|:-----|:--------|
+| `search_knowledge` | Vector search across vaults with tag/date filtering |
+| `ask_question` | AI Q&A with optional `researchMode` for comprehensive answers |
+| `create_knowledge` | Save learnings, notes, decisions to vault |
+| `update_knowledge` | Update existing knowledge items |
+| `get_knowledge_item` | Retrieve item by ID with related items |
+| `bulk_get_knowledge_items` | Batch fetch up to 100 items |
+| `list_vaults` | List accessible vaults with stats |
+| `list_vault_contents` | Browse vault items with filters |
+| `find_entities` | Find people, locations, events in your knowledge |
 
 #### How It Works
 
@@ -336,9 +355,10 @@ Once connected, **all KnowzCode agents automatically use MCP tools**:
 
 | Agent | Uses MCP For |
 |:------|:-------------|
-| **Impact Analyst** | `search_codebase` to find related code<br>`analyze_dependencies` to map change ripple effects<br>`get_context` to understand the domain |
-| **Spec Chief** | `query_specs` to retrieve existing specifications<br>`search_codebase` to find implementation patterns |
-| **Implementation Lead** | `query_specs` to load specifications<br>`search_codebase` to find reference implementations |
+| **Impact Analyst** | `search_knowledge` to find related code and past decisions |
+| **Spec Chief** | `ask_question` for conventions, `search_knowledge` for patterns |
+| **Implementation Lead** | `search_knowledge` for similar implementations |
+| **Finalization Steward** | `create_knowledge` to capture learnings automatically |
 
 #### Configuration Scopes
 

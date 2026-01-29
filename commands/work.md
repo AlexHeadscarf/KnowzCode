@@ -229,7 +229,7 @@ Check for existing specs that may cover the requested work:
 
    **Tier 2 (if MCP available)**: Semantic search
    ```
-   - Use query_specs() for semantic matching if KnowzCode MCP is connected
+   - Use search_knowledge() for semantic matching if KnowzCode MCP is connected
    - Combines with Tier 1 scores
    ```
 
@@ -377,6 +377,53 @@ After Step 4.5, the WorkGroup file should indicate the path taken:
 
 ---
 
+## Phase Transition Validation Protocol
+
+**Every phase transition MUST pass validation before proceeding.**
+
+### Validation Checkpoint Structure
+
+At EACH phase boundary, execute this checklist:
+
+```markdown
+◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+◆ VALIDATION CHECKPOINT: {Phase} → {Next Phase}
+◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**WorkGroupID**: {wgid}
+
+### Pre-Transition Checks:
+- [ ] All outputs from {Phase} are complete
+- [ ] User approval obtained at gate (if applicable)
+- [ ] WorkGroup file updated with current state
+- [ ] Tracker updated with NodeID statuses
+- [ ] Log entry created for phase completion
+
+### State Verification:
+- [ ] knowzcode/workgroups/{wgid}.md exists and is current
+- [ ] knowzcode/knowzcode_tracker.md reflects Change Set
+- [ ] No orphaned todos without KnowzCode: prefix
+
+### Quality Checks:
+- [ ] No placeholder text in completed artifacts
+- [ ] Dependencies documented for all NodeIDs
+- [ ] Iteration count within limits (< 3 per phase)
+
+**Result**: PASS / FAIL
+**If FAIL**: List specific issues and block transition
+◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+### Validation Failures Are BLOCKING
+
+**DO NOT proceed to next phase if validation fails.** Instead:
+1. Present the specific validation failures to user
+2. Fix the identified issues
+3. Re-run validation
+4. Only proceed when all checks pass
+
+---
+
 ## Phase Loop (Stay In Main Context)
 
 Execute phases sequentially. **DO NOT re-read context files between phases** - you already have them.
@@ -489,6 +536,19 @@ prompt: |
 5. Update `knowzcode/knowzcode_tracker.md` - add NodeIDs with [WIP] status
 6. Log event in `knowzcode/knowzcode_log.md`
 
+#### 1A → 1B Validation Checkpoint
+
+**Before spawning spec-chief agents, verify:**
+```
+✓ Change Set has at least 1 NodeID
+✓ Each NodeID has a clear description
+✓ User explicitly approved the Change Set
+✓ Tracker updated with [WIP] entries
+✓ WorkGroup file has Change Set recorded
+```
+
+**If ANY check fails**: Stop and address before proceeding.
+
 ---
 
 ### Phase 1B: Specification (PARALLEL PER NODEID)
@@ -571,6 +631,24 @@ prompt: |
    ```
 4. If rejected: Re-spawn ONLY the specs that need revision (parallel if multiple)
 5. If approved: Update workgroup file, log SpecApproved events, proceed to Phase 2A
+
+#### 1B → 2A Validation Checkpoint
+
+**Before spawning implementation-lead agents, verify:**
+```
+✓ Spec file exists for EVERY NodeID in Change Set
+✓ Each spec has all 7 required sections:
+  - Purpose, Dependencies, Interfaces, Core Logic, Data Structures, ARC, Tech Debt
+✓ No [TBD], [TODO], or placeholder text in any spec
+✓ At least 3 testable ARC criteria per spec
+✓ User explicitly approved ALL specs
+✓ Specs committed to git (pre-implementation commit)
+```
+
+**If ANY check fails**:
+- List the specific issues
+- Block implementation
+- User must approve fixes before proceeding
 
 ---
 
@@ -675,6 +753,23 @@ prompt: |
 1. Run unified verification across all NodeIDs
 2. Present consolidated implementation summary
 3. Update workgroup file, proceed to Phase 2B
+
+#### 2A → 2B Validation Checkpoint
+
+**Before spawning audit agents, verify:**
+```
+✓ All NodeIDs have implementation attempted
+✓ Test files exist for each NodeID
+✓ All tests pass (or failures documented)
+✓ Build succeeds
+✓ No implementation-lead agent failed due to max iterations
+✓ Implementation summary presented to user
+```
+
+**If tests fail or build breaks**:
+- DO NOT proceed to audit
+- Return to implementation with specific failures
+- Only proceed when verification passes
 
 **Fallback for Complex Conflicts:**
 
@@ -790,6 +885,23 @@ prompt: |
    ```
 3. If <100% and user chooses to fix: Return to Phase 2A with gap list
 4. If acceptable and user approves: Proceed to Phase 3
+
+#### 2B → 3 Validation Checkpoint
+
+**Before spawning finalization-steward, verify:**
+```
+✓ All three audit agents returned results
+✓ ARC completion percentage calculated
+✓ Security posture assessed
+✓ User explicitly approved proceeding to finalization
+✓ If gaps found, user confirmed acceptable or gaps addressed
+✓ No CRITICAL security concerns unresolved
+```
+
+**If user chose "Return to implementation"**:
+- DO NOT spawn finalization-steward
+- Return to Phase 2A with gap list
+- Only proceed when audit passes user approval
 
 ---
 

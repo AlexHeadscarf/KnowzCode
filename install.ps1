@@ -65,17 +65,24 @@ Examples:
 function Test-SourceFiles {
     Write-Info "Validating source files..."
 
-    $claudeDir = Join-Path $ScriptDir "claude"
     $knowzcodeDir = Join-Path $ScriptDir "knowzcode"
+    $commandsDir = Join-Path $ScriptDir "commands"
+    $agentsDir = Join-Path $ScriptDir "agents"
 
-    if (-not (Test-Path $claudeDir -PathType Container)) {
-        Write-Error "Source directory 'claude/' not found in $ScriptDir"
+    if (-not (Test-Path $knowzcodeDir -PathType Container)) {
+        Write-Error "Source directory 'knowzcode/' not found in $ScriptDir"
         Write-Error "Please run this script from the KnowzCode template directory."
         exit 1
     }
 
-    if (-not (Test-Path $knowzcodeDir -PathType Container)) {
-        Write-Error "Source directory 'knowzcode/' not found in $ScriptDir"
+    if (-not (Test-Path $commandsDir -PathType Container)) {
+        Write-Error "Source directory 'commands/' not found in $ScriptDir"
+        Write-Error "Please run this script from the KnowzCode template directory."
+        exit 1
+    }
+
+    if (-not (Test-Path $agentsDir -PathType Container)) {
+        Write-Error "Source directory 'agents/' not found in $ScriptDir"
         Write-Error "Please run this script from the KnowzCode template directory."
         exit 1
     }
@@ -255,10 +262,10 @@ function Install-KnowzCode {
 
     # Copy commands and agents
     Write-Info "Installing commands..."
-    Copy-DirectoryContents -Source (Join-Path $ScriptDir "claude\commands") -Destination (Join-Path $claudeTarget "commands")
+    Copy-DirectoryContents -Source (Join-Path $ScriptDir "commands") -Destination (Join-Path $claudeTarget "commands")
 
     Write-Info "Installing agents..."
-    Copy-DirectoryContents -Source (Join-Path $ScriptDir "claude\agents") -Destination (Join-Path $claudeTarget "agents")
+    Copy-DirectoryContents -Source (Join-Path $ScriptDir "agents") -Destination (Join-Path $claudeTarget "agents")
 
     # Copy framework files
     Write-Info "Installing framework files..."

@@ -5,6 +5,77 @@ All notable changes to KnowzCode will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.24] - 2026-01-28
+
+### Added
+- **Auto-vault configuration** after `/kc:register`
+  - Registration API now returns `vault_id` (auto-created "KnowzCode" vault)
+  - `/kc:register` automatically populates `knowzcode/mcp_config.md` with vault ID
+  - Users immediately ready to use `/kc:learn` without manual configuration
+- **Single vault model** for new users
+  - Research Vault (Primary): Learnings, conventions, decisions, patterns
+  - Code Vault (Optional): For large codebases (50k+ LOC)
+  - Code search uses local grep/glob by default (works well for most projects)
+- **`--configure-vaults` flag** for `/kc:connect-mcp`
+  - Forces vault configuration prompts even if already configured
+  - Useful for reconfiguring or adding code vault later
+
+### Changed
+- **`/kc:register`** now parses `vault_id` from API response and auto-configures
+  - Success message includes vault configuration status
+  - Suggests `/kc:learn` as next step
+- **`/kc:connect-mcp`** skips vault prompts if already configured from registration
+  - Detects existing Research Vault configuration
+  - Shows current vault status and suggests `--configure-vaults` to reconfigure
+- **`knowzcode/mcp_config.md`** template updated
+  - Research Vault marked as "Primary"
+  - Code Vault marked as "Optional" with guidance
+  - Added "Single Vault Model" section explaining the approach
+- **`knowz-mcp-quick`** agent updated for single vault model
+  - Code search operations return grep/glob guidance when code vault not configured
+  - Research vault operations require vault configuration
+  - Pattern search tries research vault first, then code vault if available
+- **`/kc:learn`** improved error messages
+  - Clear guidance to run `/kc:register` for vault setup
+  - Distinguishes between "MCP not connected" and "vault not configured"
+
+### Fixed
+- Dead end after registration where users had API key but no vault configured
+- Unclear error messages when trying to use `/kc:learn` without vault setup
+
+---
+
+## [2.0.23] - 2026-01-28
+
+### Added
+- **`knowz-mcp-quick` subagent** for MCP context isolation
+  - Handles ALL MCP interactions in isolated context
+  - Returns summarized results only (max 500 tokens)
+  - Uses `haiku` model for speed and efficiency
+  - Supported operations: code search, research query, deep research, convention lookup, pattern search, create learning, check duplicate
+  - Keeps raw MCP responses (8000+ tokens) out of main agent context
+
+### Changed
+- **`impact-analyst`** now delegates MCP queries to `knowz-mcp-quick` subagent
+  - Replaced direct MCP tool instructions with subagent delegation pattern
+  - Maintains fallback mode for when MCP unavailable
+- **`spec-chief`** now delegates MCP queries to `knowz-mcp-quick` subagent
+  - Uses subagent for implementation examples and convention lookups
+- **`implementation-lead`** now delegates MCP queries to `knowz-mcp-quick` subagent
+  - Pattern discovery flow updated to use subagent
+- **`architecture-reviewer`** now delegates MCP queries to `knowz-mcp-quick` subagent
+  - Architecture compliance checks via isolated subagent
+- **`finalization-steward`** now uses subagent for learning capture
+  - Duplicate checking via `Task(knowz-mcp-quick, "Check duplicate: ...")`
+  - Learning creation via `Task(knowz-mcp-quick, "Create learning: ...")`
+
+### Fixed
+- Main agent context no longer polluted by 8000+ token MCP responses
+- Agents work with concise summaries instead of raw MCP data
+- Better context conservation across multi-phase workflows
+
+---
+
 ## [2.0.21] - 2026-01-28
 
 ### Added
@@ -424,6 +495,11 @@ None - all changes are additive and backward compatible.
 
 ---
 
+[2.0.24]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.23...v2.0.24
+[2.0.23]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.22...v2.0.23
+[2.0.22]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.21...v2.0.22
+[2.0.21]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.20...v2.0.21
+[2.0.20]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.19...v2.0.20
 [2.0.19]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.18...v2.0.19
 [2.0.18]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.17...v2.0.18
 [2.0.17]: https://github.com/AlexHeadscarf/KnowzCode/compare/v2.0.16...v2.0.17

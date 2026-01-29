@@ -9,16 +9,18 @@ You are the **KnowzCode MCP Connection Agent**. Your task is to configure the Kn
 ## Command Syntax
 
 ```bash
-/kc:connect-mcp <api-key> [--endpoint <url>] [--scope <local|project|user>] [--dev]
+/kc:connect-mcp <api-key> [--endpoint <url>] [--scope <local|project|user>] [--dev] [--configure-vaults]
 ```
 
 **Note:** If you don't have an API key yet, run `/kc:register` to create an account and get one automatically.
+Registration also auto-configures your vault - no manual setup needed!
 
 **Parameters:**
 - `<api-key>` - Required. Your KnowzCode API key (or omit for interactive prompt)
 - `--endpoint <url>` - Optional. Custom MCP endpoint (overrides environment default)
 - `--scope <scope>` - Optional. Configuration scope: local (default), project, or user
 - `--dev` - Optional. Use development environment instead of production
+- `--configure-vaults` - Optional. Force vault configuration prompts (even if already configured)
 
 **Environments:**
 | Environment | Endpoint | When to Use |
@@ -51,10 +53,20 @@ You are the **KnowzCode MCP Connection Agent**. Your task is to configure the Kn
 
 Once connected, you gain access to powerful vector-based tools:
 
-- **`search_codebase`** - Vector similarity search across indexed code
-- **`query_specs`** - Query KnowzCode specifications and documentation
-- **`get_context`** - Retrieve relevant context for the current task
-- **`analyze_dependencies`** - Understand code relationships and impact
+- **`search_knowledge`** - Vector similarity search across vaults (code or research)
+- **`ask_question`** - AI-powered Q&A with optional research mode
+- **`create_knowledge`** - Save learnings to research vault (used by finalization)
+- **`update_knowledge`** - Update existing knowledge items
+- **`find_entities`** - Find people, locations, or events in your knowledge
+
+### Dual Vault Architecture
+
+KnowzCode uses two vault types for optimal search:
+
+| Vault Type | Purpose | Query Examples |
+|------------|---------|----------------|
+| **Code Vault** | Indexed source code (AST-chunked) | "Find auth middleware", "JWT validation" |
+| **Research Vault** | Architecture, conventions, learnings | "Error handling conventions", "Why Redis?" |
 
 These tools integrate seamlessly with all KnowzCode agents, enhancing their capabilities with project-wide context awareness.
 
@@ -71,6 +83,7 @@ Configure the KnowzCode MCP server using Claude Code's built-in MCP management.
    - Default endpoint: `https://api.knowz.io/mcp` (production)
    - With `--dev` flag: `https://api.dev.knowz.io/mcp` (development)
    - Parse `--scope <scope>` flag (default: `local`)
+   - Parse `--configure-vaults` flag (forces vault prompts)
    - Store parsed values for use in configuration
 
 2. **Check for existing configuration**
@@ -100,7 +113,41 @@ Configure the KnowzCode MCP server using Claude Code's built-in MCP management.
    - Ensure it starts with `https://` (or `http://` for local dev)
    - Show which endpoint will be used
 
-6. **Add MCP server using CLI**
+6. **Configure Vault IDs (Conditional)**
+
+   First, check if vaults are already configured in `knowzcode/mcp_config.md`:
+   - Read the file and check for Research Vault ID
+
+   **If Research Vault already configured AND `--configure-vaults` NOT set:**
+   - Skip vault prompts entirely
+   - Display:
+     ```
+     Vault already configured (from previous setup or /kc:register):
+       • Research Vault: {vault_name} ({vault_id prefix...})
+       • Code Vault: {configured or "Not configured"}
+
+     To reconfigure vaults, run: /kc:connect-mcp --configure-vaults
+     ```
+
+   **If Research Vault NOT configured OR `--configure-vaults` IS set:**
+   - Prompt user for vault configuration:
+     ```
+     Configure Vault IDs for enhanced search capabilities:
+
+     Research Vault (required for /kc:learn):
+       • Enter vault ID or name (e.g., "my-org-knowledge")
+       • This vault stores learnings, conventions, decisions
+       • Get your vault ID from: https://knowz.io/vaults
+
+     Code Vault (optional - for large codebases):
+       • Enter vault ID or name (e.g., "my-project-code")
+       • This vault contains AST-chunked source files
+       • Leave blank to use grep/glob for code search (recommended for most projects)
+     ```
+   - If vault IDs provided, validate format (GUID or name)
+   - Store vault configuration in `knowzcode/mcp_config.md`
+
+7. **Add MCP server using CLI**
    ```bash
    claude mcp add --transport http \
      --scope <chosen-scope> \
@@ -110,32 +157,46 @@ Configure the KnowzCode MCP server using Claude Code's built-in MCP management.
      --header "X-Project-Path: $(pwd)"
    ```
 
-7. **Verify configuration**
+8. **Verify configuration**
    - Run: `claude mcp get knowzcode`
    - Confirm server appears in the list
    - Check for any error messages
 
-8. **Test connection (optional)**
-   - If verification succeeds, optionally test with a simple tool call
-   - This validates the API key is valid
+9. **Update mcp_config.md**
+   - Update `knowzcode/mcp_config.md` with connection details:
+     - Set `Connected: Yes`
+     - Set `Endpoint: <endpoint-url>`
+     - Set `Last Verified: <timestamp>`
+     - Set Research Vault ID and name (if provided or already set)
+     - Set Code Vault ID and name (if provided)
+     - Set `Auto-configured: No` (to distinguish from /kc:register setup)
 
-9. **Report success**
-   ```
-   ✅ KnowzCode MCP server configured!
+10. **Test connection (optional)**
+    - If verification succeeds, optionally test with a simple tool call
+    - This validates the API key is valid
 
-   Scope: <chosen-scope>
-   Endpoint: <endpoint-url>
+11. **Report success**
+    ```
+    ✅ KnowzCode MCP server configured!
 
-   🔄 Please restart Claude Code to activate these features:
-      • search_codebase - Vector search across code
-      • query_specs - Query specifications
-      • get_context - Get relevant context
-      • analyze_dependencies - Analyze relationships
+    Scope: <chosen-scope>
+    Endpoint: <endpoint-url>
 
-   After restart, these tools will be available to all KnowzCode agents.
+    Vaults Configured:
+      • Code Vault: <vault-name or "Not configured">
+      • Research Vault: <vault-name or "Not configured">
 
-   Check connection status: /kc:status
-   ```
+    🔄 Please restart Claude Code to activate these features:
+       • search_knowledge - Vector search across vaults
+       • ask_question - AI Q&A with research mode
+       • create_knowledge - Save learnings (via finalization)
+       • update_knowledge - Update existing items
+       • find_entities - Find people/locations/events
+
+    After restart, these tools will be available to all KnowzCode agents.
+
+    Check connection status: /kc:status
+    ```
 
 ## Configuration Details
 
@@ -263,19 +324,28 @@ To switch between environments or self-hosted:
 
 ## Integration with KnowzCode Agents
 
-Once configured, agents automatically detect and use MCP tools:
+Once configured, agents automatically detect and use MCP tools with dual vault support:
 
 **impact-analyst**:
-- Uses `search_codebase` to find related code during impact analysis
-- Uses `analyze_dependencies` to map change ripple effects
+- Uses `search_knowledge` with **code vault** to find related code
+- Uses `search_knowledge` with **research vault** to find past decisions
+- Uses `ask_question` with **research vault** for architectural context
 
 **spec-chief**:
-- Uses `query_specs` to retrieve existing specifications
-- Uses `get_context` to understand component relationships
+- Uses `search_knowledge` with **code vault** for implementation examples
+- Uses `ask_question` with **research vault** for conventions
 
 **implementation-lead**:
-- Uses `search_codebase` to find implementation examples
-- Uses `get_context` to understand code patterns
+- Uses `search_knowledge` with **code vault** for similar patterns
+- Uses `search_knowledge` with **research vault** for best practices
+
+**architecture-reviewer**:
+- Uses `search_knowledge` with **research vault** for standards
+- Uses `search_knowledge` with **code vault** for precedent checks
+
+**finalization-steward**:
+- Uses `search_knowledge` with **research vault** to check for duplicate learnings
+- Uses `create_knowledge` to save new learnings to **research vault**
 
 **All agents**:
 - Automatically leverage MCP tools when available

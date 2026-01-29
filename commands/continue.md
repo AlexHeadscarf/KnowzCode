@@ -312,6 +312,70 @@ Before resuming execution, verify ALL:
 
 ---
 
+## Validation Recovery Protocol
+
+When resuming, perform these validation checks to ensure state consistency:
+
+### State Consistency Validation
+
+```markdown
+◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+◆ VALIDATION RECOVERY: State Consistency
+◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**WorkGroupID**: {wgid}
+**Detected Phase**: {phase}
+
+### Cross-File Consistency:
+- [ ] Tracker NodeIDs match WorkGroup Change Set
+- [ ] Spec files exist for all [NEEDS_SPEC] NodeIDs
+- [ ] Log entries align with detected phase
+- [ ] WorkGroup todos have KnowzCode: prefix
+
+### Artifact Integrity:
+- [ ] No orphaned specs (specs without tracker entry)
+- [ ] No orphaned tracker entries (entries without specs)
+- [ ] Timestamps are monotonically increasing
+- [ ] No duplicate NodeIDs
+
+### Code-Spec Alignment (if Phase 2A+):
+- [ ] Test files exist for implemented NodeIDs
+- [ ] Implementation files match spec target paths
+- [ ] No code changes since last verification
+
+**Issues Found**: {list any inconsistencies}
+
+**Recovery Actions**:
+1. {action for each issue}
+◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+### Recovery Actions by Issue Type
+
+**Tracker-WorkGroup Mismatch**:
+- Trust WorkGroup file as source of truth
+- Update tracker to match Change Set
+- Log correction event
+
+**Missing Spec Files**:
+- Either return to Phase 1B to create specs
+- Or remove NodeID from Change Set (user approval required)
+
+**Orphaned Code**:
+- Code exists without corresponding spec
+- Options: Create spec for existing code, or remove code
+- User decision required
+
+**Stale Verification**:
+- Code modified since last test run
+- Re-run verification loop before proceeding
+
+**Todo Prefix Missing**:
+- Add KnowzCode: prefix to all todos automatically
+- Log the correction
+
+---
+
 ## Summary
 
 You orchestrate the resumed workflow by:

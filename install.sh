@@ -103,14 +103,20 @@ parse_args() {
 validate_source() {
     print_info "Validating source files..."
 
-    if [[ ! -d "$SCRIPT_DIR/claude" ]]; then
-        print_error "Source directory 'claude/' not found in $SCRIPT_DIR"
+    if [[ ! -d "$SCRIPT_DIR/knowzcode" ]]; then
+        print_error "Source directory 'knowzcode/' not found in $SCRIPT_DIR"
         print_error "Please run this script from the KnowzCode template directory."
         exit 1
     fi
 
-    if [[ ! -d "$SCRIPT_DIR/knowzcode" ]]; then
-        print_error "Source directory 'knowzcode/' not found in $SCRIPT_DIR"
+    if [[ ! -d "$SCRIPT_DIR/commands" ]]; then
+        print_error "Source directory 'commands/' not found in $SCRIPT_DIR"
+        print_error "Please run this script from the KnowzCode template directory."
+        exit 1
+    fi
+
+    if [[ ! -d "$SCRIPT_DIR/agents" ]]; then
+        print_error "Source directory 'agents/' not found in $SCRIPT_DIR"
         print_error "Please run this script from the KnowzCode template directory."
         exit 1
     fi
@@ -254,10 +260,10 @@ install_knowzcode() {
 
     # Copy commands and agents
     print_info "Installing commands..."
-    copy_directory "$SCRIPT_DIR/claude/commands" "$claude_target/commands"
+    copy_directory "$SCRIPT_DIR/commands" "$claude_target/commands"
 
     print_info "Installing agents..."
-    copy_directory "$SCRIPT_DIR/claude/agents" "$claude_target/agents"
+    copy_directory "$SCRIPT_DIR/agents" "$claude_target/agents"
 
     # Copy framework files
     print_info "Installing framework files..."

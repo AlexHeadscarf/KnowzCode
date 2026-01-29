@@ -109,15 +109,78 @@ Result: 3 NodeIDs in parallel, 1 after = faster than all 4 sequential
 - environment-guard
 - tracker-update
 
-## MCP Tools (If Available)
+## MCP Queries (via Subagent)
 
-If the KnowzCode MCP server is connected, you have access to enhanced tools:
+MCP interactions are delegated to the **knowz-mcp-quick** subagent for context isolation.
+This keeps raw MCP responses (8000+ tokens) out of the implementation context.
 
-- **search_codebase(query, limit)** - Find implementation examples and patterns
-- **query_specs(component, spec_type)** - Retrieve component specifications
-- **get_context(task_description)** - Understand implementation context
+### When to Use MCP Subagent
 
-**Fallback:** If MCP tools unavailable, manually read specs from `knowzcode/specs/`.
+Spawn `knowz-mcp-quick` when you need:
+- Similar implementation patterns from code vault
+- Team conventions before implementing
+- Best practices for specific features
+- Examples of existing patterns
+
+### Subagent Queries
+
+**Find implementation patterns:**
+```
+Task(knowz-mcp-quick, "Search code vault for: pagination implementation")
+→ Returns: file paths + brief context
+```
+
+**Find similar patterns:**
+```
+Task(knowz-mcp-quick, "Find patterns for: repository pattern with caching")
+→ Returns: files using similar patterns + snippets
+```
+
+**Check conventions before implementing:**
+```
+Task(knowz-mcp-quick, "Conventions for: error handling")
+→ Returns: bullet list of conventions
+```
+
+**Get best practices:**
+```
+Task(knowz-mcp-quick, "Query research vault: How should we handle API rate limiting?")
+→ Returns: summarized guidance
+```
+
+**Understand component context:**
+```
+Task(knowz-mcp-quick, "Get context for: implement user authentication flow")
+→ Returns: related components + interaction patterns
+```
+
+### Pattern Discovery Flow
+
+```
+Before implementing feature X:
+
+1. Task(knowz-mcp-quick, "Conventions for: X")
+   → Found: "Always use Repository pattern for data access"
+
+2. Task(knowz-mcp-quick, "Search code vault for: X example")
+   → Found: Similar component in src/services/UserService.ts
+
+3. Follow discovered pattern
+4. If creating NEW pattern, note in WorkGroup for finalization learning capture
+```
+
+### Fallback Mode (No MCP)
+
+If subagent returns `status: "not_configured"`:
+
+| Need | Fallback Approach |
+|------|-------------------|
+| Implementation patterns | `Grep` for similar code in codebase |
+| Spec details | Read `knowzcode/specs/{NodeID}.md` directly |
+| Best practices | Read `knowzcode/user_preferences.md` |
+| Examples | Search codebase with `Grep` for keywords |
+
+**TDD implementation works identically with or without MCP** - MCP just helps find patterns faster.
 
 ---
 

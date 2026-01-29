@@ -11,7 +11,6 @@ This manifest describes the Claude Code resources that support the KnowzCode wor
 | `/kc-audit` | Launches read-only audit routines (spec, implementation, architecture, security, integration) with friendly aliases | `claude/commands/kc_audit.yaml` |
 | `/kc-plan` | Facilitates planning prompts (strategic blueprint, feature ideation, pre-flight analysis, expansion) with alias support | `claude/commands/kc_plan.yaml` |
 | `/kc-microfix` | Executes the KCv2.0 micro-fix workflow | `claude/commands/kc_microfix.yaml` |
-| `/kc-install` | **Automated installer** - Copies `claude/` template to `.claude/` and configures hooks for quality enforcement | `claude/commands/kc_install.yaml` |
 
 ## Subagents
 
@@ -24,7 +23,6 @@ This manifest describes the Claude Code resources that support the KnowzCode wor
 | `finalization-steward` | Finalizes specs, tracker, log, and architecture during Loop 3 | `load-core-context`, `tracker-update`, `log-entry-builder`, `architecture-diff` |
 | `spec-quality-auditor` | Performs comprehensive spec validation audits before implementation | `load-core-context`, `spec-validator`, `workgroup-spec-validator` |
 | `feature-orchestrator` | Background assistant that seeds planning tasks for new PrimaryGoals | `load-core-context`, `feature-background-orchestrator` |
-| `installation-orchestrator` | **Self-installer** - Coordinates copying template files, creating directory structure, and configuring hooks | `install-knowzcode`, `validate-installation` |
 
 ## Skills
 
@@ -44,39 +42,9 @@ This manifest describes the Claude Code resources that support the KnowzCode wor
 | `spec-validator` | Validates individual NodeID spec for completeness, ARC criteria quality, and placeholder-free content |
 | `workgroup-spec-validator` | Validates all specs in a WorkGroupID with aggregated scores and error reporting |
 | `feature-background-orchestrator` | Seeds planning notes for background orchestration of new features |
-| `install-knowzcode` | **Installer skill** - Copies all files from `claude/` to `.claude/`, creates settings.json with hook configuration |
+| `install-knowzcode` | **Installer skill** - Sets up KnowzCode directory structure and initial files |
 | `check-installation-status` | **Installation checker** - Detects if KnowzCode is already installed and reports current component counts |
-| `validate-installation` | **Post-install validator** - Verifies all components installed correctly and hooks are properly configured |
-
-## Hooks
-
-| Hook | Trigger | Purpose |
-| --- | --- | --- |
-| `pre-command/validate-environment` | Before any command that executes shell/git actions | Blocks execution if `environment_context.md` contains placeholders or unverified commands |
-| `pre-command/confirm-change-set` | Before Loop 1B+ commands | Ensures tracker rows are marked `[WIP]` with consistent WorkGroupID |
-| `pre-command/validate-specs` | Before Loop 2A (implementation) | **NEW:** Blocks implementation if WorkGroup specs are invalid (score < 70 or critical errors). Ensures quality baseline before coding begins. |
-| `post-command/update-caches` | After spec or tracker updates | Refreshes cached context so subsequent automations see the latest state |
-| `post-command/git-status` | After Loop 3 completion | Reports git status and diff summary for operator review |
-
-## Installation
-
-**The `claude/` directory is a template.** To activate KnowzCode automation, run:
-
-```
-/kc-install
-```
-
-This command:
-1. Copies all files from `claude/` → `.claude/` (your project's automation directory)
-2. Creates `.claude/settings.json` with hook configuration
-3. Validates installation succeeded
-4. Provides next steps
-
-**Why two directories?**
-- `claude/` = Visible template (committed to git, distributed with KnowzCode)
-- `.claude/` = Hidden installation (gitignored, created by user, contains local config)
-
-**Manual installation:** See [INSTALL.md](../INSTALL.md) for step-by-step instructions.
+| `validate-installation` | **Post-install validator** - Verifies all components installed correctly |
 
 ## State & Backlog Files
 

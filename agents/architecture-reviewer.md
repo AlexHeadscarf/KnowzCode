@@ -79,6 +79,73 @@ When invoked via `/kc:audit architecture`:
 - architecture-diff
 - tracker-scan
 
+## MCP Queries (via Subagent)
+
+MCP interactions are delegated to the **knowz-mcp-quick** subagent for context isolation.
+This keeps raw MCP responses (8000+ tokens) out of the architecture review context.
+
+### When to Use MCP Subagent
+
+Spawn `knowz-mcp-quick` when you need:
+- Documented architectural patterns from research vault
+- Precedent checks across the codebase
+- Compliance verification against standards
+- Pattern consistency validation
+
+### Subagent Queries
+
+**Find architectural standards:**
+```
+Task(knowz-mcp-quick, "Conventions for: service layer patterns")
+→ Returns: documented layer conventions
+```
+
+**Deep compliance analysis:**
+```
+Task(knowz-mcp-quick, "Research mode: Does our architecture support microservices migration?")
+→ Returns: key insights (extracted from comprehensive analysis)
+```
+
+**Check pattern precedents:**
+```
+Task(knowz-mcp-quick, "Search code vault for: similar service pattern")
+→ Returns: files using pattern + context
+```
+
+**Find layer rules:**
+```
+Task(knowz-mcp-quick, "Query research vault: What are our architecture layer rules?")
+→ Returns: layer constraints and dependencies
+```
+
+### Architecture Compliance Flow
+
+```
+During architecture review:
+
+1. Task(knowz-mcp-quick, "Conventions for: architecture layer rules")
+   → Found: "Services must not import from UI layer"
+
+2. Task(knowz-mcp-quick, "Search code vault for: service dependencies")
+   → Verify existing services follow this pattern
+
+3. Check if reviewed code follows discovered pattern
+4. Flag any deviations with reference to documented standard
+```
+
+### Fallback Mode (No MCP)
+
+If subagent returns `status: "not_configured"`:
+
+| Need | Fallback Approach |
+|------|-------------------|
+| Architecture standards | Read `knowzcode/knowzcode_architecture.md` |
+| Pattern precedents | `Grep` for similar patterns in codebase |
+| Conventions | Read `knowzcode/user_preferences.md` |
+| Layer violations | Manual code inspection with `Read` |
+
+**Architecture reviews work fully without MCP** - MCP just enables checking against organizational standards.
+
 ## Entry Actions
 
 - Extract architectural drift indicators before running prompt

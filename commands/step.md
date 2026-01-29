@@ -65,6 +65,49 @@ Read these files ONCE:
 - `knowzcode/knowzcode_loop.md` - phase requirements
 - `knowzcode/knowzcode_tracker.md` - NodeID statuses
 
+### Step 2.5: Pre-Phase Validation
+
+**Before executing ANY phase, verify prerequisites:**
+
+```markdown
+◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+◆ PRE-PHASE VALIDATION: {Phase}
+◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**WorkGroupID**: {wgid}
+**Target Phase**: {phase}
+
+### Phase-Specific Prerequisites:
+
+**Phase 1A (Impact Analysis)**:
+- [ ] WorkGroup file exists with Primary Goal
+- [ ] No active Change Set (fresh start)
+
+**Phase 1B (Specification)**:
+- [ ] Change Set defined and approved
+- [ ] At least 1 NodeID with [NEEDS_SPEC]
+
+**Phase 2A (Implementation)**:
+- [ ] All specs exist for Change Set NodeIDs
+- [ ] Specs have been approved
+- [ ] No placeholder text in specs
+
+**Phase 2B (Verification)**:
+- [ ] Implementation attempted for all NodeIDs
+- [ ] Tests exist and have been run
+- [ ] Build succeeds
+
+**Phase 3 (Finalization)**:
+- [ ] Audit completed
+- [ ] User approved proceeding to finalization
+- [ ] No CRITICAL gaps unresolved
+
+**Result**: PASS / FAIL
+◆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+**If validation FAILS**: Stop and report missing prerequisites to user.
+
 ### Step 3: Execute Phase
 
 Based on the parsed phase, spawn the appropriate agent:

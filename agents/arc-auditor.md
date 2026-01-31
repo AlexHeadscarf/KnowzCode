@@ -64,6 +64,63 @@ When performing multiple independent operations:
 - Produce objective completion percentage and list of discrepancies
 - Recommend blocker vs acceptable debt
 
+## Enterprise Compliance Integration (Optional)
+
+If enterprise compliance is configured and enabled, include compliance review in the audit battery.
+
+### Check Compliance Configuration
+
+```
+READ knowzcode/enterprise/compliance_manifest.md
+
+IF file exists AND compliance_enabled: true:
+  include_compliance = true
+ELSE:
+  include_compliance = false (skip compliance review)
+```
+
+### Compliance Audit Delegation
+
+When `include_compliance = true`, spawn compliance reviewer in parallel with other audits:
+
+```
+PARALLEL {
+  // Existing audits
+  verify_arc_criteria(NodeIDs)
+  check_test_coverage(NodeIDs)
+
+  // Compliance audit (if enabled)
+  IF include_compliance:
+    Task(enterprise-compliance-reviewer, "
+      Review implementation for compliance.
+      Mode: impl-review
+      NodeIDs: {list}
+      Filter: applies_to IN ['implementation', 'both']
+    ")
+}
+```
+
+### Merge Compliance Results
+
+After all parallel audits complete:
+
+```
+IF compliance_results:
+  MERGE into audit report:
+    - Blocking compliance issues → add to blockers
+    - Advisory compliance issues → add to recommendations
+    - Compliance score → include in overall health score
+```
+
+### Graceful Handling
+
+If `enterprise/` directory doesn't exist or `compliance_enabled: false`:
+- Skip compliance delegation
+- Proceed with standard ARC audit
+- This feature is **optional**
+
+---
+
 ## Instructions
 
-Maintain strict read-only posture. Audit implementation against ARC criteria and report findings objectively.
+Maintain strict read-only posture. Audit implementation against ARC criteria and report findings objectively. If enterprise compliance is enabled, delegate compliance review to enterprise-compliance-reviewer and merge results into the audit report.

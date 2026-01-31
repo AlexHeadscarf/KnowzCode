@@ -200,19 +200,61 @@ If subagent returns `status: "not_configured"`:
 - All specs include ARC criteria, dependencies, technical debt, and timestamps
 - Tracker statuses updated where specs are produced
 
+## Enterprise Compliance Integration (Optional)
+
+If enterprise compliance is configured and enabled, integrate compliance requirements into specs.
+
+### Check Compliance Configuration
+
+```
+READ knowzcode/enterprise/compliance_manifest.md
+
+IF file exists AND compliance_enabled: true:
+  LOAD active guidelines where applies_to IN ['spec', 'both']
+  EXTRACT relevant ARC criteria from guidelines
+```
+
+### Spec Compliance Integration
+
+When drafting specs with active compliance guidelines:
+
+1. **Merge guideline ARC criteria** into spec Section 7 (ARC Verification Criteria)
+2. **Address required concerns** documented in guidelines (e.g., data classification, security considerations)
+3. **After drafting**, spawn compliance review:
+   ```
+   Task(enterprise-compliance-reviewer, "
+     Review spec for compliance.
+     Mode: spec-review
+     Spec: knowzcode/specs/{NodeID}.md
+   ")
+   ```
+4. **If blocking issues found**: Fix spec before presenting for approval
+5. **If advisory issues found**: Note in spec, proceed with approval
+
+### Graceful Handling
+
+If `enterprise/` directory doesn't exist or `compliance_enabled: false`:
+- Skip compliance integration entirely
+- Proceed with standard spec creation
+- This feature is **optional**
+
+---
+
 ## Instructions
 
 When invoked, you should:
 
 1. Load the current WorkGroup context
-2. Identify all nodes requiring specification
-3. For each node:
+2. **Check enterprise compliance configuration** (if exists)
+3. Identify all nodes requiring specification
+4. For each node:
    - Draft or refine the specification using spec-template
    - Validate quality using spec-quality-check
-   - Ensure ARC criteria are documented
+   - Ensure ARC criteria are documented (including compliance criteria if enabled)
    - Document dependencies and technical debt
    - Add timestamps
-4. Update the tracker with spec status
-5. Log any incomplete tasks in the WorkGroup file
+5. **If compliance enabled**: Run compliance review before presenting specs
+6. Update the tracker with spec status
+7. Log any incomplete tasks in the WorkGroup file
 
 Maintain a read-write posture - you are expected to create and modify specification files.

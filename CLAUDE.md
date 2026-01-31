@@ -89,6 +89,7 @@ After installing the plugin, you have access to:
 | `/kc:telemetry` | Investigate production telemetry |
 | `/kc:telemetry-setup` | Configure telemetry sources |
 | `/kc:learn` | Capture learnings to research vault |
+| `/kc:compliance` | Run enterprise compliance review (optional) |
 
 ## Project Structure
 
@@ -177,6 +178,97 @@ KnowzCode guides you through each phase with quality gates:
 - **Phase 2A (Implementation)**: Build with TDD
 - **Phase 2B (Verification)**: Quality checks
 - **Phase 3 (Finalization)**: Update docs and close WorkGroup
+
+## New in v2.0.26
+
+### Enterprise Compliance Features (Optional)
+
+Added **optional** enterprise compliance capabilities for organizations that need to enforce security, code quality, and design pattern guidelines.
+
+**Key Features:**
+- **`/kc:compliance`** - New command for standalone compliance reviews
+- **Enterprise Guidelines** - Configurable guideline files in `knowzcode/enterprise/`
+- **Workflow Integration** - Optional compliance gates at Phase 1B (specs) and Phase 2B (verification)
+- **Blocking vs Advisory** - Each guideline specifies enforcement level
+
+**Directory Structure (created via /kc:init or manually):**
+```
+knowzcode/enterprise/
+├── compliance_manifest.md       # Active guidelines + config
+├── compliance_status.md         # Per-WorkGroup tracking
+├── guidelines/
+│   ├── security.md              # Security requirements (template)
+│   ├── code-quality.md          # Code quality standards (template)
+│   └── custom/                  # Your organization's guidelines
+└── templates/
+    └── guideline-template.md    # Template for new guidelines
+```
+
+**Usage:**
+```bash
+# Run compliance review
+/kc:compliance                    # Full review (spec + implementation)
+/kc:compliance spec               # Specs only
+/kc:compliance impl               # Implementation only
+/kc:compliance configure          # Show configuration
+
+# Enable during /kc:init (optional)
+/kc:init
+# → "Would you like to set up enterprise compliance?" → Yes
+```
+
+**Configuration (compliance_manifest.md):**
+```yaml
+compliance_enabled: false         # Set to true to enable
+skip_empty_guidelines: true       # Skip empty/template guidelines
+```
+
+**Guideline Format:**
+```yaml
+---
+guideline_id: SEC-001
+name: Security Guidelines
+enforcement: blocking    # blocking | advisory
+applies_to: both        # spec | implementation | both
+---
+```
+
+**Key Design Decisions:**
+- **Fully optional** - Works gracefully when not configured
+- **Disabled by default** - Must explicitly enable in manifest
+- **Empty files allowed** - Template files don't cause errors
+- **Non-blocking by default** - Minimal disruption to existing workflows
+
+**CI/CD Integration:**
+
+For deterministic compliance validation in CI/CD pipelines:
+
+```bash
+# Bash (Linux/macOS/Git Bash)
+./scripts/compliance-check.sh [spec|impl|full]
+
+# PowerShell (Windows)
+.\scripts\compliance-check.ps1 -Scope [spec|impl|full]
+```
+
+Exit codes:
+- `0` - All checks passed (or compliance disabled)
+- `1` - Blocking issues found
+- `2` - Configuration error
+
+Environment variables (Bash):
+- `KC_COMPLIANCE_STRICT=true` - Fail on advisory issues too
+- `KC_COMPLIANCE_VERBOSE=true` - Show detailed output
+
+Example GitHub Actions workflow:
+```yaml
+- name: Compliance Check
+  run: ./scripts/compliance-check.sh full
+  env:
+    KC_COMPLIANCE_STRICT: true
+```
+
+---
 
 ## New in v2.0.25
 
